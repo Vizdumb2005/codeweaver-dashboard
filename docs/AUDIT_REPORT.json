@@ -1,0 +1,3807 @@
+{
+  "metadata": {
+    "site": "coNinja Shadow Swarm Dashboard",
+    "run_id": "audit-1780402957231",
+    "timestamp": "2026-06-02T12:22:37.231Z",
+    "viewports_tested": [
+      "1366x768 (desktop)",
+      "768x1024 (tablet)",
+      "375x812 (mobile)"
+    ]
+  },
+  "pages": [
+    {
+      "url": "http://localhost:3000",
+      "viewport": "1366x768",
+      "status_code": 200,
+      "layout_correct": true,
+      "component_consistency_issues": 0,
+      "spacing_issues": 8,
+      "contrast_violations": 33,
+      "buttons": [
+        {
+          "selector": "#global-pause-btn",
+          "text": "(icon)",
+          "activated_by_mouse": true,
+          "activated_by_keyboard": true,
+          "activated_by_touch": true,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": [
+            "aria-label: \"Pause swarm\""
+          ]
+        },
+        {
+          "selector": "#new-project-btn",
+          "text": "New Mission",
+          "activated_by_mouse": true,
+          "activated_by_keyboard": true,
+          "activated_by_touch": true,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": [
+            "aria-label: \"Start new mission\""
+          ]
+        },
+        {
+          "selector": "button.nav-item",
+          "text": "Shinobi Clan",
+          "activated_by_mouse": true,
+          "activated_by_keyboard": true,
+          "activated_by_touch": true,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.nav-item",
+          "text": "Jutsu Roadmap\n                2",
+          "activated_by_mouse": true,
+          "activated_by_keyboard": true,
+          "activated_by_touch": true,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.nav-item",
+          "text": "Stealth Scroll",
+          "activated_by_mouse": true,
+          "activated_by_keyboard": true,
+          "activated_by_touch": true,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.nav-item",
+          "text": "Notifications\n                2",
+          "activated_by_mouse": true,
+          "activated_by_keyboard": true,
+          "activated_by_touch": true,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.nav-item",
+          "text": "Projects",
+          "activated_by_mouse": true,
+          "activated_by_keyboard": true,
+          "activated_by_touch": true,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.nav-item",
+          "text": "Collaboration",
+          "activated_by_mouse": true,
+          "activated_by_keyboard": true,
+          "activated_by_touch": true,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.nav-item",
+          "text": "Dojo Workbench",
+          "activated_by_mouse": true,
+          "activated_by_keyboard": true,
+          "activated_by_touch": true,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.nav-item",
+          "text": "Repository",
+          "activated_by_mouse": true,
+          "activated_by_keyboard": true,
+          "activated_by_touch": true,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.nav-item",
+          "text": "Pull Requests\n                2",
+          "activated_by_mouse": true,
+          "activated_by_keyboard": true,
+          "activated_by_touch": true,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.nav-item",
+          "text": "Workflow Forge",
+          "activated_by_mouse": true,
+          "activated_by_keyboard": true,
+          "activated_by_touch": true,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.nav-item",
+          "text": "Agent Studio",
+          "activated_by_mouse": true,
+          "activated_by_keyboard": true,
+          "activated_by_touch": true,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.nav-item",
+          "text": "Testing Grounds\n                1",
+          "activated_by_mouse": true,
+          "activated_by_keyboard": true,
+          "activated_by_touch": true,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.nav-item",
+          "text": "Neural Graph",
+          "activated_by_mouse": true,
+          "activated_by_keyboard": true,
+          "activated_by_touch": true,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.nav-item",
+          "text": "Memory Vault",
+          "activated_by_mouse": true,
+          "activated_by_keyboard": true,
+          "activated_by_touch": true,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.nav-item",
+          "text": "Intelligence",
+          "activated_by_mouse": true,
+          "activated_by_keyboard": true,
+          "activated_by_touch": true,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.nav-item",
+          "text": "Stealth Archives",
+          "activated_by_mouse": true,
+          "activated_by_keyboard": true,
+          "activated_by_touch": true,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.nav-item",
+          "text": "Analytics",
+          "activated_by_mouse": true,
+          "activated_by_keyboard": true,
+          "activated_by_touch": true,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.nav-item",
+          "text": "Ops & Recovery",
+          "activated_by_mouse": true,
+          "activated_by_keyboard": true,
+          "activated_by_touch": true,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.nav-item",
+          "text": "Pulse Monitor",
+          "activated_by_mouse": true,
+          "activated_by_keyboard": true,
+          "activated_by_touch": true,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.nav-item",
+          "text": "Deploy Gate",
+          "activated_by_mouse": true,
+          "activated_by_keyboard": true,
+          "activated_by_touch": true,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.nav-item",
+          "text": "Sandbox Multiplexer",
+          "activated_by_mouse": true,
+          "activated_by_keyboard": true,
+          "activated_by_touch": true,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.nav-item",
+          "text": "Approvals\n                5",
+          "activated_by_mouse": true,
+          "activated_by_keyboard": true,
+          "activated_by_touch": true,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.nav-item",
+          "text": "Council Decrees\n                1",
+          "activated_by_mouse": true,
+          "activated_by_keyboard": true,
+          "activated_by_touch": true,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.nav-item",
+          "text": "Debate Center",
+          "activated_by_mouse": true,
+          "activated_by_keyboard": true,
+          "activated_by_touch": true,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.nav-item",
+          "text": "Shadow Guard\n                2",
+          "activated_by_mouse": true,
+          "activated_by_keyboard": true,
+          "activated_by_touch": true,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.nav-item",
+          "text": "Provenance",
+          "activated_by_mouse": true,
+          "activated_by_keyboard": true,
+          "activated_by_touch": true,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.nav-item",
+          "text": "MCP Registry",
+          "activated_by_mouse": true,
+          "activated_by_keyboard": true,
+          "activated_by_touch": true,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.nav-item",
+          "text": "Triage Inbox",
+          "activated_by_mouse": true,
+          "activated_by_keyboard": true,
+          "activated_by_touch": true,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.nav-item",
+          "text": "Dojo Rules",
+          "activated_by_mouse": true,
+          "activated_by_keyboard": true,
+          "activated_by_touch": true,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.pill",
+          "text": "All Jutsu",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.pill",
+          "text": "Genjutsu (FE)",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.pill",
+          "text": "Ninjutsu (BE)",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.pill",
+          "text": "Stealth (Sec)",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.btn",
+          "text": "Override Decrees",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.btn",
+          "text": "Enforce Decrees",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "#console-clear-btn",
+          "text": "Wipe",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "#console-toggle-btn",
+          "text": "Pause Scroll",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.w-tab",
+          "text": "Scrolls",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.w-tab",
+          "text": "Blueprint",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.w-tab",
+          "text": "Checklist",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "#workbench-show-browser-btn",
+          "text": "◈ Open Browser",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "#workbench-show-editor-btn",
+          "text": "◈️ Open Editor",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.btn",
+          "text": "◈ Establish Connection",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "#btn-graph-reset",
+          "text": "◈ Center Graph",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "#btn-graph-zoom-in",
+          "text": "+",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": [
+            "aria-label: \"Zoom In\""
+          ]
+        },
+        {
+          "selector": "#btn-graph-zoom-out",
+          "text": "−",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": [
+            "aria-label: \"Zoom Out\""
+          ]
+        },
+        {
+          "selector": "#node-detail-close",
+          "text": "×",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": [
+            "aria-label: \"Close details\""
+          ]
+        },
+        {
+          "selector": "#node-btn-open-editor",
+          "text": "◈️ Open in Dojo Workbench",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "#multiplexer-add-terminal",
+          "text": "+ Add Terminal",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": [
+            "aria-label: \"Add new terminal\""
+          ]
+        },
+        {
+          "selector": "button.tl-btn",
+          "text": "◈",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": [
+            "aria-label: \"Clear coder terminal buffer\""
+          ]
+        },
+        {
+          "selector": "button.tl-btn",
+          "text": "⏸️",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": [
+            "aria-label: \"Pause coder terminal stream\""
+          ]
+        },
+        {
+          "selector": "button.tl-btn",
+          "text": "◈",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": [
+            "aria-label: \"Clear tester terminal buffer\""
+          ]
+        },
+        {
+          "selector": "button.tl-btn",
+          "text": "⏸️",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": [
+            "aria-label: \"Pause tester terminal stream\""
+          ]
+        },
+        {
+          "selector": "button.tl-btn",
+          "text": "◈",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": [
+            "aria-label: \"Clear scout terminal buffer\""
+          ]
+        },
+        {
+          "selector": "button.tl-btn",
+          "text": "⏸️",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": [
+            "aria-label: \"Pause scout terminal stream\""
+          ]
+        },
+        {
+          "selector": "button.tl-btn",
+          "text": "◈",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": [
+            "aria-label: \"Clear docker terminal buffer\""
+          ]
+        },
+        {
+          "selector": "button.tl-btn",
+          "text": "⏸️",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": [
+            "aria-label: \"Pause docker terminal stream\""
+          ]
+        },
+        {
+          "selector": "button.s-tab",
+          "text": "◈ General",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.s-tab",
+          "text": "◈ Swarm Routing",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.s-tab",
+          "text": "◈ LLM Providers",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.s-tab",
+          "text": "◈ Agent Studio",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.s-tab",
+          "text": "◈ Workflow",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.s-tab",
+          "text": "◈️ Debate",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.s-tab",
+          "text": "◈ MCP & Tools",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.s-tab",
+          "text": "◈️ Prompts & Skills",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.s-tab",
+          "text": "◈️ RAG & Knowledge",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.s-tab",
+          "text": "◈ Testing/QA/Sec",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.s-tab",
+          "text": "◈ Deploy/Ops",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.s-tab",
+          "text": "◈️ Runtime & Net",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.s-tab",
+          "text": "◈ Notifications",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.s-tab",
+          "text": "◈ Repository Connect",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.s-tab",
+          "text": "◈ IAM & Ecosystem",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "#mcp-server-submit",
+          "text": "Mount Server",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "#prompt-save-btn",
+          "text": "Inscribe Prompt Scroll",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "#skill-forge-submit",
+          "text": "Forge Skill",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "#rag-ingest-submit",
+          "text": "Vectorize Scroll",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.btn",
+          "text": "Configure",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.btn",
+          "text": "Configure",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.btn",
+          "text": "Enable",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.password-toggle",
+          "text": "(icon)",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "clickable",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": [
+            "aria-label: \"Toggle password visibility\""
+          ]
+        },
+        {
+          "selector": "button.password-toggle",
+          "text": "(icon)",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "clickable",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": [
+            "aria-label: \"Toggle password visibility\""
+          ]
+        },
+        {
+          "selector": "button.password-toggle",
+          "text": "(icon)",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "clickable",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": [
+            "aria-label: \"Toggle password visibility\""
+          ]
+        },
+        {
+          "selector": "button.btn",
+          "text": "Edit",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.btn",
+          "text": "Edit",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.btn",
+          "text": "Edit",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.btn",
+          "text": "Edit",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.btn",
+          "text": "Edit",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.password-toggle",
+          "text": "(icon)",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "clickable",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": [
+            "aria-label: \"Toggle password visibility\""
+          ]
+        },
+        {
+          "selector": "button.password-toggle",
+          "text": "(icon)",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "clickable",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": [
+            "aria-label: \"Toggle password visibility\""
+          ]
+        },
+        {
+          "selector": "button.password-toggle",
+          "text": "(icon)",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "clickable",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": [
+            "aria-label: \"Toggle password visibility\""
+          ]
+        },
+        {
+          "selector": "#btn-oauth-github",
+          "text": "GitHub",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "#btn-oauth-gitlab",
+          "text": "GitLab",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "#btn-oauth-bitbucket",
+          "text": "Bitbucket",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.btn",
+          "text": "Establish Connection Seal",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "#agent-studio-view-toggle",
+          "text": "(icon)",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": [
+            "aria-label: \"Toggle view\""
+          ]
+        },
+        {
+          "selector": "#agent-studio-create-btn",
+          "text": "Summon New Shinobi",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "#workflow-add-stage-btn",
+          "text": "+ Add Stage",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "#workflow-save-btn",
+          "text": "Save Pipeline",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        }
+      ],
+      "navigation_issues": 0,
+      "artifacts": {
+        "screenshot": "docs/screenshots/desktop-fullpage.png",
+        "diff_image": null,
+        "video_clip": null,
+        "har_snippet": null
+      }
+    },
+    {
+      "url": "http://localhost:3000",
+      "viewport": "768x1024",
+      "status_code": 200,
+      "layout_correct": true,
+      "component_consistency_issues": 0,
+      "spacing_issues": 0,
+      "contrast_violations": 33,
+      "buttons": [
+        {
+          "selector": "#global-pause-btn",
+          "text": "(icon)",
+          "activated_by_mouse": true,
+          "activated_by_keyboard": true,
+          "activated_by_touch": true,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": [
+            "aria-label: \"Pause swarm\""
+          ]
+        },
+        {
+          "selector": "#new-project-btn",
+          "text": "New Mission",
+          "activated_by_mouse": true,
+          "activated_by_keyboard": true,
+          "activated_by_touch": true,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": [
+            "aria-label: \"Start new mission\""
+          ]
+        },
+        {
+          "selector": "button.nav-item",
+          "text": "Shinobi Clan",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.nav-item",
+          "text": "Jutsu Roadmap\n                2",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.nav-item",
+          "text": "Stealth Scroll",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.nav-item",
+          "text": "Notifications\n                2",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.nav-item",
+          "text": "Projects",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.nav-item",
+          "text": "Collaboration",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.nav-item",
+          "text": "Dojo Workbench",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.nav-item",
+          "text": "Repository",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.nav-item",
+          "text": "Pull Requests\n                2",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.nav-item",
+          "text": "Workflow Forge",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.nav-item",
+          "text": "Agent Studio",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.nav-item",
+          "text": "Testing Grounds\n                1",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.nav-item",
+          "text": "Neural Graph",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.nav-item",
+          "text": "Memory Vault",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.nav-item",
+          "text": "Intelligence",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.nav-item",
+          "text": "Stealth Archives",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.nav-item",
+          "text": "Analytics",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.nav-item",
+          "text": "Ops & Recovery",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.nav-item",
+          "text": "Pulse Monitor",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.nav-item",
+          "text": "Deploy Gate",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.nav-item",
+          "text": "Sandbox Multiplexer",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.nav-item",
+          "text": "Approvals\n                5",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.nav-item",
+          "text": "Council Decrees\n                1",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.nav-item",
+          "text": "Debate Center",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.nav-item",
+          "text": "Shadow Guard\n                2",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.nav-item",
+          "text": "Provenance",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.nav-item",
+          "text": "MCP Registry",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.nav-item",
+          "text": "Triage Inbox",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.nav-item",
+          "text": "Dojo Rules",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.pill",
+          "text": "All Jutsu",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.pill",
+          "text": "Genjutsu (FE)",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.pill",
+          "text": "Ninjutsu (BE)",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.pill",
+          "text": "Stealth (Sec)",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.btn",
+          "text": "Override Decrees",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.btn",
+          "text": "Enforce Decrees",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "#console-clear-btn",
+          "text": "Wipe",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "#console-toggle-btn",
+          "text": "Pause Scroll",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.w-tab",
+          "text": "Scrolls",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.w-tab",
+          "text": "Blueprint",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.w-tab",
+          "text": "Checklist",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "#workbench-show-browser-btn",
+          "text": "◈ Open Browser",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "#workbench-show-editor-btn",
+          "text": "◈️ Open Editor",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.btn",
+          "text": "◈ Establish Connection",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "#btn-graph-reset",
+          "text": "◈ Center Graph",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "#btn-graph-zoom-in",
+          "text": "+",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": [
+            "aria-label: \"Zoom In\""
+          ]
+        },
+        {
+          "selector": "#btn-graph-zoom-out",
+          "text": "−",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": [
+            "aria-label: \"Zoom Out\""
+          ]
+        },
+        {
+          "selector": "#node-detail-close",
+          "text": "×",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": [
+            "aria-label: \"Close details\""
+          ]
+        },
+        {
+          "selector": "#node-btn-open-editor",
+          "text": "◈️ Open in Dojo Workbench",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "#multiplexer-add-terminal",
+          "text": "+ Add Terminal",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": [
+            "aria-label: \"Add new terminal\""
+          ]
+        },
+        {
+          "selector": "button.tl-btn",
+          "text": "◈",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": [
+            "aria-label: \"Clear coder terminal buffer\""
+          ]
+        },
+        {
+          "selector": "button.tl-btn",
+          "text": "⏸️",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": [
+            "aria-label: \"Pause coder terminal stream\""
+          ]
+        },
+        {
+          "selector": "button.tl-btn",
+          "text": "◈",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": [
+            "aria-label: \"Clear tester terminal buffer\""
+          ]
+        },
+        {
+          "selector": "button.tl-btn",
+          "text": "⏸️",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": [
+            "aria-label: \"Pause tester terminal stream\""
+          ]
+        },
+        {
+          "selector": "button.tl-btn",
+          "text": "◈",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": [
+            "aria-label: \"Clear scout terminal buffer\""
+          ]
+        },
+        {
+          "selector": "button.tl-btn",
+          "text": "⏸️",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": [
+            "aria-label: \"Pause scout terminal stream\""
+          ]
+        },
+        {
+          "selector": "button.tl-btn",
+          "text": "◈",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": [
+            "aria-label: \"Clear docker terminal buffer\""
+          ]
+        },
+        {
+          "selector": "button.tl-btn",
+          "text": "⏸️",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": [
+            "aria-label: \"Pause docker terminal stream\""
+          ]
+        },
+        {
+          "selector": "button.s-tab",
+          "text": "◈ General",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.s-tab",
+          "text": "◈ Swarm Routing",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.s-tab",
+          "text": "◈ LLM Providers",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.s-tab",
+          "text": "◈ Agent Studio",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.s-tab",
+          "text": "◈ Workflow",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.s-tab",
+          "text": "◈️ Debate",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.s-tab",
+          "text": "◈ MCP & Tools",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.s-tab",
+          "text": "◈️ Prompts & Skills",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.s-tab",
+          "text": "◈️ RAG & Knowledge",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.s-tab",
+          "text": "◈ Testing/QA/Sec",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.s-tab",
+          "text": "◈ Deploy/Ops",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.s-tab",
+          "text": "◈️ Runtime & Net",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.s-tab",
+          "text": "◈ Notifications",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.s-tab",
+          "text": "◈ Repository Connect",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.s-tab",
+          "text": "◈ IAM & Ecosystem",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "#mcp-server-submit",
+          "text": "Mount Server",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "#prompt-save-btn",
+          "text": "Inscribe Prompt Scroll",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "#skill-forge-submit",
+          "text": "Forge Skill",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "#rag-ingest-submit",
+          "text": "Vectorize Scroll",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.btn",
+          "text": "Configure",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.btn",
+          "text": "Configure",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.btn",
+          "text": "Enable",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.password-toggle",
+          "text": "(icon)",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "clickable",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": [
+            "aria-label: \"Toggle password visibility\""
+          ]
+        },
+        {
+          "selector": "button.password-toggle",
+          "text": "(icon)",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "clickable",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": [
+            "aria-label: \"Toggle password visibility\""
+          ]
+        },
+        {
+          "selector": "button.password-toggle",
+          "text": "(icon)",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "clickable",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": [
+            "aria-label: \"Toggle password visibility\""
+          ]
+        },
+        {
+          "selector": "button.btn",
+          "text": "Edit",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.btn",
+          "text": "Edit",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.btn",
+          "text": "Edit",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.btn",
+          "text": "Edit",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.btn",
+          "text": "Edit",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.password-toggle",
+          "text": "(icon)",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "clickable",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": [
+            "aria-label: \"Toggle password visibility\""
+          ]
+        },
+        {
+          "selector": "button.password-toggle",
+          "text": "(icon)",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "clickable",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": [
+            "aria-label: \"Toggle password visibility\""
+          ]
+        },
+        {
+          "selector": "button.password-toggle",
+          "text": "(icon)",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "clickable",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": [
+            "aria-label: \"Toggle password visibility\""
+          ]
+        },
+        {
+          "selector": "#btn-oauth-github",
+          "text": "GitHub",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "#btn-oauth-gitlab",
+          "text": "GitLab",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "#btn-oauth-bitbucket",
+          "text": "Bitbucket",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.btn",
+          "text": "Establish Connection Seal",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "#agent-studio-view-toggle",
+          "text": "(icon)",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": [
+            "aria-label: \"Toggle view\""
+          ]
+        },
+        {
+          "selector": "#agent-studio-create-btn",
+          "text": "Summon New Shinobi",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "#workflow-add-stage-btn",
+          "text": "+ Add Stage",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "#workflow-save-btn",
+          "text": "Save Pipeline",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        }
+      ],
+      "navigation_issues": 0,
+      "artifacts": {
+        "screenshot": "docs/screenshots/tablet-fullpage.png",
+        "diff_image": null,
+        "video_clip": null,
+        "har_snippet": null
+      }
+    },
+    {
+      "url": "http://localhost:3000",
+      "viewport": "375x812",
+      "status_code": 200,
+      "layout_correct": false,
+      "component_consistency_issues": 0,
+      "spacing_issues": 0,
+      "contrast_violations": 33,
+      "buttons": [
+        {
+          "selector": "#global-pause-btn",
+          "text": "(icon)",
+          "activated_by_mouse": true,
+          "activated_by_keyboard": true,
+          "activated_by_touch": true,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": [
+            "aria-label: \"Pause swarm\""
+          ]
+        },
+        {
+          "selector": "#new-project-btn",
+          "text": "New Mission",
+          "activated_by_mouse": true,
+          "activated_by_keyboard": true,
+          "activated_by_touch": true,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": [
+            "aria-label: \"Start new mission\""
+          ]
+        },
+        {
+          "selector": "button.nav-item",
+          "text": "Shinobi Clan",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.nav-item",
+          "text": "Jutsu Roadmap\n                2",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.nav-item",
+          "text": "Stealth Scroll",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.nav-item",
+          "text": "Notifications\n                2",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.nav-item",
+          "text": "Projects",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.nav-item",
+          "text": "Collaboration",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.nav-item",
+          "text": "Dojo Workbench",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.nav-item",
+          "text": "Repository",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.nav-item",
+          "text": "Pull Requests\n                2",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.nav-item",
+          "text": "Workflow Forge",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.nav-item",
+          "text": "Agent Studio",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.nav-item",
+          "text": "Testing Grounds\n                1",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.nav-item",
+          "text": "Neural Graph",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.nav-item",
+          "text": "Memory Vault",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.nav-item",
+          "text": "Intelligence",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.nav-item",
+          "text": "Stealth Archives",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.nav-item",
+          "text": "Analytics",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.nav-item",
+          "text": "Ops & Recovery",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.nav-item",
+          "text": "Pulse Monitor",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.nav-item",
+          "text": "Deploy Gate",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.nav-item",
+          "text": "Sandbox Multiplexer",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.nav-item",
+          "text": "Approvals\n                5",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.nav-item",
+          "text": "Council Decrees\n                1",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.nav-item",
+          "text": "Debate Center",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.nav-item",
+          "text": "Shadow Guard\n                2",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.nav-item",
+          "text": "Provenance",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.nav-item",
+          "text": "MCP Registry",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.nav-item",
+          "text": "Triage Inbox",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.nav-item",
+          "text": "Dojo Rules",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.pill",
+          "text": "All Jutsu",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.pill",
+          "text": "Genjutsu (FE)",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.pill",
+          "text": "Ninjutsu (BE)",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.pill",
+          "text": "Stealth (Sec)",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.btn",
+          "text": "Override Decrees",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.btn",
+          "text": "Enforce Decrees",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "#console-clear-btn",
+          "text": "Wipe",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "#console-toggle-btn",
+          "text": "Pause Scroll",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.w-tab",
+          "text": "Scrolls",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.w-tab",
+          "text": "Blueprint",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.w-tab",
+          "text": "Checklist",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "#workbench-show-browser-btn",
+          "text": "◈ Open Browser",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "#workbench-show-editor-btn",
+          "text": "◈️ Open Editor",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.btn",
+          "text": "◈ Establish Connection",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "#btn-graph-reset",
+          "text": "◈ Center Graph",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "#btn-graph-zoom-in",
+          "text": "+",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": [
+            "aria-label: \"Zoom In\""
+          ]
+        },
+        {
+          "selector": "#btn-graph-zoom-out",
+          "text": "−",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": [
+            "aria-label: \"Zoom Out\""
+          ]
+        },
+        {
+          "selector": "#node-detail-close",
+          "text": "×",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": [
+            "aria-label: \"Close details\""
+          ]
+        },
+        {
+          "selector": "#node-btn-open-editor",
+          "text": "◈️ Open in Dojo Workbench",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "#multiplexer-add-terminal",
+          "text": "+ Add Terminal",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": [
+            "aria-label: \"Add new terminal\""
+          ]
+        },
+        {
+          "selector": "button.tl-btn",
+          "text": "◈",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": [
+            "aria-label: \"Clear coder terminal buffer\""
+          ]
+        },
+        {
+          "selector": "button.tl-btn",
+          "text": "⏸️",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": [
+            "aria-label: \"Pause coder terminal stream\""
+          ]
+        },
+        {
+          "selector": "button.tl-btn",
+          "text": "◈",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": [
+            "aria-label: \"Clear tester terminal buffer\""
+          ]
+        },
+        {
+          "selector": "button.tl-btn",
+          "text": "⏸️",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": [
+            "aria-label: \"Pause tester terminal stream\""
+          ]
+        },
+        {
+          "selector": "button.tl-btn",
+          "text": "◈",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": [
+            "aria-label: \"Clear scout terminal buffer\""
+          ]
+        },
+        {
+          "selector": "button.tl-btn",
+          "text": "⏸️",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": [
+            "aria-label: \"Pause scout terminal stream\""
+          ]
+        },
+        {
+          "selector": "button.tl-btn",
+          "text": "◈",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": [
+            "aria-label: \"Clear docker terminal buffer\""
+          ]
+        },
+        {
+          "selector": "button.tl-btn",
+          "text": "⏸️",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": [
+            "aria-label: \"Pause docker terminal stream\""
+          ]
+        },
+        {
+          "selector": "button.s-tab",
+          "text": "◈ General",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.s-tab",
+          "text": "◈ Swarm Routing",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.s-tab",
+          "text": "◈ LLM Providers",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.s-tab",
+          "text": "◈ Agent Studio",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.s-tab",
+          "text": "◈ Workflow",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.s-tab",
+          "text": "◈️ Debate",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.s-tab",
+          "text": "◈ MCP & Tools",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.s-tab",
+          "text": "◈️ Prompts & Skills",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.s-tab",
+          "text": "◈️ RAG & Knowledge",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.s-tab",
+          "text": "◈ Testing/QA/Sec",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.s-tab",
+          "text": "◈ Deploy/Ops",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.s-tab",
+          "text": "◈️ Runtime & Net",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.s-tab",
+          "text": "◈ Notifications",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.s-tab",
+          "text": "◈ Repository Connect",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.s-tab",
+          "text": "◈ IAM & Ecosystem",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "#mcp-server-submit",
+          "text": "Mount Server",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "#prompt-save-btn",
+          "text": "Inscribe Prompt Scroll",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "#skill-forge-submit",
+          "text": "Forge Skill",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "#rag-ingest-submit",
+          "text": "Vectorize Scroll",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.btn",
+          "text": "Configure",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.btn",
+          "text": "Configure",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.btn",
+          "text": "Enable",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.password-toggle",
+          "text": "(icon)",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "clickable",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": [
+            "aria-label: \"Toggle password visibility\""
+          ]
+        },
+        {
+          "selector": "button.password-toggle",
+          "text": "(icon)",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "clickable",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": [
+            "aria-label: \"Toggle password visibility\""
+          ]
+        },
+        {
+          "selector": "button.password-toggle",
+          "text": "(icon)",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "clickable",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": [
+            "aria-label: \"Toggle password visibility\""
+          ]
+        },
+        {
+          "selector": "button.btn",
+          "text": "Edit",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.btn",
+          "text": "Edit",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.btn",
+          "text": "Edit",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.btn",
+          "text": "Edit",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.btn",
+          "text": "Edit",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.password-toggle",
+          "text": "(icon)",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "clickable",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": [
+            "aria-label: \"Toggle password visibility\""
+          ]
+        },
+        {
+          "selector": "button.password-toggle",
+          "text": "(icon)",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "clickable",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": [
+            "aria-label: \"Toggle password visibility\""
+          ]
+        },
+        {
+          "selector": "button.password-toggle",
+          "text": "(icon)",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "clickable",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": [
+            "aria-label: \"Toggle password visibility\""
+          ]
+        },
+        {
+          "selector": "#btn-oauth-github",
+          "text": "GitHub",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "#btn-oauth-gitlab",
+          "text": "GitLab",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "#btn-oauth-bitbucket",
+          "text": "Bitbucket",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "button.btn",
+          "text": "Establish Connection Seal",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "#agent-studio-view-toggle",
+          "text": "(icon)",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": [
+            "aria-label: \"Toggle view\""
+          ]
+        },
+        {
+          "selector": "#agent-studio-create-btn",
+          "text": "Summon New Shinobi",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "#workflow-add-stage-btn",
+          "text": "+ Add Stage",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        },
+        {
+          "selector": "#workflow-save-btn",
+          "text": "Save Pipeline",
+          "activated_by_mouse": false,
+          "activated_by_keyboard": false,
+          "activated_by_touch": false,
+          "action_type": "form-submit",
+          "action_result": {
+            "disabled": false
+          },
+          "notes": []
+        }
+      ],
+      "navigation_issues": 0,
+      "artifacts": {
+        "screenshot": "docs/screenshots/mobile-fullpage.png",
+        "diff_image": null,
+        "video_clip": null,
+        "har_snippet": null
+      }
+    }
+  ],
+  "summary": {
+    "pages_audited": 3,
+    "high_priority_issues": 16,
+    "buttons_tested": 351,
+    "buttons_failed": 3,
+    "recommendations": [
+      "Fix 99 color contrast violations — ensure WCAG AA compliance (4.5:1 ratio)",
+      "Fix layout issues - eliminate horizontal scroll at all viewports",
+      "Resolve element overlaps for proper UI spacing",
+      "Capture HAR file via Chrome DevTools Network tab for network request analysis",
+      "Screenshots captured at: \"desktop\", \"tablet\", \"mobile\""
+    ]
+  }
+}

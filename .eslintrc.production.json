@@ -1,0 +1,66 @@
+{
+  "extends": "./.eslintrc.json",
+  "rules": {
+    /* ==================== Strict Production Rules ==================== */
+    
+    /* Ban console.log in production builds (allow warn/error) */
+    "no-console": ["error", { "allow": ["warn", "error"] }],
+    
+    /* Require error handling for all promises */
+    "@typescript-eslint/no-floating-promises": [
+      "error",
+      {
+        "ignoreVoid": false,
+        "ignoreIIFE": false
+      }
+    ],
+    
+    /* No debug statements */
+    "no-debugger": "error",
+    
+    /* No inline styles */
+    "react/forbid-component-props": ["error", { "forbid": ["style"] }],
+    
+    /* No inline functions in JSX props (performance) */
+    "react/jsx-no-bind": [
+      "error",
+      {
+        "ignoreRefs": true,
+        "allowArrowFunctions": false,
+        "allowFunctions": false,
+        "allowBind": false
+      }
+    ],
+    
+    /* Require all dependencies to be in package.json */
+    "import/no-extraneous-dependencies": [
+      "error",
+      {
+        "devDependencies": false,
+        "optionalDependencies": false,
+        "peerDependencies": false
+      }
+    ],
+    
+    /* No dynamic requires */
+    "@typescript-eslint/no-var-requires": "error",
+    
+    /* No require statements */
+    "import/no-commonjs": "error",
+    
+    /* No eval */
+    "no-eval": "error",
+    
+    /* No new Function */
+    "no-new-func": "error",
+    
+    /* No explicit any */
+    "@typescript-eslint/no-explicit-any": "error",
+    
+    /* All functions must have return types */
+    "@typescript-eslint/explicit-function-return-type": "error",
+    
+    /* All module boundary types must be explicit */
+    "@typescript-eslint/explicit-module-boundary-types": "error"
+  }
+}

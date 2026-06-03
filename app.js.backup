@@ -1,0 +1,4139 @@
+// --- APPLICATION STATE ---
+const state = {
+  activeProject: "TaskMaster Marketplace MVP",
+  systemStatus: "active", // active, paused
+  autonomyLevel: "advisory", // silent, advisory, approval_required
+  hardwareProfile: "standard",
+  dailyLimit: 5.00,
+  alertThreshold: 0.8,
+  accumulatedCost: 1.42,
+  llmRequests: 412,
+  autoFixes: 24,
+  avgConfidence: 91,
+  testCoverage: 84.2,
+
+  activeTab: "swarm-graph",
+  activeReportId: "ab-cta",
+  activeSettingsTab: "models",
+  vramSwapEnabled: true,
+  temperature: 0.20,
+  contextLength: 8192,
+  proxyEnabled: false,
+  sslEnabled: true,
+
+  // ── Advanced Operations & Safety Settings ───────────────────
+  aggressiveUnload: true,
+  maxConcurrentModels: 2,
+  quantizationMatrix: {
+    sensei: "Q8_0",
+    coder: "Q8_0",
+    tester: "Q4_K_M"
+  },
+  sandboxDir: "/workspace",
+  sandboxNetLevel: "isolated",
+  watchdogEnabled: true,
+  activeModelsInVRAM: ["Sensei (Orch)"],
+  multiplexerLogs: {
+    coder: [],
+    tester: [],
+    scout: [],
+    docker: []
+  },
+  multiplexerPaused: {
+    coder: false,
+    tester: false,
+    scout: false,
+    docker: false
+  },
+
+  // ── 365-Day Operations ──────────────────────────────────────
+  // Proving Grounds (QA)
+  tddStance: "genin",          // "genin" | "jonin"
+  mutationTesting: false,
+  coverageGate: 80,            // 50–100 %
+
+  // Scroll Archive (Memory)
+  scrollTokenLimit: 4000,      // 1000–8000
+  memoryPruning: "weekly",     // "daily" | "weekly" | "eidetic"
+
+  // Shadow Strike Protocols (CI/CD)
+  midnightDeploy: true,
+  autoRollback: true,
+  releaseChakra: 5,            // 1–10 tasks
+
+  // Dojo Seals (Sandboxing)
+  executionSeal: "code_only",  // "code_only" | "trusted_docker" | "unsealed"
+  astEditLimit: 80,            // max AST modifications before hard reset
+
+  // Nightwalker Protocols (Idle)
+  idleFocus: "documentation",  // "performance" | "documentation" | "hibernate"
+
+  // Persona Tuner (per-selected agent)
+  agentPersonaTemp: 0.20,
+
+  // Time-Lapse Viewer
+  timelapse: {
+    playing: false,
+    speed: 1,
+    currentMinute: 720,        // 0–1440 (minutes in a day)
+    day: 1
+  },
+  customSkills: [
+    { id: "vulnerability-audit", desc: "Runs OWASP scans on repository", prompt: "When a security scan is requested, run checksec and check npm audit findings." },
+    { id: "markdown-builder", desc: "Constructs GFM Markdown reports", prompt: "When writing reports, use clean tables, GFM highlights, and alerts." }
+  ],
+  mcpServers: [
+    { id: "filesystem", name: "Filesystem MCP", command: "node", args: "dist/index.js", status: "active", tools: ["read_file", "write_file", "list_dir"] },
+    { id: "git", name: "Git MCP", command: "git", args: "status", status: "active", tools: ["git_status", "git_diff", "git_commit"] },
+    { id: "sqlite", name: "SQLite Database", command: "node", args: "server-sqlite/dist/index.js", status: "active", tools: ["inspect_schema", "run_migrations", "execute_query"] },
+    { id: "github", name: "GitHub Integration", command: "npx", args: "-y @modelcontextprotocol/server-github", status: "active", tools: ["get_pull_request", "post_comment", "merge_pull_request"] },
+    { id: "puppeteer", name: "Puppeteer Browser", command: "node", args: "server-puppeteer/dist/index.js", status: "active", tools: ["open_page", "click_element", "take_screenshot"] },
+    { id: "brave-search", name: "Brave Search API", command: "npx", args: "-y @modelcontextprotocol/server-brave-search", status: "active", tools: ["web_search", "retrieve_url"] }
+  ],
+  ragConfig: [
+    { name: "coNinja_stealth_protocol.md", size: "12 KB", status: "Indexed", chunks: 24 },
+    { name: "shinobi_hashing_standards.txt", size: "8 KB", status: "Indexed", chunks: 16 }
+  ],
+  availableLocalModels: [
+    "Ollama: Llama-3.1-8B",
+    "Ollama: Qwen-2.5-Coder-7B",
+    "Ollama: Mistral-7B",
+    "Ollama: DeepSeek-Coder-6.7B",
+    "Gemini 3.5 Flash",
+    "Gemini 1.5 Pro"
+  ],
+  agentPrompts: {
+    orchestrator: "You are the coNinja orchestrator (Sensei). Your task is to delegate subtasks, coordinate VRAM loading, and arbitrate code conflicts.",
+    architect: "You are the Grandmaster (Architect). You create blueprints, schemas, and design guidelines for code tasks.",
+    coder: "You are the Jutsu Coder. You write high-quality, typed, modular code adhering to the architecture specs.",
+    tester: "You are the Kunai Tester. You write comprehensive tests and debug test failures with precision.",
+    security: "You are the Stealth Auditor. You scan all commits for security leaks, vulnerabilities, and CVEs."
+  },
+  selectedAgentId: "architect",
+  selectedTaskId: null,
+
+  // Log streaming control
+  streamLogs: true,
+  logFilterAgent: "all",
+  logSearchQuery: "",
+
+  agents: {
+    orchestrator: {
+      id: "orchestrator",
+      name: "Sensei (Orch)",
+      icon: "🏯",
+      role: "orchestrator",
+      status: "thinking",
+      objective: "Directing the mission roadmap, arbitrating debates, and compiling progress scrolls.",
+      currentTaskId: null,
+      route: "Gemini 3.5 Flash",
+      ram: "0.2 GB (Cloud)",
+      cost: 0.52,
+      skills: ["task-scheduling", "peer-arbitration", "performance-auditing", "workflow-management"]
+    },
+    pm: {
+      id: "pm",
+      name: "Recon Shinobi",
+      icon: "🥷",
+      role: "product_manager",
+      status: "idle",
+      objective: "Gathering requirement specifications and drafting the primary mission scope.",
+      currentTaskId: null,
+      route: "Gemini 3.5 Flash",
+      ram: "0.0 GB (Cloud)",
+      cost: 0.15,
+      skills: ["requirement-analysis", "user-story-writing", "scope-definition", "clarification-polling"]
+    },
+    architect: {
+      id: "architect",
+      name: "Grandmaster (Arch)",
+      icon: "⛩️",
+      role: "architect",
+      status: "idle",
+      objective: "Architecting code property blueprints, database relations, and system specs.",
+      currentTaskId: null,
+      route: "Gemini 3.5 Flash",
+      ram: "0.0 GB (Cloud)",
+      cost: 0.34,
+      skills: ["database-design", "systems-architecture", "adr-authoring", "uml-generation"]
+    },
+    coder1: {
+      id: "coder1",
+      name: "Jutsu Coder (BE)",
+      icon: "⚔️",
+      role: "coder",
+      status: "coding",
+      objective: "Writing backend server services, database models, and API endpoints.",
+      currentTaskId: "task-04",
+      route: "Ollama: Llama-3.1-8B",
+      ram: "5.4 GB VRAM",
+      cost: 0.12,
+      skills: ["api-routing", "sql-queries", "typescript", "dependency-binding"]
+    },
+    coder2: {
+      id: "coder2",
+      name: "Genjutsu Coder (FE)",
+      icon: "🪭",
+      role: "coder",
+      status: "idle",
+      objective: "Creating front-facing UI flows, glassmorphism layouts, and state stores.",
+      currentTaskId: null,
+      route: "Ollama: Llama-3.1-8B",
+      ram: "0.0 GB VRAM",
+      cost: 0.08,
+      skills: ["html5-css3", "vanilla-js", "responsive-layouts", "component-scaffolding"]
+    },
+    tester: {
+      id: "tester",
+      name: "Kunai Tester",
+      icon: "🏹",
+      role: "tester",
+      status: "coding",
+      objective: "Executing test runner assertions to confirm code files pass quality gates.",
+      currentTaskId: "task-05",
+      route: "Ollama: Mistral-7B",
+      ram: "4.8 GB VRAM",
+      cost: 0.09,
+      skills: ["unit-testing", "jest-mocha", "regression-audits", "mock-generation"]
+    },
+    security: {
+      id: "security",
+      name: "Stealth Auditor",
+      icon: "👺",
+      role: "security",
+      status: "idle",
+      objective: "Conducting continuous vulnerability scans, secret leak assessments, and supply checks.",
+      currentTaskId: null,
+      route: "Ollama: Llama-3.1-8B",
+      ram: "0.0 GB VRAM",
+      cost: 0.06,
+      skills: ["vulnerability-scans", "secret-detection", "owasp-auditing", "dependency-cve-checks"]
+    },
+    devops: {
+      id: "devops",
+      name: "Chunin DevOps",
+      icon: "🐉",
+      role: "devops",
+      status: "idle",
+      objective: "Configuring Docker container setups, compiling pipelines, and triggering production releases.",
+      currentTaskId: null,
+      route: "Gemini 3.5 Flash",
+      ram: "0.0 GB (Cloud)",
+      cost: 0.04,
+      skills: ["docker-compose", "nginx-configurations", "ci-cd-pipelines", "cloud-deployment"]
+    },
+    documentation: {
+      id: "documentation",
+      name: "Scroll Keeper",
+      icon: "📜",
+      role: "documentation",
+      status: "idle",
+      objective: "Writing inline explanations and maintaining code documentations in sync.",
+      currentTaskId: null,
+      route: "Ollama: Llama-3.1-8B",
+      ram: "0.0 GB VRAM",
+      cost: 0.01,
+      skills: ["markdown-authoring", "jsdoc-extraction", "changelog-updates", "readme-generation"]
+    },
+    performance: {
+      id: "performance",
+      name: "Taijutsu Engineer",
+      icon: "🔥",
+      role: "performance",
+      status: "idle",
+      objective: "Optimizing request speeds, analyzing O(N) constraints, and recommending cache relays.",
+      currentTaskId: null,
+      route: "Ollama: Mistral-7B",
+      ram: "0.0 GB VRAM",
+      cost: 0.01,
+      skills: ["runtime-profiling", "big-o-analysis", "cache-optimization", "query-tuning"]
+    },
+    hunter: {
+      id: "hunter",
+      name: "Stealth Scout (Hunter)",
+      icon: "🦅",
+      role: "security",
+      status: "watching",
+      objective: "Monitoring Sentry error logs and production telemetry for runtime exceptions.",
+      currentTaskId: null,
+      route: "Gemini 3.5 Flash",
+      ram: "0.2 GB (Cloud)",
+      cost: 0.18,
+      skills: ["log-parsing", "stacktrace-diagnosis", "anomaly-detection", "incident-dispatch"]
+    },
+    updater: {
+      id: "updater",
+      name: "Debt Chunin (Updater)",
+      icon: "🎋",
+      role: "devops",
+      status: "idle",
+      objective: "Running scheduled weekly cron-sweeps to identify outdated packages and automate PR bump validation.",
+      currentTaskId: null,
+      route: "Gemini 3.5 Flash",
+      ram: "0.0 GB (Cloud)",
+      cost: 0.22,
+      skills: ["dependency-auditing", "semver-resolution", "regression-testing", "auto-pr-creation"]
+    }
+  },
+
+  tasks: [
+    {
+      id: "task-01",
+      title: "Design Database Schema",
+      desc: "Architect the entity relational schemas for users, workspace nodes, task lines, and transaction logs. Detail indices for foreign key constraints.",
+      status: "completed",
+      assignee: "architect",
+      priority: 5,
+      complexity: "complex",
+      duration: "24 min elapsed",
+      attempts: "1 / 3",
+      tags: ["#architecture", "#db"],
+      deps: [],
+      output: "[DB Spec Compiled]\nEntities: user, task, decision, workspace\nRelations: user HAS_MANY tasks, workspace CONTAINS tasks\nIndices: Created index idx_tasks_user_id on tasks(user_id)"
+    },
+    {
+      id: "task-02",
+      title: "Verify Hashing Security",
+      desc: "Perform static review of password hashing wrappers. Ensure bcrypt utilizes a strength factor >= 12, and check for secret leaks in salt environments.",
+      status: "completed",
+      assignee: "security",
+      priority: 5,
+      complexity: "medium",
+      duration: "8 min elapsed",
+      attempts: "1 / 3",
+      tags: ["#security", "#auth"],
+      deps: ["task-01"],
+      output: "[Security Audit Success]\nScanned: src/utils/auth.ts\nFound: bcrypt.hash(pwd, 12) used.\nResult: Code conforms to OWASP cryptograph guidelines. Secret scanners reported 0 indicators."
+    },
+    {
+      id: "task-03",
+      title: "Create User & Session Models",
+      desc: "Implement database mapping entities for user authentication states. Write session token serializers and JWT validation handlers.",
+      status: "completed",
+      assignee: "coder2",
+      priority: 4,
+      complexity: "medium",
+      duration: "18 min elapsed",
+      attempts: "1 / 3",
+      tags: ["#backend", "#auth"],
+      deps: ["task-01", "task-02"],
+      output: "[Models Completed]\nWritten: src/models/User.ts, src/models/Session.ts\nTests: Manual verify check pass."
+    },
+    {
+      id: "task-04",
+      title: "Create Email Service Module",
+      desc: "Implement email service logic using Nodemailer. Support SMTP server parameters with a fallback for mock console log templates.",
+      status: "in_progress",
+      assignee: "coder1",
+      priority: 4,
+      complexity: "medium",
+      duration: "12 min elapsed",
+      attempts: "1 / 3",
+      tags: ["#backend", "#notifications"],
+      deps: ["task-03"],
+      progress: 45,
+      output: ""
+    },
+    {
+      id: "task-05",
+      title: "Write User Auth Integration Tests",
+      desc: "Write testing scripts targeting login, validation, and token refresh endpoints. Verify invalid logins throw 401 statuses.",
+      status: "review",
+      assignee: "tester",
+      priority: 4,
+      complexity: "medium",
+      duration: "14 min elapsed",
+      attempts: "1 / 3",
+      tags: ["#testing", "#auth"],
+      deps: ["task-03"],
+      output: "[Test Run Running]\nExecuting jest integration/auth.test.ts...\nTests: 6 passed, 2 executing..."
+    },
+    {
+      id: "task-06",
+      title: "Setup Docker Compose",
+      desc: "Draft multi-stage Dockerfiles for node application services. Write compose files linking database service, redis cache, and backend app container.",
+      status: "backlog",
+      assignee: "devops",
+      priority: 3,
+      complexity: "medium",
+      duration: "Pending prerequisite",
+      attempts: "0 / 3",
+      tags: ["#devops", "#docker"],
+      deps: ["task-04"],
+      output: ""
+    },
+    {
+      id: "task-07",
+      title: "Generate API Documentation",
+      desc: "Extract JSDoc declarations from Express controller files to output OpenAPI v3 JSON endpoints map. Configure Swagger UI handler.",
+      status: "backlog",
+      assignee: "documentation",
+      priority: 2,
+      complexity: "simple",
+      duration: "Pending prerequisite",
+      attempts: "0 / 3",
+      tags: ["#docs", "#swagger"],
+      deps: ["task-04"],
+      output: ""
+    },
+    {
+      id: "task-08",
+      title: "Run Performance Profiling",
+      desc: "Measure memory allocations and event loop lag on request spikes. Suggest indexing extensions for database query pathways.",
+      status: "backlog",
+      assignee: "performance",
+      priority: 2,
+      complexity: "medium",
+      duration: "Pending prerequisite",
+      attempts: "0 / 3",
+      tags: ["#performance", "#profiling"],
+      deps: ["task-04"],
+      output: ""
+    }
+  ],
+
+  decisions: [
+    {
+      id: "decision-01",
+      title: "SMTP Local Server vs SendGrid Integration for Email Alerts",
+      desc: "Determine transaction transit routing for workspace email alerts. Local Nodemailer is completely free, whereas SendGrid offers dedicated delivery tunnels but charges subscription tiers.",
+      status: "proposed",
+      decidedBy: "architect",
+      confidence: 87,
+      rationale: "We should prioritize Nodemailer with SMTP configuration parameters for local sandbox operations. This removes third-party account credential bottlenecks during initial implementation. The email service will use an interface, letting us switch to SendGrid by swapping environmental variables later.",
+      alternatives: [
+        {
+          title: "Nodemailer (SMTP Local Configuration)",
+          pros: "Zero operational costs. Works offline within isolated local testing sandboxes.",
+          cons: "Low inbox delivery rates in production without manual reverse-DNS/DKIM setups."
+        },
+        {
+          title: "SendGrid Web API Integration",
+          pros: "99% deliverability rates. Includes delivery diagnostics and HTML template design features.",
+          cons: "Requires payment accounts, API token configurations, and fails offline."
+        }
+      ],
+      selectedAlternative: 0
+    },
+    {
+      id: "decision-02",
+      title: "Primary Relational Storage Selection: SQLite vs PostgreSQL",
+      desc: "Select the database engine for user accounts, workspace configurations, and task timelines.",
+      status: "decided",
+      decidedBy: "architect",
+      confidence: 92,
+      rationale: "PostgreSQL chosen because task assignments, subteams, and graph indices require parallel transactional writes and relational constraints that SQLite handles poorly.",
+      alternatives: [
+        {
+          title: "SQLite Database",
+          pros: "Embedded file-based configuration. Extremely fast for read-only local structures.",
+          cons: "Locks database tables during concurrent writes. Lacks robust production scaling."
+        },
+        {
+          title: "PostgreSQL Instance",
+          pros: "Full transactional isolation, JSONB index support, and concurrent writing capabilities.",
+          cons: "Requires external docker environment setups and configuration overhead."
+        }
+      ],
+      selectedAlternative: 1
+    }
+  ]
+};
+
+// Console logs initial data
+let consoleLogs = [
+  { time: "15:40:01", agent: "system", type: "info", msg: "coNinja Shadow Swarm initialized successfully." },
+  { time: "15:40:03", agent: "pm", type: "info", msg: "Mission parameters scoped by Recon Shinobi. Commenced requirement questionnaire..." },
+  { time: "15:40:45", agent: "pm", type: "info", msg: "Compiled Mission Scroll (PRD). Transmitted to Grandmaster." },
+  { time: "15:41:00", agent: "architect", type: "info", msg: "Grandmaster initiated strategy research. Querying local code scrolls..." },
+  { time: "15:41:20", agent: "architect", type: "info", msg: "Grandmaster triggered debate: SQLite vs PostgreSQL. Weighting parameters..." },
+  { time: "15:42:05", agent: "orchestrator", type: "success", msg: "Decision approved: Primary Storage -> PostgreSQL." },
+  { time: "15:42:15", agent: "architect", type: "info", msg: "Database blueprint compiled: outputting entity mapping scrolls." },
+  { time: "15:42:30", agent: "orchestrator", type: "info", msg: "Sensei dispatched Scroll #01 (Design Database Schema) to Grandmaster." },
+  { time: "15:43:10", agent: "orchestrator", type: "info", msg: "Sensei dispatched Scroll #02 (Verify Hashing Security) to Stealth Auditor." },
+  { time: "15:44:02", agent: "architect", type: "success", msg: "Scroll #01 completed. Database schema blueprint saved to /docs/db-schema.md." },
+  { time: "15:44:15", agent: "security", type: "info", msg: "Stealth Auditor scanning cryptography buffers for password leaks..." },
+  { time: "15:44:30", agent: "security", type: "success", msg: "Scroll #02 completed. Cryptographic parameters verified." },
+  { time: "15:45:00", agent: "orchestrator", type: "info", msg: "Sensei dispatched Scroll #03 (Create User & Session Models) to Genjutsu Coder." },
+  { time: "15:45:10", agent: "coder", type: "info", msg: "Genjutsu Coder: Writing code logic in src/models/User.ts..." },
+  { time: "15:46:12", agent: "coder", type: "success", msg: "Scroll #03 completed. Session models compiled and verified." },
+  { time: "15:47:00", agent: "orchestrator", type: "info", msg: "Sensei dispatched Scroll #04 (Create Email Service Module) to Jutsu Coder." },
+  { time: "15:47:05", agent: "orchestrator", type: "info", msg: "Sensei dispatched Scroll #05 (Write User Auth Integration Tests) to Kunai Tester." },
+  { time: "15:47:15", agent: "coder", type: "info", msg: "Jutsu Coder: Implementation started on Nodemailer SMTP wrapper..." },
+  { time: "15:47:20", agent: "tester", type: "info", msg: "Kunai Tester: Compiling mock authentication specs..." }
+];
+
+// --- SHURIKEN DRAWING UTILITY FOR CANVAS ---
+function drawShuriken(ctx, cx, cy, spikes, outerRadius, innerRadius, fillStyle, strokeStyle, rotateRad = 0) {
+  let rot = (Math.PI / 2 * 3) + rotateRad;
+  let x = cx;
+  let y = cy;
+  let step = Math.PI / spikes;
+
+  ctx.beginPath();
+  ctx.moveTo(cx, cy - outerRadius);
+  
+  for (let i = 0; i < spikes; i++) {
+    x = cx + Math.cos(rot) * outerRadius;
+    y = cy + Math.sin(rot) * outerRadius;
+    ctx.lineTo(x, y);
+    rot += step;
+
+    x = cx + Math.cos(rot) * innerRadius;
+    y = cy + Math.sin(rot) * innerRadius;
+    ctx.lineTo(x, y);
+    rot += step;
+  }
+  ctx.lineTo(cx, cy - outerRadius);
+  ctx.closePath();
+  
+  if (fillStyle) {
+    ctx.fillStyle = fillStyle;
+    ctx.fill();
+  }
+  if (strokeStyle) {
+    ctx.strokeStyle = strokeStyle;
+    ctx.lineWidth = 1.8;
+    ctx.stroke();
+  }
+}
+
+// --- SMOKE PUFF VISUAL EFFECT TRIGGER ( billowing smoke overlay ) ---
+function triggerSmokePuff(cardId) {
+  const cardElement = document.querySelector(`.task-card[data-id="${cardId}"]`);
+  if (!cardElement) return;
+
+  const container = document.createElement("div");
+  container.className = "smoke-puff-container";
+
+  // Create 6 puff particles
+  for (let i = 0; i < 6; i++) {
+    const particle = document.createElement("div");
+    particle.className = "smoke-particle";
+    
+    // Randomize size, position, and delay
+    const size = Math.random() * 45 + 35; // 35px to 80px
+    particle.style.width = `${size}px`;
+    particle.style.height = `${size}px`;
+    particle.style.left = `${Math.random() * 60 + 20}%`;
+    particle.style.top = `${Math.random() * 60 + 20}%`;
+    particle.style.animationDelay = `${Math.random() * 0.12}s`;
+    
+    container.appendChild(particle);
+  }
+
+  cardElement.appendChild(container);
+  
+  // Auto remove after animation completes
+  setTimeout(() => {
+    container.remove();
+  }, 850);
+}
+
+// --- GRAPH VISUALIZATION (CANVAS) ---
+class SwarmGraph {
+  constructor(canvasId) {
+    this.canvas = document.getElementById(canvasId);
+    this.ctx = this.canvas.getContext("2d");
+    this.nodes = [];
+    this.links = [];
+    this.animationFrameId = null;
+
+    // Resize canvas
+    this.resize();
+    window.addEventListener("resize", () => this.resize());
+
+    // Click handler
+    this.canvas.addEventListener("click", (e) => this.handleCanvasClick(e));
+  }
+
+  resize() {
+    const rect = this.canvas.parentElement.getBoundingClientRect();
+    this.canvas.width = rect.width;
+    this.canvas.height = rect.height;
+    this.initGraph();
+  }
+
+  initGraph() {
+    const w = this.canvas.width;
+    const h = this.canvas.height;
+    const cx = w / 2;
+    const cy = h / 2;
+
+    // Setup Agent Nodes coordinates
+    const agentPositions = {
+      orchestrator: { x: cx, y: cy - 70 },
+      pm: { x: cx - 180, y: cy - 140 },
+      architect: { x: cx - 180, y: cy - 30 },
+      coder1: { x: cx - 60, y: cy + 90 },
+      coder2: { x: cx + 60, y: cy + 90 },
+      tester: { x: cx + 180, y: cy - 30 },
+      security: { x: cx + 180, y: cy - 140 },
+      devops: { x: cx - 220, y: cy + 80 },
+      documentation: { x: cx + 220, y: cy + 80 },
+      performance: { x: cx, y: cy - 200 },
+      hunter: { x: cx - 80, y: cy - 200 },
+      updater: { x: cx + 80, y: cy - 200 }
+    };
+
+    this.nodes = Object.keys(state.agents).map(key => {
+      const agent = state.agents[key];
+      const pos = agentPositions[key] || { x: cx, y: cy };
+      return {
+        id: agent.id,
+        name: agent.name,
+        icon: agent.icon,
+        role: agent.role,
+        x: pos.x,
+        y: pos.y,
+        radius: 24,
+        pulseVal: 0,
+        rotation: Math.random() * Math.PI * 2 // Randomized initial alignment
+      };
+    });
+
+    // Setup Links
+    this.links = [
+      { source: "orchestrator", target: "pm", pulseOffset: 0 },
+      { source: "orchestrator", target: "architect", pulseOffset: 0.2 },
+      { source: "orchestrator", target: "coder1", pulseOffset: 0.4 },
+      { source: "orchestrator", target: "coder2", pulseOffset: 0.6 },
+      { source: "orchestrator", target: "tester", pulseOffset: 0.8 },
+      { source: "orchestrator", target: "security", pulseOffset: 0.1 },
+      { source: "orchestrator", target: "devops", pulseOffset: 0.3 },
+      { source: "orchestrator", target: "documentation", pulseOffset: 0.5 },
+      { source: "orchestrator", target: "performance", pulseOffset: 0.7 },
+      { source: "orchestrator", target: "hunter", pulseOffset: 0.15 },
+      { source: "orchestrator", target: "updater", pulseOffset: 0.35 },
+      { source: "coder1", target: "tester", pulseOffset: 0.2 },
+      { source: "coder2", target: "tester", pulseOffset: 0.4 },
+      { source: "coder1", target: "security", pulseOffset: 0.6 }
+    ];
+  }
+
+  draw() {
+    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+    // Draw grid background
+    this.ctx.strokeStyle = "rgba(255, 255, 255, 0.012)";
+    this.ctx.lineWidth = 1;
+    const gridSize = 40;
+    for (let x = 0; x < this.canvas.width; x += gridSize) {
+      this.ctx.beginPath();
+      this.ctx.moveTo(x, 0);
+      this.ctx.lineTo(x, this.canvas.height);
+      this.ctx.stroke();
+    }
+    for (let y = 0; y < this.canvas.height; y += gridSize) {
+      this.ctx.beginPath();
+      this.ctx.moveTo(0, y);
+      this.ctx.lineTo(this.canvas.width, y);
+      this.ctx.stroke();
+    }
+
+    // Draw connections (glowing silk threads)
+    this.links.forEach(link => {
+      const sourceNode = this.nodes.find(n => n.id === link.source);
+      const targetNode = this.nodes.find(n => n.id === link.target);
+      if (!sourceNode || !targetNode) return;
+
+      const activeLink = state.systemStatus === "active" && 
+        (state.agents[sourceNode.id].status !== "idle" || state.agents[targetNode.id].status !== "idle");
+
+      // Draw connection line
+      this.ctx.beginPath();
+      this.ctx.moveTo(sourceNode.x, sourceNode.y);
+      this.ctx.lineTo(targetNode.x, targetNode.y);
+      this.ctx.strokeStyle = activeLink 
+        ? "rgba(255, 115, 0, 0.45)" 
+        : "rgba(255, 255, 255, 0.03)";
+      this.ctx.lineWidth = activeLink ? 2 : 1.5;
+      
+      if (activeLink) {
+        this.ctx.shadowBlur = 8;
+        this.ctx.shadowColor = "#ff7300";
+      }
+      this.ctx.stroke();
+      this.ctx.shadowBlur = 0; // reset blur
+
+      // Draw throwing star particle
+      if (activeLink) {
+        link.pulseOffset += 0.004; // smooth particle movement
+        if (link.pulseOffset > 1) link.pulseOffset = 0;
+        
+        const px = sourceNode.x + (targetNode.x - sourceNode.x) * link.pulseOffset;
+        const py = sourceNode.y + (targetNode.y - sourceNode.y) * link.pulseOffset;
+
+        this.ctx.save();
+        this.ctx.translate(px, py);
+        this.ctx.rotate(link.pulseOffset * Math.PI * 10);
+        this.ctx.shadowBlur = 10;
+        this.ctx.shadowColor = "#ff7300";
+        drawShuriken(this.ctx, 0, 0, 4, 6, 2.5, "#ff7300", null);
+        this.ctx.restore();
+      }
+    });
+
+    // Draw nodes
+    this.nodes.forEach(node => {
+      const agent = state.agents[node.id];
+      const isSelected = state.selectedAgentId === node.id;
+      
+      // Status-specific spin rates
+      let rotSpeed = 0.002; // slow drift for idle
+      if (agent.status === "coding") {
+        rotSpeed = 0.022; // active coding spin
+      } else if (agent.status === "thinking") {
+        rotSpeed = 0.007; // meditative thinking spin
+      } else if (agent.status === "error") {
+        rotSpeed = -0.012; // reverse jammed spin
+      }
+
+      if (state.systemStatus === "active") {
+        node.rotation = (node.rotation || 0) + rotSpeed;
+      }
+      
+      // Node Pulse animation
+      node.pulseVal += 0.025; 
+      const pulseSize = node.radius + Math.sin(node.pulseVal) * 2.5;
+
+      // Draw active pulsing ring
+      if (agent.status === "thinking" || agent.status === "coding") {
+        this.ctx.beginPath();
+        this.ctx.arc(node.x, node.y, pulseSize + 4, 0, Math.PI * 2);
+        this.ctx.strokeStyle = agent.status === "thinking" ? "rgba(255, 179, 0, 0.25)" : "rgba(255, 115, 0, 0.25)";
+        this.ctx.lineWidth = 1;
+        this.ctx.stroke();
+      }
+
+      // Draw Selected Glowing Outer Ring
+      if (isSelected) {
+        this.ctx.beginPath();
+        this.ctx.arc(node.x, node.y, node.radius + 8, 0, Math.PI * 2);
+        this.ctx.strokeStyle = "#ff7300";
+        this.ctx.lineWidth = 2;
+        this.ctx.stroke();
+      }
+
+      // Draw Shuriken Crest
+      const isActive = agent.status !== "idle";
+      const shurikenColor = isSelected ? "rgba(45, 25, 15, 0.9)" : "rgba(12, 10, 8, 0.85)";
+      const strokeColor = isSelected ? "#ff7300" : isActive ? "rgba(255, 115, 0, 0.4)" : "rgba(255, 255, 255, 0.1)";
+      
+      this.ctx.save();
+      this.ctx.translate(node.x, node.y);
+      this.ctx.rotate(node.rotation || 0);
+      drawShuriken(this.ctx, 0, 0, 4, node.radius + 2, node.radius - 12, shurikenColor, strokeColor);
+      this.ctx.restore();
+
+      // Draw Emoji
+      this.ctx.font = "20px var(--font-sans)";
+      this.ctx.textAlign = "center";
+      this.ctx.textBaseline = "middle";
+      this.ctx.fillStyle = "#fff";
+      this.ctx.fillText(node.icon, node.x, node.y + 1);
+
+      // Draw Status Dot indicator
+      let statusColor = "#5e5248"; // idle
+      if (agent.status === "thinking") statusColor = "#FFB300"; 
+      if (agent.status === "coding") statusColor = "#ff7300"; 
+      if (agent.status === "error") statusColor = "#ef4444";
+
+      this.ctx.beginPath();
+      this.ctx.arc(node.x + 15, node.y - 15, 5.5, 0, Math.PI * 2);
+      this.ctx.fillStyle = statusColor;
+      this.ctx.strokeStyle = "#080605";
+      this.ctx.lineWidth = 1.5;
+      this.ctx.fill();
+      this.ctx.stroke();
+
+      // Label Text
+      this.ctx.font = "600 11px var(--font-sans)";
+      this.ctx.fillStyle = isSelected ? "#ff9d4d" : "#94a3b8";
+      this.ctx.fillText(node.name, node.x, node.y + node.radius + 16);
+
+      // Subtitle status text
+      this.ctx.font = "400 9px var(--font-mono)";
+      this.ctx.fillStyle = agent.status !== "idle" ? "#5e5248" : "#322923";
+      this.ctx.fillText(`[${agent.status.toUpperCase()}]`, node.x, node.y + node.radius + 26);
+    });
+
+    if (state.activeTab === "swarm-graph") {
+      this.animationFrameId = requestAnimationFrame(() => this.draw());
+    }
+  }
+
+  handleCanvasClick(e) {
+    const rect = this.canvas.getBoundingClientRect();
+    const clickX = e.clientX - rect.left;
+    const clickY = e.clientY - rect.top;
+
+    // Check hit nodes
+    const hitNode = this.nodes.find(node => {
+      const distance = Math.sqrt((clickX - node.x) ** 2 + (clickY - node.y) ** 2);
+      return distance <= node.radius + 8;
+    });
+
+    if (hitNode) {
+      selectAgent(hitNode.id);
+    }
+  }
+
+  start() {
+    if (!this.animationFrameId) {
+      this.draw();
+    }
+  }
+
+  stop() {
+    if (this.animationFrameId) {
+      cancelAnimationFrame(this.animationFrameId);
+      this.animationFrameId = null;
+    }
+  }
+}
+
+let swarmGraph = null;
+
+// --- DYNAMIC RENDERING UTILITIES ---
+
+function selectAgent(agentId) {
+  state.selectedAgentId = agentId;
+  const agent = state.agents[agentId];
+  
+  // Show Agent Pane and Hide Task Pane
+  document.getElementById("pane-agent-detail").classList.add("active");
+  document.getElementById("pane-task-detail").classList.remove("active");
+
+  // Update Detail UI
+  document.getElementById("agent-detail-name").innerText = agent.name;
+  
+  let statusClass = "status-idle";
+  let statusText = "Hidden";
+  if (agent.status === "thinking") {
+    statusClass = "status-thinking";
+    statusText = "Meditating";
+  } else if (agent.status === "coding") {
+    statusClass = "status-coding";
+    statusText = "Attacking";
+  } else if (agent.status === "watching") {
+    statusClass = "status-thinking";
+    statusText = "Scouting";
+  } else if (agent.status === "sleeping") {
+    statusClass = "status-idle";
+    statusText = "Hibernating";
+  }
+  
+  const statusBadge = document.getElementById("agent-detail-status");
+  statusBadge.innerText = statusText;
+  statusBadge.className = `status-badge ${statusClass}`;
+
+  const avatarRing = document.getElementById("agent-detail-avatar-ring");
+  avatarRing.className = `avatar-ring ${agent.status !== "idle" && agent.status !== "sleeping" ? "active-pulse" : ""}`;
+  document.getElementById("agent-detail-avatar-inner").innerText = agent.icon;
+
+  document.getElementById("agent-detail-objective").innerText = agent.objective;
+  
+  // Route / Ram / Cost
+  document.getElementById("agent-detail-route").innerText = agent.route;
+  document.getElementById("agent-detail-ram").innerText = agent.ram;
+  document.getElementById("agent-detail-cost").innerText = `$${agent.cost.toFixed(2)}`;
+
+  // Skills
+  const skillsContainer = document.getElementById("agent-detail-skills");
+  skillsContainer.innerHTML = "";
+  agent.skills.forEach(skill => {
+    const span = document.createElement("span");
+    span.className = "skill-tag";
+    span.innerText = skill;
+    skillsContainer.appendChild(span);
+  });
+
+  // Active Task Card
+  const taskCard = document.getElementById("agent-detail-task-card");
+  if (agent.currentTaskId) {
+    const task = state.tasks.find(t => t.id === agent.currentTaskId);
+    taskCard.style.display = "flex";
+    document.getElementById("agent-detail-task-title").innerText = task.title;
+    document.getElementById("agent-detail-task-meta").innerText = `Priority ${task.priority} • ID: #${task.id}`;
+  } else {
+    taskCard.style.display = "none";
+  }
+}
+
+function selectTask(taskId) {
+  state.selectedTaskId = taskId;
+  const task = state.tasks.find(t => t.id === taskId);
+  
+  // Show Task Pane and Hide Agent Pane
+  document.getElementById("pane-agent-detail").classList.remove("active");
+  document.getElementById("pane-task-detail").classList.add("active");
+
+  // Update Detail UI
+  document.getElementById("task-detail-title").innerText = task.title;
+  document.getElementById("task-detail-id").innerText = `ID: #${task.id}`;
+  document.getElementById("task-detail-desc").innerText = task.desc;
+  
+  const colBadge = document.getElementById("task-detail-col-badge");
+  colBadge.innerText = task.status.replace("_", " ").toUpperCase();
+  let badgeClass = "badge-outline";
+  if (task.status === "in_progress") badgeClass = "badge-purple";
+  if (task.status === "review") badgeClass = "badge-warning";
+  if (task.status === "completed") badgeClass = "badge-success";
+  colBadge.className = `badge ${badgeClass}`;
+
+  document.getElementById("task-detail-assignee").innerText = state.agents[task.assignee]?.name || "Unassigned";
+  document.getElementById("task-detail-priority").innerText = `${task.priority} / 5`;
+  
+  const complexityBadge = document.getElementById("task-detail-complexity");
+  complexityBadge.innerHTML = `<span class="badge ${task.complexity === "complex" ? "badge-purple" : task.complexity === "medium" ? "badge-warning" : "badge-outline"}">${task.complexity.toUpperCase()}</span>`;
+
+  document.getElementById("task-detail-duration").innerText = task.duration;
+  document.getElementById("task-detail-attempts").innerText = task.attempts;
+
+  // Dependencies
+  const depsContainer = document.getElementById("task-detail-deps");
+  depsContainer.innerHTML = "";
+  if (task.deps.length > 0) {
+    task.deps.forEach(depId => {
+      const depTask = state.tasks.find(t => t.id === depId);
+      const span = document.createElement("span");
+      span.className = "badge badge-outline";
+      span.innerText = depTask ? depTask.title : depId;
+      depsContainer.appendChild(span);
+    });
+  } else {
+    depsContainer.innerHTML = `<span class="text-muted text-xs">No dependencies</span>`;
+  }
+
+  // Logs output
+  const outputContainer = document.getElementById("task-detail-output");
+  if (task.output) {
+    outputContainer.innerText = task.output;
+    outputContainer.style.color = "#FFB300"; // Amber gold
+  } else {
+    if (task.status === "in_progress") {
+      outputContainer.innerText = `[Attacking Scroll] Code compilation ongoing. Progress: ${task.progress}%...\n> Scanning package buffers\n> Injecting hooks`;
+      outputContainer.style.color = "#ff7300"; // Samurai Orange
+    } else {
+      outputContainer.innerText = "Task is queued in backlog. Awaiting active workspace scheduling.";
+      outputContainer.style.color = "#5e5248";
+    }
+  }
+}
+
+// Render Kanban columns
+function renderKanban(filter = "all") {
+  const lists = {
+    backlog: document.getElementById("list-backlog"),
+    in_progress: document.getElementById("list-in-progress"),
+    review: document.getElementById("list-review"),
+    completed: document.getElementById("list-completed")
+  };
+
+  let counts = { backlog: 0, in_progress: 0, review: 0, completed: 0 };
+  const activeTaskIds = [];
+
+  state.tasks.forEach(task => {
+    // Filter
+    let matchesFilter = true;
+    if (filter !== "all") {
+      matchesFilter = task.tags.some(tag => tag.toLowerCase().includes(filter));
+    }
+
+    if (matchesFilter) {
+      counts[task.status]++;
+      activeTaskIds.push(task.id);
+    }
+
+    // Find if card already exists
+    let card = document.querySelector(`.task-card[data-id="${task.id}"]`);
+
+    if (!matchesFilter) {
+      if (card) card.remove();
+      return;
+    }
+
+    const targetList = lists[task.status];
+    if (!targetList) return;
+
+    if (!card) {
+      // Create new card
+      card = document.createElement("div");
+      card.className = `task-card`;
+      card.setAttribute("draggable", "true");
+      card.dataset.id = task.id;
+
+      // Click handler
+      card.addEventListener("click", () => {
+        selectTask(task.id);
+        document.querySelectorAll(".task-card").forEach(c => c.classList.remove("active-border-glow"));
+        card.classList.add("active-border-glow");
+      });
+
+      // Drag-drop events
+      card.addEventListener("dragstart", (e) => {
+        e.dataTransfer.setData("text/plain", task.id);
+        card.style.opacity = "0.5";
+      });
+      card.addEventListener("dragend", (e) => {
+        card.style.opacity = "1";
+      });
+
+      targetList.appendChild(card);
+      card.style.animation = "card-appear 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards";
+    } else {
+      // Move card if status changed
+      if (card.parentElement !== targetList) {
+        triggerSmokePuff(task.id);
+        targetList.appendChild(card);
+        
+        card.style.animation = "none";
+        card.offsetHeight; // force reflow
+        card.style.animation = "card-appear 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards";
+      }
+    }
+
+    // Update border glow
+    if (task.id === state.selectedTaskId) {
+      card.classList.add("active-border-glow");
+    } else {
+      card.classList.remove("active-border-glow");
+    }
+
+    // Rebuild internal elements dynamically
+    card.innerHTML = "";
+
+    // Head
+    const head = document.createElement("div");
+    head.className = "card-head";
+
+    const title = document.createElement("span");
+    title.className = "task-title";
+    title.innerText = task.title;
+    head.appendChild(title);
+
+    // Priority mark (Japanese culture shuriken SVG)
+    const priorityIcon = document.createElement("span");
+    priorityIcon.className = `priority-icon p${task.priority}`;
+    priorityIcon.innerHTML = `
+      <svg class="jp-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;vertical-align:middle;filter:drop-shadow(0 0 2px currentColor);">
+        <path d="M12 2 L14 9 L21 7 L16 12 L21 17 L14 15 L12 22 L10 15 L3 17 L8 12 L3 7 L10 9 Z" fill="currentColor"/>
+      </svg>
+    `;
+    head.appendChild(priorityIcon);
+    card.appendChild(head);
+
+    // Description
+    const desc = document.createElement("p");
+    desc.className = "card-desc";
+    desc.innerText = task.desc.length > 75 ? task.desc.substring(0, 75) + "..." : task.desc;
+    card.appendChild(desc);
+
+    // Progress bar for active task
+    if (task.status === "in_progress") {
+      const progressContainer = document.createElement("div");
+      progressContainer.className = "card-progress-container";
+      const progressFill = document.createElement("div");
+      progressFill.className = "card-progress-fill";
+      progressFill.style.width = `${task.progress || 0}%`;
+      progressContainer.appendChild(progressFill);
+      card.appendChild(progressContainer);
+    }
+
+    // Foot
+    const foot = document.createElement("div");
+    foot.className = "card-foot";
+
+    // Tags
+    const tags = document.createElement("div");
+    tags.className = "card-tags";
+    task.tags.forEach(t => {
+      const span = document.createElement("span");
+      span.className = "tag";
+      span.innerText = t;
+      tags.appendChild(span);
+    });
+    foot.appendChild(tags);
+
+    // Assignee
+    const assignee = document.createElement("div");
+    assignee.className = "card-assignee";
+    const agent = state.agents[task.assignee];
+    if (agent) {
+      const avatar = document.createElement("span");
+      avatar.className = "avatar-icon";
+      avatar.innerText = agent.icon;
+      assignee.appendChild(avatar);
+
+      const name = document.createElement("span");
+      name.innerText = agent.name.split(" ")[0];
+      assignee.appendChild(name);
+    }
+    foot.appendChild(assignee);
+    card.appendChild(foot);
+  });
+
+  // Remove elements that don't match the active selection/filter
+  document.querySelectorAll(".task-card").forEach(card => {
+    if (!activeTaskIds.includes(card.dataset.id)) {
+      card.remove();
+    }
+  });
+
+  // Set counts
+  document.getElementById("count-backlog").innerText = counts.backlog;
+  document.getElementById("count-in-progress").innerText = counts.in_progress;
+  document.getElementById("count-review").innerText = counts.review;
+  document.getElementById("count-completed").innerText = counts.completed;
+
+  // Sidebar counter
+  document.getElementById("in-progress-count").innerText = counts.in_progress + counts.review;
+}
+
+// Render Decision list
+function renderDecisions() {
+  const container = document.getElementById("decisions-container");
+  container.innerHTML = "";
+
+  let pendingCount = 0;
+
+  state.decisions.forEach(decision => {
+    if (decision.status === "proposed") pendingCount++;
+
+    const card = document.createElement("div");
+    card.className = `decision-card ${decision.status === "proposed" ? "pending" : ""}`;
+
+    // Header
+    const header = document.createElement("div");
+    header.className = "decision-header";
+
+    const titleGroup = document.createElement("div");
+    titleGroup.className = "decision-title-group";
+    
+    const title = document.createElement("h3");
+    title.innerText = decision.title;
+    titleGroup.appendChild(title);
+
+    const meta = document.createElement("div");
+    meta.className = "decision-meta";
+    meta.innerText = `Proposed by: ${state.agents[decision.decidedBy]?.name || decision.decidedBy} • Status: ${decision.status.toUpperCase()}`;
+    titleGroup.appendChild(meta);
+
+    header.appendChild(titleGroup);
+
+    // Confidence
+    const confidence = document.createElement("div");
+    confidence.className = "decision-confidence";
+    confidence.innerHTML = `
+      <span class="confidence-val">${decision.confidence}%</span>
+      <span class="confidence-label">Focus</span>
+    `;
+    header.appendChild(confidence);
+    card.appendChild(header);
+
+    // Description
+    const desc = document.createElement("p");
+    desc.className = "decision-desc";
+    desc.innerText = decision.desc;
+    card.appendChild(desc);
+
+    // Alternatives Grid
+    const optionsGrid = document.createElement("div");
+    optionsGrid.className = "decision-options";
+
+    decision.alternatives.forEach((alt, idx) => {
+      const isSelected = idx === decision.selectedAlternative;
+      const optBox = document.createElement("div");
+      optBox.className = `option-box ${isSelected ? "selected" : ""}`;
+      
+      const checkIconSvg = isSelected 
+        ? `<svg class="jp-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" style="width:14px;height:14px;vertical-align:middle;color:var(--accent-purple);margin-right:6px;">
+             <path d="M12 3 C 6 3, 3 8, 3 13 C 3 18, 8 21, 13 21 C 18 21, 21 17, 21 12 C 21 8, 18 4.5, 14.5 4" fill="none"/>
+             <path d="M9 12 l2 2 l4 -4" stroke="currentColor" stroke-linecap="round"/>
+           </svg>`
+        : `<svg class="jp-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;vertical-align:middle;color:var(--text-muted);margin-right:6px;">
+             <path d="M12 3 C 6 3, 3 8, 3 13 C 3 18, 8 21, 13 21 C 18 21, 21 17, 21 12 C 21 8, 18 4.5, 14.5 4"/>
+           </svg>`;
+
+      optBox.innerHTML = `
+        <h4>
+          ${checkIconSvg}
+          <span>Option ${idx + 1}: ${alt.title}</span>
+        </h4>
+        <div class="pros-cons">
+          <p style="color:var(--accent-cyan);margin-top:4px;"><strong>Pros:</strong> ${alt.pros}</p>
+          <p style="color:var(--accent-error);margin-top:2px;"><strong>Cons:</strong> ${alt.cons}</p>
+        </div>
+      `;
+      optionsGrid.appendChild(optBox);
+    });
+    card.appendChild(optionsGrid);
+
+    // Rationale
+    const rationale = document.createElement("div");
+    rationale.className = "decision-rationale";
+    rationale.innerHTML = `<strong>Grandmaster Rationale:</strong> ${decision.rationale}`;
+    card.appendChild(rationale);
+
+    // Actions
+    if (decision.status === "proposed") {
+      const actions = document.createElement("div");
+      actions.className = "decision-actions";
+
+      const rejectBtn = document.createElement("button");
+      rejectBtn.className = "btn btn-outline btn-sm";
+      rejectBtn.innerText = "Override Decrees";
+      rejectBtn.addEventListener("click", () => handleDecisionResolve(decision.id, false));
+      actions.appendChild(rejectBtn);
+
+      const approveBtn = document.createElement("button");
+      approveBtn.className = "btn btn-primary btn-sm";
+      approveBtn.innerText = "Enforce Decrees";
+      approveBtn.addEventListener("click", () => handleDecisionResolve(decision.id, true));
+      actions.appendChild(approveBtn);
+
+      card.appendChild(actions);
+    } else {
+      const resolvedBanner = document.createElement("div");
+      resolvedBanner.className = "decision-actions";
+      resolvedBanner.innerHTML = `<span style="font-size:0.75rem;color:var(--accent-cyan);font-weight:600;">
+        <svg class="jp-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;vertical-align:middle;margin-right:4px;color:var(--accent-cyan);">
+          <rect x="3" y="3" width="18" height="18" rx="2" fill="rgba(255,179,0,0.1)"/>
+          <path d="M8 12 l3 3 l5 -5" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+        </svg>
+        Decree Enforced (Auto-Locked)
+      </span>`;
+      card.appendChild(resolvedBanner);
+    }
+
+    container.appendChild(card);
+  });
+
+  document.getElementById("pending-decisions-count").innerText = pendingCount;
+  document.getElementById("pending-decisions-count").style.display = pendingCount > 0 ? "inline-block" : "none";
+}
+
+// Approve/Reject Decision actions
+function handleDecisionResolve(decisionId, approved) {
+  const decision = state.decisions.find(d => d.id === decisionId);
+  if (!decision) return;
+
+  decision.status = approved ? "decided" : "overridden";
+  
+  // Log message
+  const timestamp = new Date().toTimeString().split(" ")[0];
+  const msgType = approved ? "success" : "error";
+  const actionText = approved ? "approved decree" : "overrode decree";
+  
+  consoleLogs.push({
+    time: timestamp,
+    agent: "orchestrator",
+    type: msgType,
+    msg: `User ${actionText}: ${decision.title}. Option Enforced: ${decision.alternatives[decision.selectedAlternative].title}.`
+  });
+
+  // If approved SMTP decision, unlock backlog tasks
+  if (decisionId === "decision-01") {
+    // Modify Coder tasks
+    const task = state.tasks.find(t => t.id === "task-04");
+    if (task) {
+      task.progress = 100;
+      task.status = "completed";
+      task.output = "[SMTP Module Configured]\nService: Nodemailer\nTransport: SMTP local proxy relay\nPort: 1025\nEncryption: TLS default SSL handshake pass.";
+      
+      // Trigger Smoke Puff visual effect on completed card!
+      setTimeout(() => triggerSmokePuff("task-04"), 100);
+    }
+
+    // Move next task from Backlog to In-Progress
+    const devopsTask = state.tasks.find(t => t.id === "task-06");
+    if (devopsTask) {
+      devopsTask.status = "in_progress";
+      devopsTask.duration = "Active: 2 min elapsed";
+      devopsTask.progress = 10;
+      state.agents.devops.status = "coding";
+      state.agents.devops.currentTaskId = "task-06";
+    }
+
+    // Free coder1 to backlog tasks
+    state.agents.coder1.status = "idle";
+    state.agents.coder1.currentTaskId = null;
+
+    consoleLogs.push({
+      time: timestamp,
+      agent: "system",
+      type: "info",
+      msg: "SMTP Scroll task closed. Dispatched Scroll #06 (Setup Docker Compose) to Chunin DevOps."
+    });
+  }
+
+  renderDecisions();
+  renderKanban();
+  renderLogs();
+}
+
+// Render System Logs in Console
+function renderLogs() {
+  const container = document.getElementById("console-lines-container");
+  container.innerHTML = "";
+
+  consoleLogs.forEach(log => {
+    // Text search filter
+    if (state.logSearchQuery) {
+      const q = state.logSearchQuery.toLowerCase();
+      const match = log.msg.toLowerCase().includes(q) || log.agent.toLowerCase().includes(q);
+      if (!match) return;
+    }
+
+    // Agent dropdown filter
+    if (state.logFilterAgent !== "all") {
+      if (state.logFilterAgent === "coder") {
+        if (log.agent !== "coder" && log.agent !== "coder1" && log.agent !== "coder2") return;
+      } else {
+        if (log.agent !== state.logFilterAgent) return;
+      }
+    }
+
+    const div = document.createElement("div");
+    div.className = `console-line ${log.type === "error" ? "error" : log.type === "success" ? "success" : ""}`;
+
+    const timeSpan = document.createElement("span");
+    timeSpan.className = "timestamp";
+    timeSpan.innerText = `[${log.time}]`;
+    div.appendChild(timeSpan);
+
+    const agentSpan = document.createElement("span");
+    agentSpan.className = `agent ${log.agent.replace("-", "").toLowerCase()}`;
+    agentSpan.innerText = `${log.agent.toUpperCase()}:`;
+    div.appendChild(agentSpan);
+
+    const msgSpan = document.createElement("span");
+    msgSpan.className = "message";
+    msgSpan.innerText = log.msg;
+    div.appendChild(msgSpan);
+
+    container.appendChild(div);
+  });
+
+  // Auto scroll to bottom
+  container.parentElement.scrollTop = container.parentElement.scrollHeight;
+}
+
+// --- DRAG AND DROP HANDLERS ---
+function initDragAndDrop() {
+  const cols = document.querySelectorAll(".kanban-col");
+  
+  cols.forEach(col => {
+    col.addEventListener("dragover", (e) => {
+      e.preventDefault();
+      col.style.backgroundColor = "rgba(255, 115, 0, 0.04)";
+    });
+
+    col.addEventListener("dragleave", (e) => {
+      col.style.backgroundColor = "rgba(8, 6, 5, 0.45)";
+    });
+
+    col.addEventListener("drop", (e) => {
+      e.preventDefault();
+      col.style.backgroundColor = "rgba(8, 6, 5, 0.45)";
+      
+      const taskId = e.dataTransfer.getData("text/plain");
+      const targetColId = col.id.replace("col-", "").replace("-", "_"); // backlog, in_progress, review, completed
+      
+      const task = state.tasks.find(t => t.id === taskId);
+      if (task && task.status !== targetColId) {
+        // Log transition
+        const timestamp = new Date().toTimeString().split(" ")[0];
+        consoleLogs.push({
+          time: timestamp,
+          agent: "system",
+          type: "info",
+          msg: `Scroll #${task.id} (${task.title}) drag-moved from [${task.status.toUpperCase()}] to [${targetColId.toUpperCase()}] by User.`
+        });
+        
+        // Remove task assignment from agents if completed/backlog
+        if (targetColId === "completed" || targetColId === "backlog") {
+          const agent = Object.values(state.agents).find(a => a.currentTaskId === task.id);
+          if (agent) {
+            agent.status = "idle";
+            agent.currentTaskId = null;
+          }
+        }
+
+        task.status = targetColId;
+        renderKanban();
+        renderLogs();
+        
+        // Trigger Smoke Puff visual effect on card!
+        triggerSmokePuff(task.id);
+
+        if (state.selectedTaskId === task.id) {
+          selectTask(task.id);
+        }
+      }
+    });
+  });
+}
+
+// --- REAL-TIME SIMULATION LOOP ---
+function runSimulationLoop() {
+  setInterval(() => {
+    if (state.systemStatus !== "active" || !state.streamLogs) return;
+
+    const timestamp = new Date().toTimeString().split(" ")[0];
+
+    // 1. Task Progress Increments
+    const activeTask = state.tasks.find(t => t.status === "in_progress");
+    if (activeTask) {
+      if (activeTask.progress === undefined) activeTask.progress = 0;
+      
+      // Increment progress
+      activeTask.progress += Math.floor(Math.random() * 8) + 4;
+      if (activeTask.progress >= 100) {
+        activeTask.progress = 100;
+        activeTask.status = "review";
+        activeTask.output = `[Jutsu Build Completed]\nCompiled target modules successfully.\nTesting review queued.`;
+        
+        // Trigger smoke puff
+        triggerSmokePuff(activeTask.id);
+
+        // Push logs
+        consoleLogs.push({
+          time: timestamp,
+          agent: activeTask.assignee,
+          type: "success",
+          msg: `Completed coding Jutsu scroll: ${activeTask.title}. Submitting for verification testing.`
+        });
+
+        // Set assignee agent to idle
+        const agent = state.agents[activeTask.assignee];
+        if (agent) {
+          agent.status = "idle";
+          agent.currentTaskId = null;
+        }
+
+        // Trigger testing review
+        const tester = state.agents.tester;
+        tester.status = "coding"; // running tests
+        
+        const reviewTask = state.tasks.find(t => t.status === "review");
+        if (reviewTask) {
+          tester.currentTaskId = reviewTask.id;
+        }
+
+        consoleLogs.push({
+          time: timestamp,
+          agent: "tester",
+          type: "info",
+          msg: `Kunai Tester: Dispatched automated integration test suits on module changes.`
+        });
+      } else {
+        // Periodic code edits logs
+        if (Math.random() > 0.6) {
+          const files = ["src/services/email.ts", "src/config/smtp.json", "src/controllers/notify.ts"];
+          const file = files[Math.floor(Math.random() * files.length)];
+          consoleLogs.push({
+            time: timestamp,
+            agent: activeTask.assignee,
+            type: "info",
+            msg: `${state.agents[activeTask.assignee].name} patching code block in ${file}...`
+          });
+        }
+      }
+    }
+
+    // 2. Testing Review Progress
+    const reviewTask = state.tasks.find(t => t.status === "review");
+    if (reviewTask && state.agents.tester.status === "coding") {
+      // Simulate tests passing
+      if (Math.random() > 0.8) {
+        reviewTask.status = "completed";
+        reviewTask.output = "[Automated Integration Test Run]\nRunning: auth.test.ts\nSpecs: 12 tests passed, 0 failed\nCoverage: 87.5% lines covered.\nStealth check requested.";
+        
+        // Trigger smoke puff
+        triggerSmokePuff(reviewTask.id);
+
+        consoleLogs.push({
+          time: timestamp,
+          agent: "tester",
+          type: "success",
+          msg: `Integration tests passed successfully for: ${reviewTask.title}.`
+        });
+
+        const tester = state.agents.tester;
+        tester.status = "idle";
+        tester.currentTaskId = null;
+
+        // Security check dispatch
+        const secAgent = state.agents.security;
+        secAgent.status = "thinking";
+        consoleLogs.push({
+          time: timestamp,
+          agent: "security",
+          type: "info",
+          msg: "Stealth Auditor started dependency check & OWASP credential vulnerability scans..."
+        });
+
+        setTimeout(() => {
+          const ts = new Date().toTimeString().split(" ")[0];
+          secAgent.status = "idle";
+          consoleLogs.push({
+            time: ts,
+            agent: "security",
+            type: "success",
+            msg: "Stealth Auditor checks completed. 0 vulnerabilities detected."
+          });
+          state.autoFixes += Math.random() > 0.8 ? 1 : 0;
+          document.getElementById("metrics-auto-fixes").innerText = state.autoFixes;
+        }, 3000);
+      } else {
+        // Test runner logging
+        if (Math.random() > 0.7) {
+          consoleLogs.push({
+            time: timestamp,
+            agent: "tester",
+            type: "info",
+            msg: `Kunai Tester: Executing integration spec [${Math.floor(Math.random() * 8) + 2} / 12]...`
+          });
+        }
+      }
+    }
+
+    // 3. Backlog dispatch (if coder is idle and database decision resolved)
+    if (!state.tasks.some(t => t.status === "in_progress") && state.decisions.find(d => d.id === "decision-01").status === "decided") {
+      const backlogTask = state.tasks.find(t => t.status === "backlog");
+      if (backlogTask) {
+        const matchingAgentKey = Object.keys(state.agents).find(key => {
+          const a = state.agents[key];
+          return a.role === backlogTask.assignee && a.status === "idle";
+        });
+
+        if (matchingAgentKey) {
+          const agent = state.agents[matchingAgentKey];
+          backlogTask.status = "in_progress";
+          backlogTask.progress = 0;
+          backlogTask.duration = "Active: 1 min elapsed";
+          agent.status = "coding";
+          agent.currentTaskId = backlogTask.id;
+
+          consoleLogs.push({
+            time: timestamp,
+            agent: "orchestrator",
+            type: "info",
+            msg: `Sensei dispatched Task #${backlogTask.id} (${backlogTask.title}) to ${agent.name}.`
+          });
+        }
+      }
+    }
+
+    // 3.5. Autonomous Engine Simulation Logs
+    if (state.agents.hunter.status === "watching" && Math.random() > 0.8) {
+      const hunterLogs = [
+        "Stealth Scout: Sentry streams clear. 0 anomalies detected in production loops.",
+        "Stealth Scout: Production logs verified. API gateway latencies stable at 42ms.",
+        "Stealth Scout: Scanned Datadog logs. Health checks passing on all clusters."
+      ];
+      consoleLogs.push({
+        time: timestamp,
+        agent: "hunter",
+        type: "success",
+        msg: hunterLogs[Math.floor(Math.random() * hunterLogs.length)]
+      });
+    }
+
+    if (state.agents.updater.status !== "sleeping" && Math.random() > 0.85) {
+      const updaterLogs = [
+        "Debt Chunin: Running weekly cron check... 0 critical updates needed.",
+        "Debt Chunin: Auditing security advisory scrolls. NPM registry package hashes verify OK.",
+        "Debt Chunin: Code refactor sweep completed. Cleaned up 4 unused imports in src/controllers."
+      ];
+      consoleLogs.push({
+        time: timestamp,
+        agent: "updater",
+        type: "info",
+        msg: updaterLogs[Math.floor(Math.random() * updaterLogs.length)]
+      });
+    }
+
+    const refactorToggleEl = document.getElementById("settings-refactor-toggle");
+    if (refactorToggleEl && refactorToggleEl.checked && Math.random() > 0.9) {
+      consoleLogs.push({
+        time: timestamp,
+        agent: "orchestrator",
+        type: "success",
+        msg: "Sensei: Swarm idle. Dispatched minor code quality refactoring sweep."
+      });
+    }
+
+    // 4. Random Metrics Increments
+    state.llmRequests += Math.floor(Math.random() * 2) + 1;
+    state.accumulatedCost += parseFloat((Math.random() * 0.02 + 0.005).toFixed(4));
+    
+    // Limits budget logic
+    if (state.accumulatedCost >= state.dailyLimit) {
+      state.accumulatedCost = state.dailyLimit;
+    }
+
+    // Update global metrics UI
+    document.getElementById("metrics-llm-requests").innerText = state.llmRequests;
+    document.querySelector(".budget-spent").innerHTML = `$${state.accumulatedCost.toFixed(2)} <span class="budget-total">/ $${state.dailyLimit.toFixed(2)}</span>`;
+    
+    const fillPercent = Math.min((state.accumulatedCost / state.dailyLimit) * 100, 100);
+    document.querySelector(".budget-bar-fill").style.width = `${fillPercent}%`;
+
+    // 5. Update selected items panels if they are open
+    if (state.selectedTaskId) selectTask(state.selectedTaskId);
+    if (state.selectedAgentId) selectAgent(state.selectedAgentId);
+
+    // Redraw lists & terminal
+    renderKanban();
+    renderLogs();
+
+    // Keep Dojo Workbench interactive widgets updated
+    if (typeof workbenchInitialized !== 'undefined' && workbenchInitialized) {
+      renderChecklist();
+      renderBrowserPreview();
+      
+      // Stream dynamic terminal activity
+      if (state.activeTab === "dojo-workbench" && Math.random() > 0.5) {
+        const projectKey = getActiveProjectKey();
+        const timestamp = new Date().toTimeString().split(" ")[0];
+        if (projectKey === "taskmaster") {
+          const lines = [
+            `[compiler] [${timestamp}] File watcher detected changes in src/services/email.ts. Recompiling...`,
+            `[test-pass] [${timestamp}] ✓ email module re-compiled & mock SMTP relay tests succeeded.`
+          ];
+          appendTerminalLine("compiler", lines[0]);
+          setTimeout(() => appendTerminalLine("test-pass", lines[1]), 600);
+        } else {
+          const lines = [
+            `[compiler] [${timestamp}] File watcher triggered offline storage index validation in src/config/indexeddb.ts...`,
+            `[test-pass] [${timestamp}] ✓ Geodesic GPS coordinate math assertions verified.`
+          ];
+          appendTerminalLine("compiler", lines[0]);
+          setTimeout(() => appendTerminalLine("test-pass", lines[1]), 600);
+        }
+      }
+    }
+    
+  }, 3000);
+}
+
+// --- PROJECT SETUP WIZARD PROCESS ---
+function initWizard() {
+  const modal = document.getElementById("project-wizard-modal");
+  const openBtn = document.getElementById("new-project-btn");
+  const closeBtn = document.getElementById("wizard-close-btn");
+  
+  openBtn.addEventListener("click", () => {
+    modal.classList.add("active");
+    resetWizard();
+  });
+
+  closeBtn.addEventListener("click", () => {
+    modal.classList.remove("active");
+  });
+
+  // Step transitions
+  document.getElementById("wizard-to-step-2-btn").addEventListener("click", () => {
+    const promptText = document.getElementById("wizard-app-prompt").value.trim();
+    if (!promptText) {
+      alert("Please describe your mission concept to start sizing.");
+      return;
+    }
+    
+    document.getElementById("wizard-step-1").classList.remove("active");
+    document.getElementById("wizard-step-2").classList.add("active");
+  });
+
+  document.getElementById("wizard-back-to-1-btn").addEventListener("click", () => {
+    document.getElementById("wizard-step-2").classList.remove("active");
+    document.getElementById("wizard-step-1").classList.add("active");
+  });
+
+  document.getElementById("wizard-to-step-3-btn").addEventListener("click", () => {
+    const answersText = document.getElementById("wizard-pm-response").value.trim();
+    if (!answersText) {
+      alert("Please answer the PM's queries to complete task layout scoping.");
+      return;
+    }
+
+    document.getElementById("wizard-step-2").classList.remove("active");
+    document.getElementById("wizard-step-3").classList.add("active");
+
+    runDecompositionAnimation();
+  });
+}
+
+function resetWizard() {
+  document.getElementById("wizard-step-1").classList.add("active");
+  document.getElementById("wizard-step-2").classList.remove("active");
+  document.getElementById("wizard-step-3").classList.remove("active");
+
+  document.getElementById("wizard-app-prompt").value = "";
+  document.getElementById("wizard-pm-response").value = "";
+
+  document.getElementById("wizard-progress-bar-fill").style.width = "0%";
+  document.getElementById("wizard-status-title").innerText = "Recon Shinobi drafting scrolls...";
+  
+  const steps = ["prd", "research", "architecture", "tasks"];
+  steps.forEach(s => {
+    const el = document.getElementById(`decomp-step-${s}`);
+    el.className = "decomp-step pending";
+  });
+
+  document.getElementById("wizard-finished-footer").classList.add("hide");
+}
+
+function runDecompositionAnimation() {
+  const steps = [
+    { id: "prd", label: "Writing Mission Scroll (PRD)", progress: 25 },
+    { id: "research", label: "Scouting tools & supplies", progress: 50 },
+    { id: "architecture", label: "Sensei council debating strategy", progress: 75 },
+    { id: "tasks", label: "Breaking down scrolls to Jutsu commands", progress: 100 }
+  ];
+
+  let stepIdx = 0;
+
+  function nextStep() {
+    if (stepIdx >= steps.length) {
+      document.getElementById("wizard-status-title").innerText = "Mission roadmap compiled! Ready to strike.";
+      document.getElementById("wizard-finished-footer").classList.remove("hide");
+      return;
+    }
+
+    const current = steps[stepIdx];
+    document.getElementById("wizard-status-title").innerText = current.label + "...";
+    
+    const el = document.getElementById(`decomp-step-${current.id}`);
+    el.className = "decomp-step active-step";
+
+    setTimeout(() => {
+      el.className = "decomp-step completed";
+      document.getElementById("wizard-progress-bar-fill").style.width = `${current.progress}%`;
+      stepIdx++;
+      nextStep();
+    }, 1800);
+  }
+
+  nextStep();
+}
+
+// Launches fresh project tasks
+document.getElementById("wizard-launch-swarm-btn").addEventListener("click", () => {
+  const promptText = document.getElementById("wizard-app-prompt").value;
+  const projectTitle = promptText.length > 30 ? promptText.substring(0, 27) + "..." : promptText;
+  
+  state.activeProject = projectTitle;
+  document.getElementById("current-project-name").innerText = projectTitle;
+
+  // Setup Fresh simulation state
+  state.accumulatedCost = 0.05;
+  state.llmRequests = 10;
+  state.autoFixes = 0;
+  state.testCoverage = 0;
+
+  state.tasks = [
+    {
+      id: "fit-01",
+      title: "Design Fitness API Specs",
+      desc: "Architect the workout logs data structures, mapping GPS tracking matrices and coordinate arrays.",
+      status: "in_progress",
+      assignee: "architect",
+      priority: 5,
+      complexity: "complex",
+      duration: "1 min elapsed",
+      attempts: "1 / 3",
+      tags: ["#architecture", "#api"],
+      deps: [],
+      progress: 20,
+      output: ""
+    },
+    {
+      id: "fit-02",
+      title: "Setup Local Storage Cache",
+      desc: "Implement IndexedDB hooks for offline storage support. Design workout sync sync queue handlers.",
+      status: "backlog",
+      assignee: "coder2",
+      priority: 4,
+      complexity: "medium",
+      duration: "Prerequisite lock",
+      attempts: "0 / 3",
+      tags: ["#frontend", "#cache"],
+      deps: ["fit-01"],
+      output: ""
+    },
+    {
+      id: "fit-03",
+      title: "Write Route Calculation Tests",
+      desc: "Author testing specs evaluating GPS distance logic models. Assert math calculations resolve correctly.",
+      status: "backlog",
+      assignee: "tester",
+      priority: 4,
+      complexity: "medium",
+      duration: "Prerequisite lock",
+      attempts: "0 / 3",
+      tags: ["#testing", "#math"],
+      deps: ["fit-01"],
+      output: ""
+    }
+  ];
+
+  // Set agents status
+  Object.keys(state.agents).forEach(k => {
+    state.agents[k].status = "idle";
+    state.agents[k].currentTaskId = null;
+    state.agents[k].cost = 0;
+  });
+
+  // Keep toggled status for autonomous agents
+  const hunterToggleEl = document.getElementById("settings-hunter-toggle");
+  state.agents.hunter.status = (hunterToggleEl && !hunterToggleEl.checked) ? "idle" : "watching";
+  
+  const updaterToggleEl = document.getElementById("settings-updater-toggle");
+  state.agents.updater.status = (updaterToggleEl && !updaterToggleEl.checked) ? "sleeping" : "idle";
+
+  state.agents.architect.status = "thinking";
+  state.agents.architect.currentTaskId = "fit-01";
+
+  // Re-write logs console
+  const timestamp = new Date().toTimeString().split(" ")[0];
+  consoleLogs = [
+    { time: timestamp, agent: "system", type: "info", msg: `Initialized mission: ${projectTitle}.` },
+    { time: timestamp, agent: "pm", type: "info", msg: "Stealth coordinates integrated. Strategy scrolls prepared." },
+    { time: timestamp, agent: "orchestrator", type: "info", msg: "Shadow swarm unleashed. Scroll #fit-01 assigned to Grandmaster." }
+  ];
+
+  // Close modal
+  document.getElementById("project-wizard-modal").classList.remove("active");
+
+  // Re-render dashboard
+  renderKanban();
+  renderDecisions();
+  renderLogs();
+  selectAgent("architect");
+
+  // Reset workbench state so it reloads tree files and previews of the new project!
+  workbenchInitialized = false;
+
+  // Switch to graph tab
+  switchTab("swarm-graph");
+});
+
+// --- GLOBAL EVENT LISTENERS & NAVIGATION ---
+
+function switchTab(tabId) {
+  state.activeTab = tabId;
+
+  // Toggle active tab content
+  document.querySelectorAll(".tab-content").forEach(tab => {
+    tab.classList.remove("active");
+  });
+  document.getElementById(`tab-${tabId}`).classList.add("active");
+
+  // Toggle active menu button
+  document.querySelectorAll(".nav-item").forEach(btn => {
+    btn.classList.remove("active");
+    if (btn.dataset.tab === tabId) btn.classList.add("active");
+  });
+
+  // Render and initialize tabs dynamically
+  if (tabId === "mcp-registry") {
+    renderMCPRegistry();
+    initMCPRegistryForm();
+  }
+
+  if (tabId === "neural-graph") {
+    setTimeout(() => {
+      if (neuralGraphInstance) {
+        const container = document.getElementById("neural-graph-canvas");
+        if (container) {
+          neuralGraphInstance.width(container.clientWidth);
+          neuralGraphInstance.height(container.clientHeight);
+          neuralGraphInstance.centerAt(0, 0);
+        }
+      } else {
+        initNeuralGraph();
+      }
+    }, 150);
+  }
+
+  if (tabId === "sandbox-multiplexer") {
+    initSandboxMultiplexer();
+  }
+
+  // Start / Stop graph animation loops
+  if (tabId === "swarm-graph") {
+    if (swarmGraph) {
+      swarmGraph.resize();
+      swarmGraph.start();
+    }
+  } else {
+    if (swarmGraph) swarmGraph.stop();
+  }
+
+  // Initialize Monaco and file explorers if entering the Dojo Workbench
+  if (tabId === "dojo-workbench") {
+    initDojoWorkbench();
+    if (editorInstance) {
+      setTimeout(() => {
+        editorInstance.layout();
+      }, 100);
+    }
+  }
+
+  // Initialize report rendering if entering Stealth Archives
+  if (tabId === "mission-reports") {
+    renderReport(state.activeReportId);
+  }
+
+  // Initialize sub-tabs rendering if entering Dojo Rules
+  if (tabId === "settings") {
+    renderSettingsSubtab(state.activeSettingsTab);
+  }
+}
+
+function initNavigation() {
+  document.querySelectorAll(".nav-item").forEach(btn => {
+    btn.addEventListener("click", () => {
+      switchTab(btn.dataset.tab);
+    });
+  });
+
+  // Kanban filters
+  document.querySelectorAll(".filter-pills .pill").forEach(pill => {
+    pill.addEventListener("click", () => {
+      document.querySelectorAll(".filter-pills .pill").forEach(p => p.classList.remove("active"));
+      pill.classList.add("active");
+      renderKanban(pill.dataset.filter);
+    });
+  });
+}
+
+function initGlobalControls() {
+  // Global pauseBtn
+  const pauseBtn = document.getElementById("global-pause-btn");
+  pauseBtn.addEventListener("click", () => {
+    const timestamp = new Date().toTimeString().split(" ")[0];
+    if (state.systemStatus === "active") {
+      state.systemStatus = "paused";
+      pauseBtn.innerHTML = `
+        <svg class="jp-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M2 10 C2 10 4 5 12 5 C20 5 22 10 22 10 C22 10 20 15 12 15 C4 15 2 10 2 10 Z"/>
+          <line x1="2" y1="10" x2="22" y2="10"/>
+        </svg>
+      `;
+      pauseBtn.classList.remove("btn-outline");
+      pauseBtn.classList.add("btn-purple");
+      document.getElementById("system-status-indicator").className = "status-indicator-pulse offline";
+      document.getElementById("system-status-text").innerText = "Swarm Hidden";
+
+      consoleLogs.push({
+        time: timestamp,
+        agent: "orchestrator",
+        type: "error",
+        msg: "Stealth shroud activated. HALTING all active shinobi threads."
+      });
+    } else {
+      state.systemStatus = "active";
+      pauseBtn.innerHTML = `
+        <svg class="jp-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M2 10 C2 10 4 5 12 5 C20 5 22 10 22 10 C22 10 20 15 12 15 C4 15 2 10 2 10 Z"/>
+          <line x1="2" y1="10" x2="22" y2="10"/>
+          <circle cx="12" cy="10" r="2" fill="currentColor"/>
+        </svg>
+      `;
+      pauseBtn.classList.add("btn-outline");
+      pauseBtn.classList.remove("btn-purple");
+      document.getElementById("system-status-indicator").className = "status-indicator-pulse online";
+      document.getElementById("system-status-text").innerText = "Swarm Active";
+
+      consoleLogs.push({
+        time: timestamp,
+        agent: "orchestrator",
+        type: "success",
+        msg: "Stealth shroud deactivated. Resuming active shinobi missions."
+      });
+    }
+    renderLogs();
+  });
+
+  // Settings Sliders (legacy IDs — guarded for null safety)
+  const dailySlider = document.getElementById("daily-limit-slider");
+  const dailyVal = document.getElementById("daily-limit-val");
+  if (dailySlider && dailyVal) {
+    dailySlider.addEventListener("input", (e) => {
+      state.dailyLimit = parseInt(e.target.value);
+      dailyVal.innerText = `$${state.dailyLimit.toFixed(2)}`;
+    });
+  }
+
+  const thresholdSlider = document.getElementById("alert-threshold-slider");
+  const thresholdVal = document.getElementById("alert-threshold-val");
+  if (thresholdSlider && thresholdVal) {
+    thresholdSlider.addEventListener("input", (e) => {
+      state.alertThreshold = parseInt(e.target.value) / 100;
+      thresholdVal.innerText = `${e.target.value}%`;
+    });
+  }
+
+  // Settings Autonomy radio selection (legacy — new name is autonomy-level-new)
+  document.querySelectorAll("input[name='autonomy-level']").forEach(radio => {
+    radio.addEventListener("change", (e) => {
+      state.autonomyLevel = e.target.value;
+      
+      // Update css class
+      document.querySelectorAll(".radio-option").forEach(opt => opt.classList.remove("active"));
+      radio.closest(".radio-option").classList.add("active");
+
+      const timestamp = new Date().toTimeString().split(" ")[0];
+      consoleLogs.push({
+        time: timestamp,
+        agent: "system",
+        type: "info",
+        msg: `Stealth permit rules updated to: ${state.autonomyLevel.toUpperCase()}`
+      });
+      renderLogs();
+    });
+  });
+
+  // Log Search and Filter inputs
+  const searchInput = document.getElementById("log-search");
+  searchInput.addEventListener("input", (e) => {
+    state.logSearchQuery = e.target.value.trim();
+    renderLogs();
+  });
+
+  const filterSelect = document.getElementById("log-filter-agent");
+  filterSelect.addEventListener("change", (e) => {
+    state.logFilterAgent = e.target.value;
+    renderLogs();
+  });
+
+  // Console actions
+  document.getElementById("console-clear-btn").addEventListener("click", () => {
+    consoleLogs = [];
+    renderLogs();
+  });
+
+  const toggleConsoleBtn = document.getElementById("console-toggle-btn");
+  toggleConsoleBtn.addEventListener("click", () => {
+    state.streamLogs = !state.streamLogs;
+    if (state.streamLogs) {
+      toggleConsoleBtn.innerHTML = `
+        <svg class="jp-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;vertical-align:middle;margin-right:4px;">
+          <path d="M12 22 L12 4 M11 22 L9 5 M13 22 L15 5"/>
+          <circle cx="12" cy="22" r="1.5" fill="currentColor"/>
+        </svg>
+        <span>Pause Scroll</span>
+      `;
+      toggleConsoleBtn.className = "btn btn-purple btn-sm";
+    } else {
+      toggleConsoleBtn.innerHTML = `
+        <svg class="jp-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;vertical-align:middle;margin-right:4px;">
+          <path d="M12 21 L3 12 C3 12 6 7 12 7 C18 7 21 12 21 12 Z"/>
+          <path d="M12 21 L7 10 M12 21 L12 7 M12 21 L17 10"/>
+        </svg>
+        <span>Resume Scroll</span>
+      `;
+      toggleConsoleBtn.className = "btn btn-outline btn-sm";
+    }
+  });
+
+  // Always-On Engine Toggle listeners
+  const hunterToggle = document.getElementById("settings-hunter-toggle");
+  if (hunterToggle) {
+    hunterToggle.addEventListener("change", (e) => {
+      const active = e.target.checked;
+      state.agents.hunter.status = active ? "watching" : "idle";
+      const timestamp = new Date().toTimeString().split(" ")[0];
+      consoleLogs.push({
+        time: timestamp,
+        agent: "hunter",
+        type: active ? "success" : "error",
+        msg: `Stealth Scout: Autonomous telemetry hunting ${active ? 'ENABLED' : 'DISABLED'}.`
+      });
+      renderLogs();
+    });
+  }
+
+  const updaterToggle = document.getElementById("settings-updater-toggle");
+  if (updaterToggle) {
+    updaterToggle.addEventListener("change", (e) => {
+      const active = e.target.checked;
+      state.agents.updater.status = active ? "idle" : "sleeping";
+      const timestamp = new Date().toTimeString().split(" ")[0];
+      consoleLogs.push({
+        time: timestamp,
+        agent: "updater",
+        type: active ? "success" : "error",
+        msg: `Debt Chunin: Cron sweep updates scheduler ${active ? 'ENABLED' : 'DISABLED'}.`
+      });
+      renderLogs();
+    });
+  }
+
+  const refactorToggle = document.getElementById("settings-refactor-toggle");
+  if (refactorToggle) {
+    refactorToggle.addEventListener("change", (e) => {
+      const active = e.target.checked;
+      const timestamp = new Date().toTimeString().split(" ")[0];
+      consoleLogs.push({
+        time: timestamp,
+        agent: "orchestrator",
+        type: active ? "success" : "info",
+        msg: `Sensei: Background refactoring idle sweeps ${active ? 'ENABLED' : 'DISABLED'}.`
+      });
+      renderLogs();
+    });
+  }
+
+  const sentryInput = document.getElementById("settings-sentry-url");
+  if (sentryInput) {
+    sentryInput.addEventListener("change", (e) => {
+      const val = e.target.value.trim();
+      const timestamp = new Date().toTimeString().split(" ")[0];
+      consoleLogs.push({
+        time: timestamp,
+        agent: "hunter",
+        type: "info",
+        msg: `Stealth Scout: Sentry target coordinates updated to ${val}`
+      });
+      renderLogs();
+    });
+  }
+
+  const datadogInput = document.getElementById("settings-datadog-key");
+  if (datadogInput) {
+    datadogInput.addEventListener("change", (e) => {
+      const timestamp = new Date().toTimeString().split(" ")[0];
+      consoleLogs.push({
+        time: timestamp,
+        agent: "hunter",
+        type: "info",
+        msg: "Stealth Scout: Datadog authentication keys re-scrambled."
+      });
+      renderLogs();
+    });
+  }
+}
+
+// --- BOOTSTRAP ---
+document.addEventListener("DOMContentLoaded", () => {
+  // Init Canvas Graph instance
+  swarmGraph = new SwarmGraph("swarm-canvas");
+  swarmGraph.start();
+
+  // Render initial components
+  renderKanban();
+  renderDecisions();
+  renderLogs();
+  selectAgent("orchestrator");
+
+  // Wire events
+  initNavigation();
+  initGlobalControls();
+  initDragAndDrop();
+  initWizard();
+
+  // Start simulated processing
+  runSimulationLoop();
+});
+
+// --- DOJO WORKBENCH WORKSPACE LOGIC ---
+let editorInstance = null;
+let workbenchInitialized = false;
+let terminalLines = [];
+
+// Mock database files for both developer projects
+const projectFiles = {
+  taskmaster: {
+    "README.md": `# coNinja TaskMaster Swarm\n\nActive Mission: Build a real-time marketplace MVP with secure authentication, Nodemailer alerts, and multi-stage Docker deployment.\n\n## Dojo Blueprint Parameters\n*   Primary DB: PostgreSQL\n*   Cache Layer: Redis Cluster\n*   Email Service: Nodemailer / SMTP\n*   Autonomous Level: Advisory Scroll`,
+    
+    "src/services/email.ts": `import nodemailer from 'nodemailer';\n\nexport interface MailOptions {\n  to: string;\n  subject: string;\n  text: string;\n}\n\n// Sensei council approved SMTP local proxy relay\nexport class EmailService {\n  private transporter = nodemailer.createTransport({\n    host: process.env.SMTP_HOST || 'localhost',\n    port: parseInt(process.env.SMTP_PORT || '1025'),\n    secure: false\n  });\n\n  async sendAlert(options: MailOptions): Promise<void> {\n    try {\n      await this.transporter.sendMail({\n        from: '"coNinja Swarm" <swarm@coninja.io>',\n        to: options.to,\n        subject: \`[Shinobi Alert] \${options.subject}\`,\n        text: options.text\n      });\n      console.log(\`[Email Sent] Message dispatched to \${options.to}\`);\n    } catch (err) {\n      console.error('Mail dispatch failed:', err);\n    }\n  }\n}`,
+
+    "src/models/User.ts": `import { Schema, model } from 'mongoose';\n\nexport interface IUser {\n  ninjaName: string;\n  email: string;\n  pwdHash: string;\n  kiRank: string;\n}\n\nconst UserSchema = new Schema<IUser>({\n  ninjaName: { type: String, required: true, unique: true },\n  email: { type: String, required: true, unique: true },\n  pwdHash: { type: String, required: true },\n  kiRank: { type: String, default: 'Genin' }\n});\n\nexport const User = model<IUser>('User', UserSchema);`,
+
+    "tests/auth.test.ts": `import request from 'supertest';\nimport { app } from '../app';\n\ndescribe('Stealth Credential Integration Checks', () => {\n  it('asserts valid logins pass code gates', async () => {\n    const res = await request(app)\n      .post('/api/auth/login')\n      .send({ email: 'genin@coninja.io', password: 'hash_strength_12' });\n    expect(res.status).toBe(200);\n    expect(res.body.token).toBeDefined();\n  });\n\n  it('throws 401 for unauthorized shadow infiltrations', async () => {\n    const res = await request(app)\n      .post('/api/auth/login')\n      .send({ email: 'spy@samurai.gov', password: 'wrong' });\n    expect(res.status).toBe(401);\n  });\n});`,
+
+    "docker-compose.yml": `version: '3.8'\n\nservices:\n  dojo-server:\n    build: .\n    ports:\n      - "3000:3000"\n    environment:\n      - SMTP_PORT=1025\n      - DB_URI=postgresql://admin:scrolls@db:5432/coninja\n    depends_on:\n      - db\n      - redis\n\n  db:\n    image: postgres:14-alpine\n    environment:\n      POSTGRES_USER: admin\n      POSTGRES_PASSWORD: scrolls\n      POSTGRES_DB: coninja\n    ports:\n      - "5432:5432"\n\n  redis:\n    image: redis:6-alpine\n    ports:\n      - "6379:6379"`
+  },
+  fitness: {
+    "README.md": `# coNinja Fitness Sync Swarm\n\nActive Mission: Develop an offline GPS route tracking application with IndexedDB cache buffering and calorie metrics computation.\n\n## Dojo Blueprint Parameters\n*   Local Cache: IndexedDB\n*   Mapping Target: SVG Vector Paths\n*   Sync Mode: Background Web-Worker`,
+
+    "src/services/gps.ts": `export interface Coordinate {\n  lat: number;\n  lng: number;\n  timestamp: number;\n}\n\nexport class GPSRouteTracker {\n  // Calculates geodesic distance using Haversine formula\n  calculateDistance(p1: Coordinate, p2: Coordinate): number {\n    const R = 6371e3; // Earth radius in meters\n    const phi1 = (p1.lat * Math.PI) / 180;\n    const phi2 = (p2.lat * Math.PI) / 180;\n    const deltaPhi = ((p2.lat - p1.lat) * Math.PI) / 180;\n    const deltaLambda = ((p2.lng - p1.lng) * Math.PI) / 180;\n\n    const a =\n      Math.sin(deltaPhi / 2) * Math.sin(deltaPhi / 2) +\n      Math.cos(phi1) * Math.cos(phi2) *\n      Math.sin(deltaLambda / 2) * Math.sin(deltaLambda / 2);\n    \n    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));\n    return R * c; // distance in meters\n  }\n}`,
+
+    "src/models/Workout.ts": `export interface IWorkout {\n  id: string;\n  userId: string;\n  startTime: string;\n  route: { lat: number; lng: number }[];\n  distance: number;\n  calories: number;\n  isSynced: boolean;\n}`,
+
+    "src/config/indexeddb.ts": `export class LocalCacheDB {\n  private dbName = 'coNinjaFitnessCache';\n\n  async initDB(): Promise<IDBDatabase> {\n    return new Promise((resolve, reject) => {\n      const req = indexedDB.open(this.dbName, 1);\n      req.onupgradeneeded = () => {\n        const db = req.result;\n        db.createObjectStore('workouts', { keyPath: 'id' });\n      };\n      req.onsuccess = () => resolve(req.result);\n      req.onerror = () => reject(req.error);\n    });\n  }\n}`,
+
+    "tests/route.test.ts": `import { GPSRouteTracker } from '../src/services/gps';\n\ndescribe('GPS Geodesic Routing Assertions', () => {\n  const tracker = new GPSRouteTracker();\n\n  it('evaluates distance along coordinates', () => {\n    const p1 = { lat: 35.6895, lng: 139.6917, timestamp: 0 }; // Tokyo\n    const p2 = { lat: 35.6586, lng: 139.7454, timestamp: 300 }; // Tokyo Tower\n    const meters = tracker.calculateDistance(p1, p2);\n    expect(meters).toBeGreaterThan(4000);\n    expect(meters).toBeLessThan(5000);\n  });\n});`
+  }
+};
+
+let currentSelectedFile = "README.md";
+
+function getActiveProjectKey() {
+  return state.activeProject.toLowerCase().includes("fitness") ? "fitness" : "taskmaster";
+}
+
+function initDojoWorkbench() {
+  if (workbenchInitialized) {
+    renderFileExplorer();
+    renderBlueprint();
+    renderChecklist();
+    renderBrowserPreview();
+    return;
+  }
+
+  workbenchInitialized = true;
+
+  // Navigation tabs inside the workbench sidebar
+  document.querySelectorAll(".workbench-tabs .w-tab").forEach(tab => {
+    tab.addEventListener("click", () => {
+      document.querySelectorAll(".workbench-tabs .w-tab").forEach(t => t.classList.remove("active"));
+      tab.classList.add("active");
+
+      const paneId = tab.dataset.wTab;
+      document.querySelectorAll(".workbench-tab-content .w-pane-view").forEach(pane => {
+        pane.classList.remove("active");
+      });
+      document.getElementById(`w-content-${paneId}`).classList.add("active");
+    });
+  });
+
+  // Start terminal logs
+  initTerminalLogs();
+
+  // Load Monaco editor instance
+  initMonacoEditor();
+
+  // Render sub components
+  renderFileExplorer();
+  renderBlueprint();
+  renderChecklist();
+  renderBrowserPreview();
+
+  // Initialize resizer and collapse toggle for sidebar
+  initSidebarResizer();
+
+  // Toggle between Editor and Browser panels
+  const workspaceContainer = document.getElementById("workbench-workspace-container");
+  const showBrowserBtn = document.getElementById("workbench-show-browser-btn");
+  const showEditorBtn = document.getElementById("workbench-show-editor-btn");
+
+  if (workspaceContainer && showBrowserBtn && showEditorBtn) {
+    showBrowserBtn.addEventListener("click", () => {
+      workspaceContainer.classList.remove("view-editor");
+      workspaceContainer.classList.add("view-browser");
+    });
+
+    showEditorBtn.addEventListener("click", () => {
+      workspaceContainer.classList.remove("view-browser");
+      workspaceContainer.classList.add("view-editor");
+      if (editorInstance) {
+        editorInstance.layout();
+        setTimeout(() => {
+          editorInstance.layout();
+        }, 150);
+      }
+    });
+  }
+}
+
+function initSidebarResizer() {
+  const sidebar = document.querySelector(".workbench-sidebar");
+  const resizer = document.getElementById("workbench-sidebar-resizer");
+  const collapseBtn = document.getElementById("sidebar-collapse-btn");
+
+  if (!sidebar || !resizer || !collapseBtn) return;
+
+  let isDragging = false;
+
+  // 1. Drag to resize logic
+  resizer.addEventListener("mousedown", (e) => {
+    // Avoid triggering drag when clicking the collapse button inside the resizer
+    if (e.target === collapseBtn) return;
+    
+    isDragging = true;
+    resizer.classList.add("dragging");
+    document.body.style.cursor = "col-resize";
+    document.body.style.userSelect = "none";
+
+    const startX = e.clientX;
+    const startWidth = sidebar.getBoundingClientRect().width;
+
+    function onMouseMove(e) {
+      if (!isDragging) return;
+      const currentX = e.clientX;
+      const deltaX = currentX - startX;
+      let newWidth = startWidth + deltaX;
+
+      // Min/Max bounds
+      if (newWidth < 150) {
+        // Auto-collapse if dragged too small
+        sidebar.classList.add("collapsed");
+        newWidth = 0;
+      } else {
+        sidebar.classList.remove("collapsed");
+        if (newWidth > 500) newWidth = 500;
+      }
+
+      sidebar.style.width = `${newWidth}px`;
+    }
+
+    function onMouseUp() {
+      isDragging = false;
+      resizer.classList.remove("dragging");
+      document.body.style.cursor = "";
+      document.body.style.userSelect = "";
+      window.removeEventListener("mousemove", onMouseMove);
+      window.removeEventListener("mouseup", onMouseUp);
+      if (editorInstance) {
+        editorInstance.layout();
+      }
+    }
+
+    window.addEventListener("mousemove", onMouseMove);
+    window.addEventListener("mouseup", onMouseUp);
+  });
+
+  // 2. Click to collapse logic
+  collapseBtn.addEventListener("click", () => {
+    const isCollapsed = sidebar.classList.toggle("collapsed");
+    if (isCollapsed) {
+      sidebar.style.width = "0px";
+    } else {
+      sidebar.style.width = "280px"; // Default size
+    }
+    if (editorInstance) {
+      setTimeout(() => {
+        editorInstance.layout();
+      }, 100);
+      setTimeout(() => {
+        editorInstance.layout();
+      }, 350);
+    }
+  });
+}
+
+function initMonacoEditor() {
+  if (typeof require === 'undefined') {
+    setTimeout(initMonacoEditor, 100);
+    return;
+  }
+
+  require.config({ paths: { vs: 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.39.0/min/vs' } });
+  require(['vs/editor/editor.main'], function () {
+    // Define the custom ninja stealth theme!
+    monaco.editor.defineTheme('coNinja-stealth', {
+      base: 'vs-dark',
+      inherit: true,
+      rules: [
+        { token: '', foreground: 'f8fafc', background: '0c0806' },
+        { token: 'comment', foreground: '5e5248', fontStyle: 'italic' },
+        { token: 'keyword', foreground: 'ff7300', fontStyle: 'bold' },
+        { token: 'string', foreground: 'ffb300' },
+        { token: 'number', foreground: 'ff9d4d' },
+        { token: 'regexp', foreground: 'ffa04d' },
+        { token: 'type', foreground: '38bdf8' },
+        { token: 'class', foreground: '38bdf8', fontStyle: 'bold' },
+        { token: 'function', foreground: 'ff9d4d' },
+        { token: 'variable', foreground: 'cbd5e1' }
+      ],
+      colors: {
+        'editor.background': '#0c0806',
+        'editor.foreground': '#f8fafc',
+        'editor.lineHighlightBackground': '#150d0a',
+        'editorCursor.foreground': '#ff7300',
+        'editor.selectionBackground': '#ff730033',
+        'editor.inactiveSelectionBackground': '#ff73001a',
+        'editorLineNumber.foreground': '#5e5248',
+        'editorLineNumber.activeForeground': '#ff7300'
+      }
+    });
+
+    editorInstance = monaco.editor.create(document.getElementById('monaco-editor-container'), {
+      value: ``,
+      language: 'markdown',
+      theme: 'coNinja-stealth',
+      automaticLayout: true,
+      readOnly: true,
+      fontFamily: 'JetBrains Mono',
+      fontSize: 12,
+      minimap: { enabled: false }
+    });
+
+    loadSelectedFile();
+  });
+}
+
+function loadSelectedFile() {
+  if (!editorInstance) return;
+
+  const projectKey = getActiveProjectKey();
+  const files = projectFiles[projectKey];
+  const fileContent = files[currentSelectedFile] || "";
+
+  // Infer language
+  let lang = "javascript";
+  if (currentSelectedFile.endsWith(".ts")) lang = "typescript";
+  else if (currentSelectedFile.endsWith(".md")) lang = "markdown";
+  else if (currentSelectedFile.endsWith(".yml")) lang = "yaml";
+
+  const model = monaco.editor.createModel(fileContent, lang);
+  editorInstance.setModel(model);
+
+  document.getElementById("active-file-path").innerText = `~/dojo/${projectKey}/${currentSelectedFile}`;
+}
+
+function renderFileExplorer() {
+  const explorer = document.getElementById("workbench-file-tree");
+  explorer.innerHTML = "";
+
+  const projectKey = getActiveProjectKey();
+  const files = Object.keys(projectFiles[projectKey]);
+
+  files.forEach(filename => {
+    const item = document.createElement("div");
+    const isActive = filename === currentSelectedFile;
+    item.className = `file-tree-item ${isActive ? "active" : ""}`;
+    
+    // Choose icon
+    let icon = "📜";
+    if (filename.endsWith(".ts")) icon = "⚔️";
+    else if (filename.endsWith(".yml")) icon = "🐉";
+    else if (filename === "README.md") icon = "⛩️";
+
+    item.innerHTML = `<span>${icon}</span> <span>${filename}</span>`;
+    item.addEventListener("click", () => {
+      currentSelectedFile = filename;
+      document.querySelectorAll(".file-tree-item").forEach(el => el.classList.remove("active"));
+      item.classList.add("active");
+      loadSelectedFile();
+    });
+
+    explorer.appendChild(item);
+  });
+}
+
+function renderBlueprint() {
+  const blueprint = document.getElementById("workbench-blueprint-view");
+  const projectKey = getActiveProjectKey();
+  
+  if (projectKey === "taskmaster") {
+    blueprint.innerHTML = `
+      <div class="blueprint-viewer">
+        <h3>⛩️ Mission Blueprint</h3>
+        <p>Swarm layout for <strong>TaskMaster Marketplace MVP</strong></p>
+        <hr style="border-color:rgba(255,115,0,0.1); margin: 8px 0;">
+        <ul>
+          <li><strong>Autonomy Permits</strong>: level-1 (advisory scroll) active.</li>
+          <li><strong>Provider Target</strong>: Google Gemini 1.5 Pro relays.</li>
+          <li><strong>Dojo stack</strong>: pgSQL relations with Nodemailer SMTP.</li>
+        </ul>
+      </div>
+    `;
+  } else {
+    blueprint.innerHTML = `
+      <div class="blueprint-viewer">
+        <h3>⛩️ Mission Blueprint</h3>
+        <p>Swarm layout for <strong>GPS Fitness App</strong></p>
+        <hr style="border-color:rgba(255,115,0,0.1); margin: 8px 0;">
+        <ul>
+          <li><strong>Offline Permits</strong>: IndexedDB cache database lock.</li>
+          <li><strong>Render Output</strong>: SVG path drawing modules.</li>
+          <li><strong>Ki router</strong>: Ollama local chunk models.</li>
+        </ul>
+      </div>
+    `;
+  }
+}
+
+function renderChecklist() {
+  const container = document.getElementById("workbench-checklist-view");
+  container.innerHTML = "";
+
+  state.tasks.forEach(task => {
+    const item = document.createElement("div");
+    const isCompleted = task.status === "completed";
+    const isInProgress = task.status === "in_progress" || task.status === "review";
+    
+    item.className = `checklist-item ${isCompleted ? "checked" : isInProgress ? "in-progress" : ""}`;
+    
+    // Checkbox icon
+    let boxContent = "";
+    if (isCompleted) {
+      boxContent = `<svg viewBox="0 0 100 100" style="width:10px;height:10px;animation:spin-shuriken 3s infinite linear;" class="shuriken-spin-svg"><path d="M50 0 L58 35 L93 25 L65 48 L93 75 L58 65 L50 100 L42 65 L7 75 L35 48 L7 25 L42 35 Z" fill="currentColor"/></svg>`;
+    } else if (isInProgress) {
+      boxContent = `<span class="vortex-spin" style="display:inline-block;animation:spin-shuriken 4s infinite linear;font-size:8px;line-height:1;">🌀</span>`;
+    }
+
+    item.innerHTML = `
+      <div class="ninja-checkbox">${boxContent}</div>
+      <div class="checklist-item-text">${task.title}</div>
+    `;
+
+    item.onclick = () => {
+      // Toggle task status
+      if (task.status === "completed") {
+        task.status = "backlog";
+        const agent = Object.values(state.agents).find(a => a.currentTaskId === task.id);
+        if (agent) {
+          agent.status = "idle";
+          agent.currentTaskId = null;
+        }
+      } else {
+        task.status = "completed";
+        triggerSmokePuff(task.id);
+      }
+      
+      // Update panels
+      renderChecklist();
+      renderKanban();
+      renderDecisions();
+      renderLogs();
+      if (state.selectedTaskId === task.id) selectTask(task.id);
+    };
+
+    container.appendChild(item);
+  });
+}
+
+function renderBrowserPreview() {
+  const container = document.getElementById("browser-viewport");
+  const projectKey = getActiveProjectKey();
+
+  const urlBar = document.getElementById("browser-url-bar");
+  urlBar.value = `http://localhost:3000/${projectKey === 'fitness' ? 'fitness-sync' : 'taskmaster-app'}`;
+
+  if (projectKey === "taskmaster") {
+    container.innerHTML = `
+      <div class="ninja-browser-preview">
+        <div class="preview-navbar">
+          <div class="preview-logo">🏯 coNinja TaskMaster</div>
+          <div class="preview-nav-links">
+            <span class="preview-nav-link active">Dashboard</span>
+            <span class="preview-nav-link">Swarm</span>
+          </div>
+        </div>
+        <div class="preview-grid">
+          <div class="preview-card">
+            <span class="preview-card-title">Completed Scrolls</span>
+            <span class="preview-card-value orange" id="browser-val-completed">12</span>
+          </div>
+          <div class="preview-card">
+            <span class="preview-card-title">System Focus</span>
+            <span class="preview-card-value">91%</span>
+          </div>
+          <div class="preview-card">
+            <span class="preview-card-title">Node Load</span>
+            <span class="preview-card-value">0.12s</span>
+          </div>
+        </div>
+        <div class="preview-list">
+          <span class="preview-list-title">Active Swarm Activity</span>
+          <div class="preview-list-item">
+            <span>⚔️ Jutsu Coder BE: Compiled Session serializer</span>
+            <span style="color:#ffb300;">100% SUCCESS</span>
+          </div>
+          <div class="preview-list-item">
+            <span>🐉 Chunin DevOps: Deploying sandbox container</span>
+            <span style="color:#ff7300;">RUNNING</span>
+          </div>
+        </div>
+      </div>
+    `;
+    const valCompleted = document.getElementById("browser-val-completed");
+    if (valCompleted) {
+      valCompleted.innerText = state.tasks.filter(t => t.status === "completed").length;
+    }
+  } else {
+    container.innerHTML = `
+      <div class="ninja-browser-preview">
+        <div class="preview-navbar">
+          <div class="preview-logo">🔥 coNinja Fitness Sync</div>
+          <div class="preview-nav-links">
+            <span class="preview-nav-link active">Route Tracker</span>
+            <span class="preview-nav-link">History</span>
+          </div>
+        </div>
+        <div class="fitness-map-preview">
+          <svg width="100%" height="100%" viewBox="0 0 400 120" style="position:absolute;top:0;left:0;">
+            <path d="M20 100 Q 100 20, 200 80 T 380 40" class="fitness-path-stroke"/>
+            <circle cx="20" cy="100" r="5" fill="#ff7300"/>
+            <circle cx="380" cy="40" r="5" fill="#FFB300"/>
+          </svg>
+          <div style="position:absolute;bottom:8px;left:8px;font-size:0.65rem;color:var(--text-secondary);background:rgba(0,0,0,0.6);padding:2px 6px;border-radius:4px;">
+            GPS Path coordinates lock (Tokyo Route #7)
+          </div>
+        </div>
+        <div class="preview-grid">
+          <div class="preview-card">
+            <span class="preview-card-title">Distance Run</span>
+            <span class="preview-card-value orange">4.82 km</span>
+          </div>
+          <div class="preview-card">
+            <span class="preview-card-title">IndexedDB Sync Queue</span>
+            <span class="preview-card-value">0 items</span>
+          </div>
+          <div class="preview-card">
+            <span class="preview-card-title">Ki Calorie Burn</span>
+            <span class="preview-card-value">312 kcal</span>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+}
+
+function initTerminalLogs() {
+  const terminal = document.getElementById("workbench-terminal-body");
+  if (!terminal) return;
+  
+  terminal.innerHTML = "";
+  const projectKey = getActiveProjectKey();
+  
+  if (projectKey === "taskmaster") {
+    terminalLines = [
+      { type: "prompt", text: "shinobi@coninja:~$ npm run dev" },
+      { type: "system", text: "[system] Starting local Swarm watchers on Port 3000..." },
+      { type: "compiler", text: "[compiler] Compiling src/services/email.ts..." },
+      { type: "compiler", text: "[compiler] Compilation complete in 1.4s." },
+      { type: "system", text: "[system] Loading pgSQL configurations from /config/..." },
+      { type: "test-pass", text: "[test-pass] jest tests/auth.test.ts" },
+      { type: "test-pass", text: "  ✓ asserts credentials login succeeds (14ms)" },
+      { type: "test-pass", text: "  ✓ rejects invalid attempts with 401 code (9ms)" },
+      { type: "system", text: "[system] Watcher status: Listening for file changes..." }
+    ];
+  } else {
+    terminalLines = [
+      { type: "prompt", text: "shinobi@coninja:~$ npm run test" },
+      { type: "system", text: "[system] Commenced test suite validation check..." },
+      { type: "compiler", text: "[compiler] Compiling src/services/gps.ts..." },
+      { type: "compiler", text: "[compiler] Compiling tests/route.test.ts..." },
+      { type: "test-pass", text: "[test-pass] jest tests/route.test.ts" },
+      { type: "test-pass", text: "  ✓ evaluates geodesic route distances (42ms)" },
+      { type: "test-pass", text: "  ✓ validates IndexedDB write operations (18ms)" },
+      { type: "system", text: "[system] All checks successfully satisfied!" }
+    ];
+  }
+
+  terminalLines.forEach(line => {
+    appendTerminalLine(line.type, line.text);
+  });
+}
+
+function appendTerminalLine(type, text) {
+  const container = document.getElementById("workbench-terminal-body");
+  if (!container) return;
+
+  const div = document.createElement("div");
+  div.className = `term-line ${type}`;
+  div.innerText = text;
+  container.appendChild(div);
+  
+  container.scrollTop = container.scrollHeight;
+}
+
+// ============================================================
+// STEALTH ARCHIVES — REPORT DATA & RENDERER
+// ============================================================
+
+const mockReports = {
+  "ab-cta": {
+    title: "A/B Experiment: CTA Button Conversion Rate",
+    type: "ab",
+    runDate: "2026-05-25",
+    status: "Complete",
+    statusClass: "badge-success",
+    summary: "The orange gradient CTA (Variant B) outperformed the default ghost-outline button (Variant A) by a statistically significant margin.",
+    variants: [
+      { name: "Variant A (Control) — Ghost Outline", sessions: 4820, conversions: 193, rate: "4.00%", lift: "—" },
+      { name: "Variant B (Test) — Orange Gradient Fill", sessions: 4891, conversions: 264, rate: "5.40%", lift: "+35.0% ↑" }
+    ],
+    stats: { zScore: "3.42", pValue: "0.0006", confidence: "99.9%", winner: "Variant B" },
+    recommendation: "Ship Variant B globally. The orange gradient CTA aligns with the Ninja brand palette and achieves significant uplift with p < 0.001 confidence."
+  },
+  "ab-model": {
+    title: "A/B Experiment: Swarm Model Router Throughput",
+    type: "ab",
+    runDate: "2026-05-27",
+    status: "Complete",
+    statusClass: "badge-success",
+    summary: "Dynamic VRAM routing (Variant B) reduced average task turnaround time versus round-robin static assignment (Variant A).",
+    variants: [
+      { name: "Variant A (Control) — Static Round-Robin Router", sessions: 320, conversions: 248, rate: "77.5% task success", lift: "—" },
+      { name: "Variant B (Test) — Dynamic VRAM-priority Router", sessions: 318, conversions: 291, rate: "91.5% task success", lift: "+18.1% ↑" }
+    ],
+    stats: { zScore: "4.17", pValue: "0.0000", confidence: "99.99%", winner: "Variant B" },
+    recommendation: "Enable VRAM-priority dynamic routing. Significant improvement in successful task completion rates observed."
+  },
+  "ab-cache": {
+    title: "A/B Experiment: Query Caching Strategy",
+    type: "ab",
+    runDate: "2026-05-28",
+    status: "Running",
+    statusClass: "badge-warning",
+    summary: "Ongoing experiment comparing Redis semantic cache (Variant B) against in-process LRU cache (Variant A) for RAG query deduplication.",
+    variants: [
+      { name: "Variant A (Control) — In-Process LRU Cache", sessions: 1240, conversions: 880, rate: "71.0% hit rate", lift: "—" },
+      { name: "Variant B (Test) — Redis Semantic Cache", sessions: 1253, conversions: 988, rate: "78.8% hit rate", lift: "+11.0% ↑" }
+    ],
+    stats: { zScore: "2.14", pValue: "0.032", confidence: "96.8%", winner: "Pending (need 2000+ samples)" },
+    recommendation: "Experiment still running. Early signals favour Redis semantic cache but require additional sample collection."
+  },
+  "dep-weekly": {
+    title: "Dependency Sweep: Weekly Advisory Report",
+    type: "dependency",
+    runDate: "2026-05-28",
+    status: "Complete",
+    statusClass: "badge-success",
+    packages: [
+      { name: "express", current: "4.18.2", latest: "4.19.1", severity: "Low", action: "Update Recommended" },
+      { name: "jsonwebtoken", current: "8.5.1", latest: "9.0.2", severity: "Medium", action: "Update — API changes" },
+      { name: "nodemailer", current: "6.9.4", latest: "6.9.8", severity: "Low", action: "Patch — safe to bump" },
+      { name: "mongoose", current: "7.3.4", latest: "8.1.2", severity: "High", action: "Major — breaking schemas" },
+      { name: "jest", current: "29.5.0", latest: "29.7.0", severity: "Low", action: "Patch update" },
+      { name: "@types/node", current: "20.3.0", latest: "20.11.0", severity: "Low", action: "Patch update" }
+    ],
+    summary: "6 packages reviewed. 1 high-severity major upgrade flagged (mongoose). 1 medium-severity JWT update available. 4 low-severity patches ready."
+  },
+  "dep-semver": {
+    title: "Dependency Sweep: SemVer Lock Synchronization",
+    type: "dependency",
+    runDate: "2026-05-26",
+    status: "Complete",
+    statusClass: "badge-success",
+    packages: [
+      { name: "typescript", current: "5.1.6", latest: "5.4.2", severity: "Low", action: "Minor — safe to update" },
+      { name: "eslint", current: "8.44.0", latest: "8.57.0", severity: "Low", action: "Minor update" },
+      { name: "prettier", current: "3.0.0", latest: "3.2.5", severity: "Low", action: "Patch update" }
+    ],
+    summary: "Lock file synchronized. 3 development toolchain packages have pending minor/patch updates. No production dependency CVEs detected."
+  },
+  "sec-owasp": {
+    title: "Security Audit: OWASP Top 10 Vulnerability Scan",
+    type: "security",
+    runDate: "2026-05-28",
+    status: "Passed",
+    statusClass: "badge-success",
+    findings: [
+      { category: "A01 — Broken Access Control", severity: "None", status: "✅ Pass", detail: "Role-based access gates enforced. JWT middleware validated." },
+      { category: "A02 — Cryptographic Failures", severity: "None", status: "✅ Pass", detail: "bcrypt strength factor = 12. No plaintext credentials detected." },
+      { category: "A03 — Injection (SQLi/XSS)", severity: "Low", status: "⚠️ Advisory", detail: "1 unescaped user input field found in /api/search. Parameterized queries recommended." },
+      { category: "A04 — Insecure Design", severity: "None", status: "✅ Pass", detail: "Architecture review confirms threat model coverage." },
+      { category: "A05 — Security Misconfiguration", severity: "None", status: "✅ Pass", detail: "All environment variables properly scoped. No debug routes exposed." },
+      { category: "A06 — Vulnerable Components", severity: "Medium", status: "⚠️ Advisory", detail: "jsonwebtoken 8.x has known algorithm confusion advisory. Update to 9.x." },
+      { category: "A07 — Auth & Session Failures", severity: "None", status: "✅ Pass", detail: "Session token rotation on login/logout confirmed." },
+      { category: "A08 — Software & Data Integrity", severity: "None", status: "✅ Pass", detail: "Subresource Integrity (SRI) hashes present for all CDN assets." },
+      { category: "A09 — Security Logging Failures", severity: "None", status: "✅ Pass", detail: "Sentry error telemetry active. Auth failures logged to audit trail." },
+      { category: "A10 — SSRF", severity: "None", status: "✅ Pass", detail: "No external URL resolution from user-controlled inputs detected." }
+    ],
+    summary: "Overall risk: LOW. 2 advisory items flagged (non-blocking). 8 categories fully cleared."
+  },
+  "sec-secrets": {
+    title: "Security Audit: Stealth Secrets Scanner",
+    type: "security",
+    runDate: "2026-05-29",
+    status: "Passed",
+    statusClass: "badge-success",
+    findings: [
+      { category: "API Keys — OpenAI Pattern", severity: "None", status: "✅ Pass", detail: "No OpenAI or Anthropic key patterns detected in codebase." },
+      { category: "AWS Credentials", severity: "None", status: "✅ Pass", detail: "No AWS Access Key ID or Secret Access Key patterns found." },
+      { category: "Database DSN Strings", severity: "None", status: "✅ Pass", detail: "All DB URIs loaded exclusively from process.env. No hardcoded strings." },
+      { category: "Private Key Files (.pem/.key)", severity: "None", status: "✅ Pass", detail: "No private key files committed to version control." },
+      { category: "JWT Secret Leaks", severity: "None", status: "✅ Pass", detail: "JWT_SECRET sourced from env. Not present in source or git history." },
+      { category: "Webhook Tokens", severity: "None", status: "✅ Pass", detail: "No hardcoded webhook endpoints or tokens found in codebase." }
+    ],
+    summary: "Clean scan. 0 secrets detected across 48 scanned files and 1,240 lines of code."
+  }
+};
+
+function renderReport(reportId) {
+  state.activeReportId = reportId;
+  const container = document.getElementById("report-view-container");
+  const report = mockReports[reportId];
+
+  // Update active item in archive sidebar
+  document.querySelectorAll(".archive-item").forEach(item => {
+    item.classList.toggle("active", item.dataset.report === reportId);
+  });
+
+  if (!report) {
+    container.innerHTML = `<p style="color:var(--text-muted); text-align:center; padding:40px;">Select a report from the archive.</p>`;
+    return;
+  }
+
+  if (report.type === "ab") {
+    container.innerHTML = `
+      <div class="report-header">
+        <div>
+          <h3 class="report-title">🔮 ${report.title}</h3>
+          <div class="report-meta">Run: ${report.runDate} &nbsp;|&nbsp; <span class="badge ${report.statusClass}">${report.status}</span></div>
+        </div>
+      </div>
+      <p class="report-summary">${report.summary}</p>
+
+      <div class="ab-variants-grid">
+        ${report.variants.map((v, i) => `
+          <div class="ab-variant-card ${i === 1 ? 'winner-variant' : ''}">
+            <div class="ab-variant-name">${v.name}</div>
+            <div class="ab-stats-row">
+              <div class="ab-stat"><span class="ab-stat-val">${v.sessions.toLocaleString()}</span><span class="ab-stat-label">Sessions</span></div>
+              <div class="ab-stat"><span class="ab-stat-val">${v.conversions.toLocaleString()}</span><span class="ab-stat-label">Conversions</span></div>
+              <div class="ab-stat"><span class="ab-stat-val orange">${v.rate}</span><span class="ab-stat-label">Conv. Rate</span></div>
+              <div class="ab-stat"><span class="ab-stat-val ${i === 1 ? 'lift-positive' : ''}">${v.lift}</span><span class="ab-stat-label">Lift</span></div>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+
+      <div class="stats-sig-bar">
+        <div class="stat-sig-item"><span class="sig-label">Z-Score</span><span class="sig-val">${report.stats.zScore}</span></div>
+        <div class="stat-sig-item"><span class="sig-label">P-Value</span><span class="sig-val">${report.stats.pValue}</span></div>
+        <div class="stat-sig-item"><span class="sig-label">Confidence</span><span class="sig-val orange">${report.stats.confidence}</span></div>
+        <div class="stat-sig-item"><span class="sig-label">Winner</span><span class="sig-val">${report.stats.winner}</span></div>
+      </div>
+
+      <div class="report-recommendation">
+        <span class="rec-label">⚔️ Grandmaster Recommendation:</span>
+        <p>${report.recommendation}</p>
+      </div>
+    `;
+  } else if (report.type === "dependency") {
+    container.innerHTML = `
+      <div class="report-header">
+        <div>
+          <h3 class="report-title">🎋 ${report.title}</h3>
+          <div class="report-meta">Run: ${report.runDate} &nbsp;|&nbsp; <span class="badge ${report.statusClass}">${report.status}</span></div>
+        </div>
+      </div>
+      <p class="report-summary">${report.summary}</p>
+
+      <table class="provider-table report-table" style="width:100%; margin-top: 16px;">
+        <thead>
+          <tr>
+            <th>Package</th>
+            <th>Current</th>
+            <th>Latest</th>
+            <th>Severity</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${report.packages.map(pkg => `
+            <tr>
+              <td><code style="color:var(--accent-cyan); font-family:var(--font-mono); font-size:0.8rem;">${pkg.name}</code></td>
+              <td style="font-family:var(--font-mono); font-size:0.78rem;">${pkg.current}</td>
+              <td style="font-family:var(--font-mono); font-size:0.78rem; color:var(--accent-purple);">${pkg.latest}</td>
+              <td><span class="badge ${pkg.severity === 'High' ? 'badge-purple' : pkg.severity === 'Medium' ? 'badge-warning' : 'badge-outline'}">${pkg.severity}</span></td>
+              <td style="font-size:0.78rem; color:var(--text-secondary);">${pkg.action}</td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+    `;
+  } else if (report.type === "security") {
+    container.innerHTML = `
+      <div class="report-header">
+        <div>
+          <h3 class="report-title">👺 ${report.title}</h3>
+          <div class="report-meta">Run: ${report.runDate} &nbsp;|&nbsp; <span class="badge ${report.statusClass}">${report.status}</span></div>
+        </div>
+      </div>
+      <p class="report-summary">${report.summary}</p>
+
+      <table class="provider-table report-table" style="width:100%; margin-top: 16px;">
+        <thead>
+          <tr>
+            <th>Category</th>
+            <th>Severity</th>
+            <th>Status</th>
+            <th>Detail</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${report.findings.map(f => `
+            <tr>
+              <td style="font-size:0.78rem; font-weight:500;">${f.category}</td>
+              <td><span class="badge ${f.severity === 'None' ? 'badge-success' : f.severity === 'Low' ? 'badge-outline' : f.severity === 'Medium' ? 'badge-warning' : 'badge-purple'}">${f.severity || 'None'}</span></td>
+              <td style="font-size:0.78rem;">${f.status}</td>
+              <td style="font-size:0.75rem; color:var(--text-secondary);">${f.detail}</td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+    `;
+  }
+}
+
+// ============================================================
+// DOJO RULES — SETTINGS SUB-TAB RENDERER
+// ============================================================
+
+function renderSettingsSubtab(tabId) {
+  state.activeSettingsTab = tabId;
+
+  // Toggle active s-tab button
+  document.querySelectorAll(".settings-tabs .s-tab").forEach(btn => {
+    btn.classList.toggle("active", btn.dataset.sTab === tabId);
+  });
+
+  // Toggle active s-pane-view
+  document.querySelectorAll(".settings-content .s-pane-view").forEach(pane => {
+    pane.classList.remove("active");
+  });
+  const targetPane = document.getElementById(`s-content-${tabId}`);
+  if (targetPane) targetPane.classList.add("active");
+
+  // Populate dynamic content per pane
+  if (tabId === "models") renderModelsPane();
+  if (tabId === "mcp") renderMCPPane();
+  if (tabId === "prompts-skills") renderPromptsSkillsPane();
+  if (tabId === "rag") renderRAGPane();
+  if (tabId === "runtime-net") renderRuntimePane();
+}
+
+function initSettingsSubTabs() {
+  document.querySelectorAll(".settings-tabs .s-tab").forEach(btn => {
+    btn.addEventListener("click", () => {
+      renderSettingsSubtab(btn.dataset.sTab);
+    });
+  });
+
+  // Settings sub-tab sliders
+  const tempSlider = document.getElementById("settings-temp");
+  const tempVal = document.getElementById("settings-temp-val");
+  if (tempSlider && tempVal) {
+    tempSlider.addEventListener("input", e => {
+      state.temperature = parseFloat(e.target.value);
+      tempVal.innerText = state.temperature.toFixed(2);
+    });
+  }
+
+  const contextSlider = document.getElementById("settings-context");
+  const contextVal = document.getElementById("settings-context-val");
+  if (contextSlider && contextVal) {
+    contextSlider.addEventListener("input", e => {
+      state.contextLength = parseInt(e.target.value);
+      contextVal.innerText = state.contextLength;
+    });
+  }
+
+  const dailySliderNew = document.getElementById("daily-limit-slider-new");
+  const dailyValNew = document.getElementById("daily-limit-val-new");
+  if (dailySliderNew && dailyValNew) {
+    dailySliderNew.addEventListener("input", e => {
+      state.dailyLimit = parseInt(e.target.value);
+      dailyValNew.innerText = `$${state.dailyLimit.toFixed(2)}`;
+    });
+  }
+
+  const alertSliderNew = document.getElementById("alert-threshold-slider-new");
+  const alertValNew = document.getElementById("alert-threshold-val-new");
+  if (alertSliderNew && alertValNew) {
+    alertSliderNew.addEventListener("input", e => {
+      state.alertThreshold = parseInt(e.target.value) / 100;
+      alertValNew.innerText = `${e.target.value}%`;
+    });
+  }
+
+  // Autonomy radio (new)
+  document.querySelectorAll("input[name='autonomy-level-new']").forEach(radio => {
+    radio.addEventListener("change", e => {
+      state.autonomyLevel = e.target.value;
+      document.querySelectorAll(".radio-option").forEach(opt => opt.classList.remove("active"));
+      radio.closest(".radio-option").classList.add("active");
+      const timestamp = new Date().toTimeString().split(" ")[0];
+      consoleLogs.push({ time: timestamp, agent: "system", type: "info", msg: `Stealth permit updated to: ${state.autonomyLevel.toUpperCase()}` });
+      renderLogs();
+    });
+  });
+
+  // VRAM swap toggle
+  const vramToggle = document.getElementById("settings-vram-swap-toggle");
+  if (vramToggle) {
+    vramToggle.addEventListener("change", e => {
+      state.vramSwapEnabled = e.target.checked;
+      const ts = new Date().toTimeString().split(" ")[0];
+      consoleLogs.push({ time: ts, agent: "system", type: "info", msg: `Dynamic VRAM swapping ${e.target.checked ? 'ENABLED' : 'DISABLED'}.` });
+      renderLogs();
+    });
+  }
+
+  // Proxy toggle enable/disable input
+  const proxyToggle = document.getElementById("settings-proxy-toggle");
+  const proxyHostInput = document.getElementById("settings-proxy-host");
+  if (proxyToggle && proxyHostInput) {
+    proxyToggle.addEventListener("change", e => {
+      state.proxyEnabled = e.target.checked;
+      proxyHostInput.disabled = !e.target.checked;
+    });
+  }
+}
+
+function renderModelsPane() {
+  const tbody = document.getElementById("models-allocation-list");
+  if (!tbody) return;
+
+  const roles = [
+    { key: "orchestrator", label: "Sensei (Orchestrator)" },
+    { key: "architect", label: "Grandmaster (Architect)" },
+    { key: "coder1", label: "Jutsu Coder (BE)" },
+    { key: "coder2", label: "Genjutsu Coder (FE)" },
+    { key: "tester", label: "Kunai Tester" },
+    { key: "security", label: "Stealth Auditor" },
+    { key: "devops", label: "Chunin DevOps" },
+    { key: "documentation", label: "Scroll Keeper" },
+    { key: "performance", label: "Taijutsu Engineer" },
+    { key: "hunter", label: "Stealth Scout" },
+    { key: "updater", label: "Debt Chunin" }
+  ];
+
+  tbody.innerHTML = roles.map(r => {
+    const agent = state.agents[r.key];
+    const currentModel = agent ? agent.route : "—";
+    const isLocal = currentModel.includes("Ollama");
+    const isActive = agent && agent.status !== "idle" && agent.status !== "sleeping";
+    
+    return `
+      <tr>
+        <td style="font-weight:500;">${agent ? agent.icon : ''} ${r.label}</td>
+        <td>
+          <select class="form-select text-xs model-role-select" data-agent="${r.key}" style="padding: 4px 8px; font-size:0.75rem;">
+            ${state.availableLocalModels.map(m => `<option value="${m}" ${m === currentModel ? 'selected' : ''}>${m}</option>`).join('')}
+          </select>
+        </td>
+        <td><span class="badge ${isLocal ? 'badge-outline' : 'badge-purple'}">${isLocal ? 'Ollama Local' : 'Cloud API'}</span></td>
+        <td>
+          <span class="status-indicator-pulse ${isActive ? 'online' : 'offline'}" style="display:inline-block; margin-right:6px;"></span>
+          <span style="font-size:0.75rem; color:var(--text-secondary);">${agent ? agent.ram : '—'}</span>
+        </td>
+      </tr>
+    `;
+  }).join('');
+
+  // Attach change listeners to model select dropdowns
+  tbody.querySelectorAll(".model-role-select").forEach(sel => {
+    sel.addEventListener("change", e => {
+      const agentKey = e.target.dataset.agent;
+      const newModel = e.target.value;
+      if (state.agents[agentKey]) {
+        const oldModel = state.agents[agentKey].route;
+        state.agents[agentKey].route = newModel;
+        const ts = new Date().toTimeString().split(" ")[0];
+        consoleLogs.push({
+          time: ts, agent: "system", type: "info",
+          msg: `Model reassigned: ${state.agents[agentKey].name} → ${newModel} (was ${oldModel}). VRAM rebalancing...`
+        });
+        renderLogs();
+        // Animate VRAM bar
+        updateVRAMBar();
+      }
+    });
+  });
+
+  updateVRAMBar();
+}
+
+function updateVRAMBar() {
+  const usedFill = document.getElementById("vram-bar-fill");
+  const usedText = document.getElementById("vram-used-text");
+  if (!usedFill || !usedText) return;
+
+  // Calculate simulated VRAM based on active local models
+  let totalVRAM = 0;
+  Object.values(state.agents).forEach(agent => {
+    if (agent.status !== "idle" && agent.status !== "sleeping") {
+      if (agent.route.includes("8B") || agent.route.includes("7B")) totalVRAM += 5.5;
+      else if (agent.route.includes("6.7B")) totalVRAM += 4.8;
+      else if (agent.route.includes("Cloud") || agent.route.includes("Flash") || agent.route.includes("Pro")) totalVRAM += 0.2;
+    }
+  });
+
+  const maxVRAM = 24.0;
+  const usedGB = Math.min(totalVRAM, maxVRAM).toFixed(1);
+  const pct = Math.min((totalVRAM / maxVRAM) * 100, 100);
+  usedFill.style.width = `${pct}%`;
+  usedFill.style.background = pct > 85 ? "linear-gradient(90deg, #ef4444, #ff7300)" : "linear-gradient(90deg, #ff7300, #ffb300)";
+  usedText.innerText = `${usedGB} GB / ${maxVRAM} GB`;
+}
+
+function renderMCPPane() {
+  const tbody = document.getElementById("mcp-servers-list");
+  const toolsList = document.getElementById("mcp-tools-list");
+
+  if (tbody) {
+    tbody.innerHTML = state.mcpServers.map(srv => `
+      <tr>
+        <td style="font-family:var(--font-mono); font-size:0.78rem; color:var(--accent-cyan);">${srv.id}</td>
+        <td style="font-size:0.75rem;">${srv.tools.join(', ')}</td>
+        <td>
+          <span class="badge ${srv.status === 'active' ? 'badge-success' : 'badge-outline'}">${srv.status}</span>
+        </td>
+        <td>
+          <label class="switch" style="transform:scale(0.8); transform-origin:left center;">
+            <input type="checkbox" class="mcp-server-toggle" data-id="${srv.id}" ${srv.status === 'active' ? 'checked' : ''}>
+            <span class="slider-toggle"></span>
+          </label>
+        </td>
+      </tr>
+    `).join('');
+
+    // Attach toggle listeners
+    tbody.querySelectorAll(".mcp-server-toggle").forEach(toggle => {
+      toggle.addEventListener("change", e => {
+        const srvId = e.target.dataset.id;
+        const srv = state.mcpServers.find(s => s.id === srvId);
+        if (srv) {
+          srv.status = e.target.checked ? "active" : "inactive";
+          const ts = new Date().toTimeString().split(" ")[0];
+          consoleLogs.push({ time: ts, agent: "system", type: "info", msg: `MCP Server [${srvId}] ${e.target.checked ? 'MOUNTED' : 'UNMOUNTED'}.` });
+          renderLogs();
+          renderMCPPane();
+        }
+      });
+    });
+  }
+
+  if (toolsList) {
+    const activeTools = state.mcpServers
+      .filter(s => s.status === "active")
+      .flatMap(s => s.tools.map(t => `<div class="tool-item">${s.id}:<span style="color:var(--accent-purple); margin-left:4px;">${t}</span></div>`));
+    toolsList.innerHTML = activeTools.length
+      ? activeTools.join('')
+      : `<div style="color:var(--text-muted); font-size:0.75rem;">No active MCP servers mounted.</div>`;
+  }
+
+  // MCP form submit
+  const mcpForm = document.getElementById("mcp-server-form");
+  if (mcpForm && !mcpForm.dataset.wired) {
+    mcpForm.dataset.wired = "1";
+    document.getElementById("mcp-server-submit").addEventListener("click", () => {
+      const id = document.getElementById("mcp-server-id").value.trim();
+      const cmd = document.getElementById("mcp-server-cmd").value.trim();
+      const args = document.getElementById("mcp-server-args").value.trim();
+      if (!id || !cmd) { alert("Enter a Server ID and Command."); return; }
+      state.mcpServers.push({ id, name: id, command: cmd, args, status: "active", tools: ["custom_tool"] });
+      const ts = new Date().toTimeString().split(" ")[0];
+      consoleLogs.push({ time: ts, agent: "system", type: "success", msg: `MCP Server [${id}] mounted. Command: ${cmd}` });
+      renderLogs();
+      document.getElementById("mcp-server-id").value = "";
+      document.getElementById("mcp-server-cmd").value = "";
+      document.getElementById("mcp-server-args").value = "";
+      renderMCPPane();
+    });
+  }
+}
+
+function renderPromptsSkillsPane() {
+  // Load prompt for current selected agent
+  const agentSelect = document.getElementById("prompt-agent-select");
+  const promptTA = document.getElementById("prompt-textarea");
+  if (agentSelect && promptTA) {
+    promptTA.value = state.agentPrompts[agentSelect.value] || "";
+
+    if (!agentSelect.dataset.wired) {
+      agentSelect.dataset.wired = "1";
+      agentSelect.addEventListener("change", () => {
+        promptTA.value = state.agentPrompts[agentSelect.value] || "";
+      });
+    }
+  }
+
+  // Save prompt
+  const saveBtn = document.getElementById("prompt-save-btn");
+  if (saveBtn && !saveBtn.dataset.wired) {
+    saveBtn.dataset.wired = "1";
+    saveBtn.addEventListener("click", () => {
+      const role = agentSelect.value;
+      state.agentPrompts[role] = promptTA.value;
+      const ts = new Date().toTimeString().split(" ")[0];
+      consoleLogs.push({ time: ts, agent: "system", type: "success", msg: `Stealth instruction scroll updated for ${role}.` });
+      renderLogs();
+      saveBtn.innerText = "Inscribed ✓";
+      setTimeout(() => { saveBtn.innerText = "Inscribe Prompt Scroll"; }, 1500);
+    });
+  }
+
+  // Render custom skills list
+  renderCustomSkillsList();
+
+  // Skill forge form
+  const skillForm = document.getElementById("skill-forge-form");
+  if (skillForm && !skillForm.dataset.wired) {
+    skillForm.dataset.wired = "1";
+    document.getElementById("skill-forge-submit").addEventListener("click", () => {
+      const id = document.getElementById("skill-id").value.trim();
+      const desc = document.getElementById("skill-desc").value.trim();
+      const prompt = document.getElementById("skill-prompt").value.trim();
+      if (!id || !desc) { alert("Enter a Skill ID and description."); return; }
+      state.customSkills.push({ id, desc, prompt });
+      const ts = new Date().toTimeString().split(" ")[0];
+      consoleLogs.push({ time: ts, agent: "system", type: "success", msg: `Custom Jutsu Skill [${id}] forged and added to the Skill Archives.` });
+      renderLogs();
+      document.getElementById("skill-id").value = "";
+      document.getElementById("skill-desc").value = "";
+      document.getElementById("skill-prompt").value = "";
+      renderCustomSkillsList();
+    });
+  }
+}
+
+function renderCustomSkillsList() {
+  const container = document.getElementById("custom-skills-list");
+  if (!container) return;
+  container.innerHTML = state.customSkills.map(skill => `
+    <div class="skill-tag-card" style="display:flex; align-items:center; justify-content:space-between; padding:8px 12px; background:rgba(255,115,0,0.06); border:1px solid rgba(255,115,0,0.15); border-radius:6px; margin-bottom:6px;">
+      <div>
+        <div style="font-size:0.78rem; font-weight:600; color:var(--accent-purple);">${skill.id}</div>
+        <div style="font-size:0.72rem; color:var(--text-secondary); margin-top:2px;">${skill.desc}</div>
+      </div>
+      <button class="btn btn-outline btn-sm skill-delete-btn" data-id="${skill.id}" style="padding:2px 8px; font-size:0.7rem;">🗡️</button>
+    </div>
+  `).join('') || `<div style="color:var(--text-muted); font-size:0.75rem;">No custom skills forged yet.</div>`;
+
+  container.querySelectorAll(".skill-delete-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const id = btn.dataset.id;
+      state.customSkills = state.customSkills.filter(s => s.id !== id);
+      renderCustomSkillsList();
+    });
+  });
+}
+
+function renderRAGPane() {
+  const ragChunkSlider = document.getElementById("rag-chunk-size");
+  const ragChunkVal = document.getElementById("rag-chunk-size-val");
+  if (ragChunkSlider && ragChunkVal && !ragChunkSlider.dataset.wired) {
+    ragChunkSlider.dataset.wired = "1";
+    ragChunkSlider.addEventListener("input", e => { ragChunkVal.innerText = e.target.value; });
+  }
+  const ragOverlapSlider = document.getElementById("rag-chunk-overlap");
+  const ragOverlapVal = document.getElementById("rag-chunk-overlap-val");
+  if (ragOverlapSlider && ragOverlapVal && !ragOverlapSlider.dataset.wired) {
+    ragOverlapSlider.dataset.wired = "1";
+    ragOverlapSlider.addEventListener("input", e => { ragOverlapVal.innerText = e.target.value; });
+  }
+
+  // RAG document ingest
+  const ragIngestBtn = document.getElementById("rag-ingest-submit");
+  if (ragIngestBtn && !ragIngestBtn.dataset.wired) {
+    ragIngestBtn.dataset.wired = "1";
+    ragIngestBtn.addEventListener("click", () => {
+      const filename = document.getElementById("rag-filename").value.trim();
+      if (!filename) { alert("Enter a scroll filename to ingest."); return; }
+      const chunks = Math.floor(Math.random() * 30) + 8;
+      state.ragConfig.push({ name: filename, size: `${Math.floor(Math.random() * 50) + 5} KB`, status: "Indexing...", chunks });
+      renderRAGDocsList();
+      const ts = new Date().toTimeString().split(" ")[0];
+      consoleLogs.push({ time: ts, agent: "system", type: "info", msg: `RAG ingestion started: ${filename} (${chunks} chunks)...` });
+      renderLogs();
+      document.getElementById("rag-filename").value = "";
+      setTimeout(() => {
+        const doc = state.ragConfig.find(d => d.name === filename);
+        if (doc) doc.status = "Indexed";
+        renderRAGDocsList();
+        consoleLogs.push({ time: new Date().toTimeString().split(" ")[0], agent: "system", type: "success", msg: `RAG Vectorization complete: ${filename}. ${chunks} chunks indexed.` });
+        renderLogs();
+      }, 2000);
+    });
+  }
+
+  // RAG drag drop box
+  const dragBox = document.getElementById("rag-drag-drop-box");
+  if (dragBox && !dragBox.dataset.wired) {
+    dragBox.dataset.wired = "1";
+    dragBox.addEventListener("click", () => {
+      document.getElementById("rag-filename").value = `project_spec_${Date.now().toString().slice(-4)}.md`;
+    });
+    dragBox.addEventListener("dragover", e => { e.preventDefault(); dragBox.style.borderColor = "var(--accent-purple)"; });
+    dragBox.addEventListener("dragleave", () => { dragBox.style.borderColor = "rgba(255,115,0,0.25)"; });
+    dragBox.addEventListener("drop", e => {
+      e.preventDefault();
+      dragBox.style.borderColor = "rgba(255,115,0,0.25)";
+      const files = e.dataTransfer.files;
+      if (files.length) document.getElementById("rag-filename").value = files[0].name;
+    });
+  }
+
+  renderRAGDocsList();
+}
+
+function renderRAGDocsList() {
+  const tbody = document.getElementById("rag-documents-list");
+  if (!tbody) return;
+  tbody.innerHTML = state.ragConfig.map(doc => `
+    <tr>
+      <td style="font-family:var(--font-mono); font-size:0.78rem; color:var(--accent-cyan);">${doc.name}</td>
+      <td style="font-size:0.78rem;">${doc.size}</td>
+      <td><span class="badge ${doc.status === 'Indexed' ? 'badge-success' : 'badge-warning'}">${doc.status}</span></td>
+      <td style="font-size:0.75rem;">${doc.chunks} chunks</td>
+    </tr>
+  `).join('') || `<tr><td colspan="4" style="text-align:center; color:var(--text-muted); padding:16px;">No scrolls indexed yet.</td></tr>`;
+}
+
+function renderRuntimePane() {
+  // Wire runtime-specific controls that aren't covered elsewhere
+  // These are already wired by initGlobalControls via old IDs;
+  // we just ensure new-ID controls are wired here if needed.
+}
+
+// ============================================================
+// ARCHIVE SIDEBAR CLICK HANDLERS
+// ============================================================
+function initArchiveSidebar() {
+  document.querySelectorAll(".archive-item").forEach(item => {
+    item.addEventListener("click", () => {
+      renderReport(item.dataset.report);
+    });
+  });
+}
+
+// ============================================================
+// SIMULATION LOOP EXTENSIONS — VRAM swaps, MCP, RAG, Skills
+// ============================================================
+function runExtendedSimulationLoop() {
+  setInterval(() => {
+    if (state.systemStatus !== "active") return;
+    const ts = new Date().toTimeString().split(" ")[0];
+
+    // VRAM swap simulation
+    if (state.vramSwapEnabled && Math.random() > 0.7) {
+      const localAgents = Object.values(state.agents).filter(a => a.route.includes("Ollama"));
+      if (localAgents.length > 1) {
+        const swapOut = localAgents[Math.floor(Math.random() * localAgents.length)];
+        const swapIn = localAgents[Math.floor(Math.random() * localAgents.length)];
+        if (swapOut.id !== swapIn.id) {
+          if (state.aggressiveUnload) {
+            consoleLogs.push({ time: ts, agent: "system", type: "warning", msg: `VRAM Manager: [Aggressive Unloading] Explicitly purging model for ${swapOut.name} from GPU VRAM.` });
+          }
+          consoleLogs.push({ time: ts, agent: "system", type: "info", msg: `VRAM Manager: Hot-swapping ${swapIn.name} model [${state.quantizationMatrix[swapIn.role] || 'Q8_0'}] into GPU VRAM.` });
+          
+          // Update VRAM active list
+          state.activeModelsInVRAM = [swapIn.name];
+          renderLogs();
+          updateVRAMBar();
+        }
+      }
+    }
+
+    // Rogue Agent Sandbox Watchdog simulation
+    if (state.watchdogEnabled && Math.random() > 0.95) {
+      consoleLogs.push({
+        time: ts,
+        agent: "system",
+        type: "error",
+        msg: `🚨 WATCHDOG TRIGGERED: Agent tried to write to [C:\\Windows\\System32\\hosts] outside sandbox root [${state.sandboxDir}]. Halted!`
+      });
+      renderLogs();
+      
+      // Also log it in Sandbox Multiplexer
+      appendMultiplexerLog("docker", `[${ts}] [sandbox-watchdog] HALTED execution: Write breach detected on C:\\Windows\\System32\\hosts`);
+      appendMultiplexerLog("docker", `[${ts}] [sandbox-watchdog] Container 'dojo-sandbox-c1' terminated. Status code 137.`);
+    }
+
+    // MCP tool execution simulation
+    const activeMCPs = state.mcpServers.filter(s => s.status === "active");
+    if (activeMCPs.length > 0 && Math.random() > 0.8) {
+      const srv = activeMCPs[Math.floor(Math.random() * activeMCPs.length)];
+      const tool = srv.tools[Math.floor(Math.random() * srv.tools.length)];
+      
+      // Check authorization matrix (simplistic check)
+      const allowed = state.mcpAuthMatrix && state.mcpAuthMatrix.coder && state.mcpAuthMatrix.coder[srv.id];
+      if (allowed !== false) {
+        consoleLogs.push({ time: ts, agent: "system", type: "info", msg: `MCP Gateway [${srv.name}]: Executed tool ${tool}() autonomously.` });
+      } else {
+        consoleLogs.push({ time: ts, agent: "system", type: "error", msg: `Security: Blocked execution of MCP tool ${srv.id}/${tool}() due to authorization restrictions.` });
+      }
+      renderLogs();
+    }
+
+    // RAG query simulation
+    if (state.ragConfig.length > 0 && Math.random() > 0.85) {
+      const doc = state.ragConfig[Math.floor(Math.random() * state.ragConfig.length)];
+      if (doc.status === "Indexed") {
+        consoleLogs.push({ time: ts, agent: "system", type: "info", msg: `RAG Query: Retrieved relevance chunks from [${doc.name}] context window.` });
+        renderLogs();
+      }
+    }
+
+    // Custom skill execution simulation
+    if (state.customSkills.length > 0 && Math.random() > 0.9) {
+      const skill = state.customSkills[Math.floor(Math.random() * state.customSkills.length)];
+      consoleLogs.push({ time: ts, agent: "orchestrator", type: "success", msg: `Swarm Executor: Custom skill [${skill.id}] successfully executed.` });
+      renderLogs();
+    }
+
+    // Live connection logs in MCP Registry
+    if (state.activeTab === "mcp-registry" && Math.random() > 0.7) {
+      const logBox = document.getElementById("mcp-events-log");
+      if (logBox) {
+        const packets = [
+          `[${ts}] Heartbeat ping from stdio tunnel... OK`,
+          `[${ts}] Dynamic schema lookup requested by jutsu-coder`,
+          `[${ts}] GitHub pull-request data parsed correctly`,
+          `[${ts}] Headless browser screenshot stored in /workspace/screenshots/`
+        ];
+        logBox.innerHTML += `<div class="log-line">${packets[Math.floor(Math.random() * packets.length)]}</div>`;
+        logBox.scrollTop = logBox.scrollHeight;
+      }
+    }
+
+    // Sandbox Multiplexer logs feed (runs in parallel)
+    if (Math.random() > 0.4) {
+      const terms = ["coder", "tester", "scout", "docker"];
+      const term = terms[Math.floor(Math.random() * terms.length)];
+      
+      const coderLogs = [
+        `[${ts}] info  - [compiler] file modified: src/services/mcp.ts`,
+        `[${ts}] info  - [compiler] compiling target modules...`,
+        `[${ts}] success - [compiler] webpack compiled modules in 480ms`,
+        `[${ts}] warning - [eslint] src/services/mcp.ts: L12 'state' defined but never used`
+      ];
+
+      const testerLogs = [
+        `[${ts}] run   - [tester] running assertions...`,
+        `[${ts}] pass  - [tester] PASS  tests/mcp-router.test.ts (1.42s)`,
+        `[${ts}] stats - [tester] Assertions: 12 passed, 0 failed, 12 total`,
+        `[${ts}] pass  - [tester] Coverage gate check: 84.2% > 80% (PASS)`
+      ];
+
+      const scoutLogs = [
+        `[${ts}] fetch - [scout] loading brave documentation search results...`,
+        `[${ts}] info  - [scout] scraped page: context-protocol-servers/postgres.md`,
+        `[${ts}] debug - [scout] parsed schema instructions, cached 4 chunks`
+      ];
+
+      const dockerLogs = [
+        `[${ts}] sandbox - [docker] mounting directories: /workspace/node_modules`,
+        `[${ts}] sandbox - [docker] enforcing network security filter (Isolated LAN)`,
+        `[${ts}] sandbox - [docker] execution check: no host escapes detected`,
+        `[${ts}] success - [docker] task finished, container destroyed in 2ms`
+      ];
+
+      const logPool = { coder: coderLogs, tester: testerLogs, scout: scoutLogs, docker: dockerLogs };
+      const lines = logPool[term];
+      const randomLine = lines[Math.floor(Math.random() * lines.length)];
+      appendMultiplexerLog(term, randomLine);
+    }
+
+  }, 4000);
+}
+
+// ============================================================
+// BOOTSTRAP EXTENSIONS — Wire everything on DOMContentLoaded
+// ============================================================
+// BOOTSTRAP EXTENSIONS — Wire everything on DOMContentLoaded
+// ============================================================
+document.addEventListener("DOMContentLoaded", () => {
+  // Initialize settings sub-tabs
+  initSettingsSubTabs();
+
+  // Initialize archive sidebar
+  initArchiveSidebar();
+
+  // Initialize the 365-day extended settings listeners
+  initExtendedSettings();
+
+  // Initialize Time-Lapse Viewer
+  initTimeLapseViewer();
+
+  // Start extended simulation (VRAM swaps, MCP logs, RAG, Skills)
+  runExtendedSimulationLoop();
+});
+
+// ============================================================
+// EXTENDED SETTINGS — 365-Day Operations Event Listeners
+// ============================================================
+function initExtendedSettings() {
+  const ts = () => new Date().toTimeString().split(" ")[0];
+  const log = (msg, type = "info") => {
+    consoleLogs.push({ time: ts(), agent: "system", type, msg });
+    renderLogs();
+  };
+
+  // ─── Proving Grounds ─────────────────────────────────────
+  document.querySelectorAll("input[name='tdd-stance']").forEach(radio => {
+    radio.addEventListener("change", e => {
+      state.tddStance = e.target.value;
+      document.querySelectorAll("input[name='tdd-stance']").forEach(r => {
+        r.closest(".radio-option").classList.toggle("active", r === e.target);
+      });
+      const label = e.target.value === "jonin" ? "Jonin Stance (Strict TDD)" : "Genin Stance (Code-First)";
+      log(`⚔️ Proving Grounds: TDD stance set to [${label}].`);
+    });
+  });
+
+  const mutationToggle = document.getElementById("settings-mutation-toggle");
+  if (mutationToggle) {
+    mutationToggle.addEventListener("change", e => {
+      state.mutationTesting = e.target.checked;
+      log(`🔥 Mutation Trial of Fire: ${e.target.checked ? "ENABLED — bug injection active." : "DISABLED."}`, e.target.checked ? "success" : "info");
+    });
+  }
+
+  const coverageSlider = document.getElementById("settings-coverage-gate");
+  const coverageVal = document.getElementById("settings-coverage-gate-val");
+  if (coverageSlider && coverageVal) {
+    coverageSlider.addEventListener("input", e => {
+      state.coverageGate = parseInt(e.target.value);
+      coverageVal.innerText = `${state.coverageGate}%`;
+    });
+    coverageSlider.addEventListener("change", e => {
+      log(`🛡️ Iron Body Shield: Minimum coverage gate set to ${state.coverageGate}%.`);
+    });
+  }
+
+  // ─── Scroll Archive ───────────────────────────────────────
+  const tokenSlider = document.getElementById("settings-scroll-tokens");
+  const tokenVal = document.getElementById("settings-scroll-tokens-val");
+  if (tokenSlider && tokenVal) {
+    tokenSlider.addEventListener("input", e => {
+      state.scrollTokenLimit = parseInt(e.target.value);
+      tokenVal.innerText = state.scrollTokenLimit;
+    });
+    tokenSlider.addEventListener("change", e => {
+      log(`📜 Scroll Slicing Technique: Context token limit set to ${state.scrollTokenLimit} tokens.`);
+    });
+  }
+
+  const memorySelect = document.getElementById("settings-memory-pruning");
+  if (memorySelect) {
+    memorySelect.addEventListener("change", e => {
+      state.memoryPruning = e.target.value;
+      const labels = { daily: "Daily Meditation", weekly: "Weekly Retrospective", eidetic: "Eidetic Memory" };
+      log(`🧠 Memory Pruning cycle changed to: ${labels[state.memoryPruning]}.`);
+    });
+  }
+
+  // ─── Shadow Strike Protocols ──────────────────────────────
+  const midnightToggle = document.getElementById("settings-midnight-deploy");
+  if (midnightToggle) {
+    midnightToggle.addEventListener("change", e => {
+      state.midnightDeploy = e.target.checked;
+      log(`🌙 Midnight Strike Automations: Off-hours deployments ${e.target.checked ? "ENABLED" : "DISABLED"}.`, e.target.checked ? "success" : "error");
+    });
+  }
+
+  const rollbackToggle = document.getElementById("settings-auto-rollback");
+  if (rollbackToggle) {
+    rollbackToggle.addEventListener("change", e => {
+      state.autoRollback = e.target.checked;
+      log(`💨 Smoke Bomb Retreat: Auto-rollback on 5xx ${e.target.checked ? "ARMED" : "DISARMED"}.`, e.target.checked ? "success" : "error");
+    });
+  }
+
+  const chakraSlider = document.getElementById("settings-release-chakra");
+  const chakraVal = document.getElementById("settings-release-chakra-val");
+  if (chakraSlider && chakraVal) {
+    chakraSlider.addEventListener("input", e => {
+      state.releaseChakra = parseInt(e.target.value);
+      chakraVal.innerText = state.releaseChakra;
+    });
+    chakraSlider.addEventListener("change", e => {
+      log(`⚡ Release Chakra gate set to ${state.releaseChakra} completed task${state.releaseChakra > 1 ? "s" : ""}.`);
+    });
+  }
+
+  // ─── Dojo Seals ───────────────────────────────────────────
+  document.querySelectorAll("input[name='execution-seal']").forEach(radio => {
+    radio.addEventListener("change", e => {
+      state.executionSeal = e.target.value;
+      document.querySelectorAll("input[name='execution-seal']").forEach(r => {
+        r.closest(".radio-option").classList.toggle("active", r === e.target);
+      });
+      const sealLabel = { code_only: "Level 1 — Code Only", trusted_docker: "Level 2 — Trusted Docker", unsealed: "Level 3 — UNSEALED ⚠️" };
+      const type = e.target.value === "unsealed" ? "error" : "info";
+      log(`🔒 Dojo Seals execution level changed to: ${sealLabel[e.target.value]}`, type);
+    });
+  });
+
+  const astInput = document.getElementById("settings-ast-limit");
+  if (astInput) {
+    astInput.addEventListener("change", e => {
+      state.astEditLimit = parseInt(e.target.value) || 80;
+      log(`🐇 Rabbit-Hole Detection: Hard reset triggers after ${state.astEditLimit} AST edits.`);
+    });
+  }
+
+  // ─── Nightwalker Protocols ────────────────────────────────
+  const idleSelect = document.getElementById("settings-idle-focus");
+  if (idleSelect) {
+    idleSelect.addEventListener("change", e => {
+      state.idleFocus = e.target.value;
+      const labels = {
+        performance: "Taijutsu Training (Performance Optimization)",
+        documentation: "Scroll Scribing (Documentation)",
+        hibernate: "Hibernation (Save Compute)"
+      };
+      log(`🌑 Nightwalker Protocol updated: Idle focus → ${labels[state.idleFocus]}.`);
+    });
+  }
+
+  // ─── Agent Persona Tuner (Yin-Yang Balance slider) ────────
+  const personaSlider = document.getElementById("agent-persona-temp");
+  const personaTempVal = document.getElementById("agent-persona-temp-val");
+  const personaToneEl = document.getElementById("agent-persona-tone");
+
+  function getTone(temp) {
+    if (temp <= 0.15) return "Surgical";
+    if (temp <= 0.35) return "Analytical";
+    if (temp <= 0.65) return "Balanced";
+    if (temp <= 0.95) return "Expressive";
+    if (temp <= 1.20) return "Inventive";
+    return "Chaotic";
+  }
+
+  if (personaSlider && personaTempVal && personaToneEl) {
+    personaSlider.addEventListener("input", e => {
+      const t = parseFloat(e.target.value);
+      state.agentPersonaTemp = t;
+      personaTempVal.innerText = t.toFixed(2);
+      personaToneEl.innerText = getTone(t);
+    });
+    personaSlider.addEventListener("change", e => {
+      const agent = state.agents[state.selectedAgentId];
+      const agentName = agent ? agent.name : "selected agent";
+      log(`☯️ Yin-Yang Balance: ${agentName} persona temp set to ${state.agentPersonaTemp.toFixed(2)} [${getTone(state.agentPersonaTemp)}].`);
+    });
+  }
+
+  // ─── VRAM Hibernation & Quantization Matrix ─────────────────
+  const aggressiveToggle = document.getElementById("settings-aggressive-unload");
+  if (aggressiveToggle) {
+    aggressiveToggle.addEventListener("change", e => {
+      state.aggressiveUnload = e.target.checked;
+      log(`📼 VRAM Hibernation: Aggressive model unloading ${state.aggressiveUnload ? "ENABLED" : "DISABLED"}.`);
+    });
+  }
+
+  const maxModelsSlider = document.getElementById("settings-max-models");
+  const maxModelsVal = document.getElementById("settings-max-models-val");
+  if (maxModelsSlider && maxModelsVal) {
+    maxModelsSlider.addEventListener("input", e => {
+      state.maxConcurrentModels = parseInt(e.target.value);
+      maxModelsVal.innerText = state.maxConcurrentModels;
+    });
+    maxModelsSlider.addEventListener("change", e => {
+      log(`📼 VRAM Limit: Max concurrent local models set to [${state.maxConcurrentModels}].`);
+    });
+  }
+
+  ["quant-sensei", "quant-coder", "quant-tester"].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.addEventListener("change", e => {
+        const role = id.split("-")[1];
+        state.quantizationMatrix[role] = e.target.value;
+        log(`🎚️ Quantization Strategy: Assigned [${e.target.value}] to ${role.toUpperCase()} tasks.`);
+      });
+    }
+  });
+
+  // ─── Kill Switch & Blast Radius ──────────────────────────────
+  const sandboxDirInput = document.getElementById("settings-sandbox-dir");
+  if (sandboxDirInput) {
+    sandboxDirInput.addEventListener("change", e => {
+      state.sandboxDir = e.target.value || "/workspace";
+      log(`🔒 Sandbox Boundary: Root directory restricted to [${state.sandboxDir}].`);
+    });
+  }
+
+  const sandboxNetSelect = document.getElementById("settings-sandbox-network");
+  if (sandboxNetSelect) {
+    sandboxNetSelect.addEventListener("change", e => {
+      state.sandboxNetLevel = e.target.value;
+      const labels = { isolated: "Isolated LAN", none: "Air-Gapped (No Network)", unrestricted: "Unrestricted Cloud" };
+      log(`🌐 Sandbox Network Stance: Changed to [${labels[state.sandboxNetLevel]}].`);
+    });
+  }
+
+  const watchdogToggle = document.getElementById("settings-watchdog-toggle");
+  if (watchdogToggle) {
+    watchdogToggle.addEventListener("change", e => {
+      state.watchdogEnabled = e.target.checked;
+      log(`🐕 AST Escape Watchdog: ${state.watchdogEnabled ? "ARMED — preventing host file escape." : "DISARMED ⚠️"}`, state.watchdogEnabled ? "success" : "error");
+    });
+  }
+}
+
+// ============================================================
+// TIME-LAPSE VIEWER ENGINE
+// ============================================================
+function initTimeLapseViewer() {
+  const scrubber  = document.getElementById("tl-scrubber");
+  const playhead  = document.getElementById("tl-playhead");
+  const tsVal     = document.getElementById("tl-timestamp-val");
+  const liveBadge = document.getElementById("tl-live-badge");
+  const playBtn   = document.getElementById("tl-play-btn");
+  const playIcon  = document.getElementById("tl-play-icon");
+  const rewindBtn = document.getElementById("tl-rewind-btn");
+  const fwdBtn    = document.getElementById("tl-forward-btn");
+  const speedSel  = document.getElementById("tl-speed-select");
+  const blipsContainer = document.getElementById("tl-blips");
+
+  if (!scrubber || !playhead || !tsVal) return;
+
+  // ── Build activity histogram blips ─────────────────────
+  const TOTAL_BLIPS = 144; // one blip per 10 min
+  for (let i = 0; i < TOTAL_BLIPS; i++) {
+    const blip = document.createElement("div");
+    blip.className = "tl-blip";
+    // simulate higher activity during business hours (6am–10pm → min 360–1320)
+    const minute = (i / TOTAL_BLIPS) * 1440;
+    const inBusiness = minute >= 360 && minute <= 1320;
+    const height = inBusiness
+      ? Math.floor(Math.random() * 70) + 20
+      : Math.floor(Math.random() * 20) + 4;
+    blip.style.height = `${height}%`;
+    // colour by intensity
+    const hue = inBusiness ? "rgba(255,115,0," : "rgba(255,179,0,";
+    blip.style.background = hue + (height / 100 * 0.85 + 0.15) + ")";
+    blipsContainer.appendChild(blip);
+  }
+
+  // ── Helpers ─────────────────────────────────────────────
+  function minutesToLabel(minutes) {
+    const m = Math.round(minutes) % 1440;
+    const h = String(Math.floor(m / 60)).padStart(2, "0");
+    const min = String(m % 60).padStart(2, "0");
+    return `${h}:${min}`;
+  }
+
+  function isLive() {
+    return state.timelapse.currentMinute >= 1435;
+  }
+
+  function updatePlayheadPos(minute) {
+    const pct = (minute / 1440) * 100;
+    playhead.style.left = `${pct}%`;
+  }
+
+  function updateDisplay() {
+    const m = state.timelapse.currentMinute;
+    updatePlayheadPos(m);
+    tsVal.innerText = `${minutesToLabel(m)} — Day ${state.timelapse.day}`;
+    liveBadge.classList.toggle("live-active", isLive());
+    scrubber.value = Math.round(m);
+  }
+
+  updateDisplay();
+
+  // ── Play / Pause ─────────────────────────────────────────
+  const PLAY_SVG  = `<polygon points="5,3 19,12 5,21"/>`;
+  const PAUSE_SVG = `<rect x="5" y="3" width="4" height="18"/><rect x="15" y="3" width="4" height="18"/>`;
+
+  let tlInterval = null;
+  const TICK_MS = 250; // advances time every 250ms
+
+  function startPlayback() {
+    if (tlInterval) return;
+    state.timelapse.playing = true;
+    playIcon.innerHTML = PAUSE_SVG;
+    playBtn.classList.add("tl-playing");
+    tlInterval = setInterval(() => {
+      if (!state.timelapse.playing) { clearInterval(tlInterval); tlInterval = null; return; }
+      const step = (60 / TICK_MS) * state.timelapse.speed; // minutes per tick
+      state.timelapse.currentMinute += step;
+      if (state.timelapse.currentMinute >= 1440) {
+        state.timelapse.currentMinute = 1440;
+        stopPlayback(); // reached end of day
+      }
+      updateDisplay();
+    }, TICK_MS);
+  }
+
+  function stopPlayback() {
+    state.timelapse.playing = false;
+    playIcon.innerHTML = PLAY_SVG;
+    playBtn.classList.remove("tl-playing");
+    if (tlInterval) { clearInterval(tlInterval); tlInterval = null; }
+  }
+
+  playBtn.addEventListener("click", () => {
+    // If at the end, rewind first
+    if (state.timelapse.currentMinute >= 1440) state.timelapse.currentMinute = 0;
+    if (state.timelapse.playing) stopPlayback(); else startPlayback();
+  });
+
+  // ── Rewind / Forward buttons (±60 min) ──────────────────
+  rewindBtn.addEventListener("click", () => {
+    stopPlayback();
+    state.timelapse.currentMinute = Math.max(0, state.timelapse.currentMinute - 60);
+    updateDisplay();
+  });
+
+  fwdBtn.addEventListener("click", () => {
+    stopPlayback();
+    state.timelapse.currentMinute = Math.min(1440, state.timelapse.currentMinute + 60);
+    updateDisplay();
+  });
+
+  // ── Speed selector ───────────────────────────────────────
+  speedSel.addEventListener("change", e => {
+    state.timelapse.speed = parseFloat(e.target.value);
+    // Restart interval with new speed if playing
+    if (state.timelapse.playing) {
+      clearInterval(tlInterval);
+      tlInterval = null;
+      startPlayback();
+    }
+  });
+
+  // ── Scrubber drag ────────────────────────────────────────
+  scrubber.addEventListener("input", e => {
+    stopPlayback();
+    state.timelapse.currentMinute = parseInt(e.target.value);
+    updateDisplay();
+  });
+
+  // ── Click on the track background ───────────────────────
+  document.getElementById("tl-track")?.addEventListener("click", e => {
+    if (e.target === scrubber) return; // handled by scrubber
+    const rect = e.currentTarget.getBoundingClientRect();
+    const pct = (e.clientX - rect.left) / rect.width;
+    stopPlayback();
+    state.timelapse.currentMinute = Math.round(pct * 1440);
+    updateDisplay();
+  });
+
+  // ── Live badge click → jump to live ─────────────────────
+  liveBadge.addEventListener("click", () => {
+    stopPlayback();
+    state.timelapse.currentMinute = 1440;
+    updateDisplay();
+  });
+}
+
+// ============================================================
+// MCP REGISTRY & AUTHORIZATION MATRIX RENDERER
+// ============================================================
+function renderMCPRegistry() {
+  const grid = document.getElementById("mcp-servers-grid");
+  if (!grid) return;
+
+  grid.innerHTML = state.mcpServers.map(srv => {
+    const isOnline = srv.status === "active";
+    return `
+      <div class="glass-card mcp-node-card" style="padding:14px; border-radius:10px;">
+        <div class="mcp-node-header">
+          <h4>📡 ${srv.name}</h4>
+          <span class="badge ${isOnline ? 'badge-success' : 'badge-danger'}">${isOnline ? 'ONLINE' : 'OFFLINE'}</span>
+        </div>
+        <div style="font-size:0.72rem; color:var(--text-muted); margin-bottom:8px; font-family:var(--font-mono); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
+          cmd: ${srv.command} ${srv.args || ''}
+        </div>
+        <div class="mcp-tools-list">
+          ${srv.tools.map(tool => `<span class="mcp-tool-badge">${tool}</span>`).join('')}
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  // Renders the matrix:
+  const authMatrixBody = document.getElementById("mcp-auth-matrix-body");
+  if (authMatrixBody) {
+    const roles = [
+      { key: "orchestrator", name: "🏯 Sensei (Orchestrator)" },
+      { key: "coder", name: "🥷 Jutsu Coder" },
+      { key: "tester", name: "⚔️ Kunai Tester" },
+      { key: "security", name: "👺 Stealth Auditor" }
+    ];
+    const servers = [
+      { id: "sqlite", col: "SQLite Database" },
+      { id: "github", col: "GitHub Integration" },
+      { id: "puppeteer", col: "Puppeteer Browser" },
+      { id: "brave-search", col: "Brave Search API" }
+    ];
+
+    if (!state.mcpAuthMatrix) {
+      state.mcpAuthMatrix = {
+        orchestrator: { sqlite: true, github: true, puppeteer: false, "brave-search": true },
+        coder: { sqlite: true, github: true, puppeteer: true, "brave-search": false },
+        tester: { sqlite: false, github: false, puppeteer: true, "brave-search": false },
+        security: { sqlite: true, github: false, puppeteer: false, "brave-search": false }
+      };
+    }
+
+    authMatrixBody.innerHTML = roles.map(role => {
+      const auth = state.mcpAuthMatrix[role.key] || {};
+      return `
+        <tr>
+          <td style="font-weight: 600;">${role.name}</td>
+          ${servers.map(srv => {
+            const checked = auth[srv.id] ? "checked" : "";
+            return `
+              <td style="text-align:center;">
+                <label class="switch" style="transform: scale(0.85); display: inline-block;">
+                  <input type="checkbox" class="mcp-matrix-checkbox" data-role="${role.key}" data-server="${srv.id}" ${checked}>
+                  <span class="slider-toggle"></span>
+                </label>
+              </td>
+            `;
+          }).join('')}
+        </tr>
+      `;
+    }).join('');
+
+    // Wire auth matrix checkbox listeners
+    document.querySelectorAll(".mcp-matrix-checkbox").forEach(chk => {
+      chk.addEventListener("change", e => {
+        const { role, server } = e.target.dataset;
+        state.mcpAuthMatrix[role][server] = e.target.checked;
+        const srvName = state.mcpServers.find(s => s.id === server)?.name || server;
+        consoleLogs.push({
+          time: new Date().toTimeString().split(" ")[0],
+          agent: "system",
+          type: "info",
+          msg: `Matrix Config: Access for role [${role}] on MCP [${srvName}] set to ${e.target.checked ? "GRANTED" : "REVOKED"}.`
+        });
+        renderLogs();
+      });
+    });
+  }
+}
+
+function initMCPRegistryForm() {
+  const form = document.getElementById("mcp-register-form");
+  if (form && !form.dataset.wired) {
+    form.dataset.wired = "true";
+    form.addEventListener("submit", e => {
+      e.preventDefault();
+      const name = document.getElementById("new-mcp-name").value;
+      const transport = document.getElementById("new-mcp-transport").value;
+      const command = document.getElementById("new-mcp-command").value;
+      
+      const newServer = {
+        id: name.toLowerCase().replace(/[^a-z0-9]/g, "-"),
+        name: name,
+        command: transport === "stdio" ? command.split(" ")[0] : "SSE Endpoint",
+        args: transport === "stdio" ? command.split(" ").slice(1).join(" ") : command,
+        status: "active",
+        tools: ["custom_mcp_tool"]
+      };
+
+      state.mcpServers.push(newServer);
+      renderMCPRegistry();
+      
+      const ts = new Date().toTimeString().split(" ")[0];
+      const logBox = document.getElementById("mcp-events-log");
+      if (logBox) {
+        logBox.innerHTML += `<div class="log-line text-success">[${ts}] Established stdio tunnel to ${name} successfully. Registered 1 tool.</div>`;
+        logBox.scrollTop = logBox.scrollHeight;
+      }
+      
+      consoleLogs.push({
+        time: ts,
+        agent: "system",
+        type: "success",
+        msg: `MCP Server Hub: Connected to [${name}] via SSE/Stdio. Registered tools: [custom_mcp_tool].`
+      });
+      renderLogs();
+      form.reset();
+    });
+  }
+}
+
+// ============================================================
+// SWARM NEURAL KNOWLEDGE GRAPH (Force-Graph Explorer)
+// ============================================================
+let neuralGraphInstance = null;
+const neuralGraphData = {
+  nodes: [
+    { id: "index.html", label: "index.html", group: "file", size: 95, summary: "Main HTML entry point. Hosts UI panels, sidebars, context panels, wizard dialogs, and dynamic RAG/MCP templates.", val: 12 },
+    { id: "app.js", label: "app.js", group: "file", size: 148, summary: "Core logic controller. Manages state synchronization, time-lapse engine, file loaders, terminal console simulator, and live agent telemetry.", val: 18 },
+    { id: "styles.css", label: "styles.css", group: "file", size: 75, summary: "Global styling rules. Themes dark glassmorphism, responsive stack layouts, neon orange accent colors, and custom scrollbar containers.", val: 10 },
+    { id: "db.sql", label: "db.sql", group: "file", size: 4, summary: "SQLite migrations schema database. Designs relational tables for credentials, logs, and backlog items.", val: 5 },
+    { id: "initExtendedSettings", label: "initExtendedSettings()", group: "func", size: 0, summary: "Binds click and input handlers for advanced settings: Proving grounds, Scroll tokens, Rollbacks, and Dojo sandbox boundaries.", val: 4 },
+    { id: "renderReport", label: "renderReport()", group: "func", size: 0, summary: "Constructs high-fidelity report views including A/B z-scores, CVE package warning alerts, and OWASP audit lists.", val: 4 },
+    { id: "runExtendedSimulationLoop", label: "runExtendedSimulationLoop()", group: "func", size: 0, summary: "Fires periodically to stream parallel console lines, run VRAM swapping telemetry, and update active hardware logs.", val: 4 },
+    { id: "t_users", label: "table: users", group: "table", size: 0, summary: "Relational database schema storing system user logins, hashed tokens, and access tiers.", val: 6 },
+    { id: "t_backlog", label: "table: backlog", group: "table", size: 0, summary: "Tracks engineering goals, tasks descriptions, and current workflow node states.", val: 6 }
+  ],
+  links: [
+    { source: "app.js", target: "index.html" },
+    { source: "styles.css", target: "index.html" },
+    { source: "app.js", target: "initExtendedSettings" },
+    { source: "app.js", target: "renderReport" },
+    { source: "app.js", target: "runExtendedSimulationLoop" },
+    { source: "db.sql", target: "t_users" },
+    { source: "db.sql", target: "t_backlog" },
+    { source: "app.js", target: "t_backlog" }
+  ]
+};
+
+function initNeuralGraph() {
+  const canvasContainer = document.getElementById("neural-graph-canvas");
+  if (!canvasContainer || neuralGraphInstance) return;
+
+  if (typeof ForceGraph === 'undefined') {
+    setTimeout(initNeuralGraph, 200);
+    return;
+  }
+
+  document.getElementById("btn-graph-reset")?.addEventListener("click", () => {
+    if (neuralGraphInstance) {
+      neuralGraphInstance.centerAt(0, 0, 400);
+      neuralGraphInstance.zoom(2.0, 400);
+    }
+  });
+
+  document.getElementById("btn-graph-zoom-in")?.addEventListener("click", () => {
+    if (neuralGraphInstance) neuralGraphInstance.zoom(neuralGraphInstance.zoom() * 1.3, 200);
+  });
+
+  document.getElementById("btn-graph-zoom-out")?.addEventListener("click", () => {
+    if (neuralGraphInstance) neuralGraphInstance.zoom(neuralGraphInstance.zoom() / 1.3, 200);
+  });
+
+  document.getElementById("node-detail-close")?.addEventListener("click", () => {
+    document.getElementById("node-detail-drawer")?.classList.remove("open");
+  });
+
+  const btnOpenEditor = document.getElementById("node-btn-open-editor");
+  if (btnOpenEditor) {
+    btnOpenEditor.onclick = () => {
+      const path = btnOpenEditor.dataset.path;
+      if (path) {
+        switchTab("dojo-workbench");
+        currentSelectedFile = path;
+        loadSelectedFile();
+        renderFileExplorer();
+      }
+    };
+  }
+
+  const width = canvasContainer.clientWidth || 800;
+  const height = canvasContainer.clientHeight || 500;
+
+  neuralGraphInstance = ForceGraph()(canvasContainer)
+    .width(width)
+    .height(height)
+    .graphData(neuralGraphData)
+    .nodeId('id')
+    .nodeLabel('label')
+    .nodeVal('val')
+    .nodeColor(node => {
+      if (node.group === "file") return "#ff7300";
+      if (node.group === "func") return "#9c27b0";
+      return "#00bcd4";
+    })
+    .linkColor(() => 'rgba(255, 255, 255, 0.15)')
+    .linkWidth(1.5)
+    .onNodeClick(node => {
+      const drawer = document.getElementById("node-detail-drawer");
+      if (drawer) {
+        document.getElementById("node-detail-title").innerText = node.label;
+        document.getElementById("node-meta-path").innerText = node.id;
+        document.getElementById("node-meta-type").innerText = node.group;
+        document.getElementById("node-meta-size").innerText = node.size ? `${node.size} KB` : "—";
+        document.getElementById("node-detail-summary").innerText = node.summary;
+        
+        const btnOpen = document.getElementById("node-btn-open-editor");
+        if (btnOpen) {
+          if (node.group === "file") {
+            btnOpen.style.display = "block";
+            btnOpen.dataset.path = node.id;
+          } else {
+            btnOpen.style.display = "none";
+          }
+        }
+        
+        drawer.classList.add("open");
+      }
+    });
+
+  neuralGraphInstance.d3Force('charge').strength(-150);
+  neuralGraphInstance.d3Force('link').distance(70);
+  
+  neuralGraphInstance.centerAt(0, 0);
+  neuralGraphInstance.zoom(2.0);
+}
+
+// ============================================================
+// SANDBOX MULTIPLEXER (tmux for Agents)
+// ============================================================
+function initSandboxMultiplexer() {
+  document.querySelectorAll(".term-clear").forEach(btn => {
+    btn.onclick = () => {
+      const term = btn.dataset.term;
+      state.multiplexerLogs[term] = [];
+      const termBody = document.getElementById(`term-${term}-body`);
+      if (termBody) termBody.innerHTML = "";
+    };
+  });
+
+  document.querySelectorAll(".term-pause").forEach(btn => {
+    btn.onclick = () => {
+      const term = btn.dataset.term;
+      state.multiplexerPaused[term] = !state.multiplexerPaused[term];
+      btn.innerText = state.multiplexerPaused[term] ? "▶️" : "⏸️";
+      btn.title = state.multiplexerPaused[term] ? "Resume Stream" : "Pause Stream";
+    };
+  });
+
+  const ts = new Date().toTimeString().split(" ")[0];
+  const defaults = {
+    coder: [
+      `[${ts}] info  - [compiler] watching source files...`,
+      `[${ts}] debug - [compiler] loaded tsconfig.json`,
+      `[${ts}] info  - [compiler] webpack compiled successfully in 1420ms`
+    ],
+    tester: [
+      `[${ts}] info  - [tester] jest initialized`,
+      `[${ts}] pass  - [tester] PASS  tests/auth.test.ts (4.82s)`,
+      `[${ts}] pass  - [tester] PASS  tests/rag.test.ts (2.12s)`
+    ],
+    scout: [
+      `[${ts}] info  - [scout] BraveSearch API connection: OK`,
+      `[${ts}] query - [scout] GET /search?q=model-context-protocol-schema`,
+      `[${ts}] info  - [scout] Fetch OK: found 8 documentation references`
+    ],
+    docker: [
+      `[${ts}] docker - [docker] Programmatic boot: Container 'dojo-sandbox-c1' initialized`,
+      `[${ts}] docker - [docker] Image: node:20-alpine`,
+      `[${ts}] docker - [docker] Sandboxing limits: ROOT=/workspace, NET=isolated`
+    ]
+  };
+
+  Object.keys(defaults).forEach(key => {
+    const termBody = document.getElementById(`term-${key}-body`);
+    if (termBody && termBody.children.length === 0) {
+      defaults[key].forEach(line => {
+        appendMultiplexerLog(key, line);
+      });
+    }
+  });
+}
+
+function appendMultiplexerLog(term, text) {
+  if (state.multiplexerPaused[term]) return;
+  
+  const container = document.getElementById(`term-${term}-body`);
+  if (!container) return;
+
+  const div = document.createElement("div");
+  div.className = "log-line";
+  
+  if (text.includes("PASS") || text.includes("success") || text.includes("OK")) {
+    div.innerHTML = text.replace(/PASS|success|OK/g, match => `<span style="color:#4caf50; font-weight:bold;">${match}</span>`);
+  } else if (text.includes("FAIL") || text.includes("error") || text.includes("Halted")) {
+    div.innerHTML = text.replace(/FAIL|error|Halted/g, match => `<span style="color:#f44336; font-weight:bold;">${match}</span>`);
+  } else if (text.includes("compile") || text.includes("warning") || text.includes("Advisory")) {
+    div.innerHTML = text.replace(/compile|warning|Advisory/g, match => `<span style="color:#ffb300; font-weight:bold;">${match}</span>`);
+  } else {
+    div.innerText = text;
+  }
+
+  container.appendChild(div);
+  container.scrollTop = container.scrollHeight;
+
+  while (container.children.length > 50) {
+    container.removeChild(container.firstChild);
+  }
+}
+
+

@@ -1,0 +1,43 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+build/
+
+# Cache
+.cache/
+
+# IDE
+.idea/
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment
+.env
+.env.*
+
+# Config
+*.config.js
+*.config.ts
+.eslintrc.*
+.prettierrc
+
+# Type declarations
+**/*.d.ts
+
+# Backups
+*.backup
+*.min.js
+
+# Test coverage
+coverage/
+.nyc_output/
+
+# Lock files
+package-lock.json
+yarn.lock
+pnpm-lock.yaml

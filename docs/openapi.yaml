@@ -1,0 +1,226 @@
+openapi: 3.0.3
+info:
+  title: coNinja Swarm Dashboard API
+  description: API contract for the coNinja Shadow Swarm dashboard backend integrations.
+  version: 1.0.0
+servers:
+  - url: /api/v1
+paths:
+  /project:
+    get:
+      summary: Fetch project metadata
+      description: Returns details of the active project, current system status, budget spent/limit, and autonomous metric summaries.
+      responses:
+        '200':
+          description: Successful retrieval
+  /agents:
+    get:
+      summary: List all active agents
+      responses:
+        '200':
+          description: List of agents
+    post:
+      summary: Register/Create new agent
+      responses:
+        '201':
+          description: Agent created
+  /agents/{id}:
+    get:
+      summary: Fetch agent by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Agent details
+    put:
+      summary: Update agent parameters/status
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Agent updated
+    delete:
+      summary: Remove agent from the swarm
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Agent removed
+  /agents/{id}/metrics:
+    get:
+      summary: Fetch performance metrics of a specific agent
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Performance metrics
+  /tasks:
+    get:
+      summary: Retrieve tasks list
+      parameters:
+        - name: status
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Tasks list
+  /tasks/{id}:
+    get:
+      summary: Retrieve task by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Task details
+    put:
+      summary: Update task properties/progress
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Task updated
+  /workflow/pipeline:
+    get:
+      summary: Retrieve CI/CD workflow pipeline stage data
+      responses:
+        '200':
+          description: Pipeline stage details
+  /workflow/stage/{stageId}:
+    put:
+      summary: Update CI/CD workflow stage properties
+      parameters:
+        - name: stageId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Stage updated
+  /workflow/stage/{stageId}/approval:
+    post:
+      summary: Require manual review/approval gate for stage
+      parameters:
+        - name: stageId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Approval gate set
+  /debate/sessions:
+    get:
+      summary: Fetch architecture debate sessions
+      responses:
+        '200':
+          description: Sessions list
+    post:
+      summary: Start new debate session
+      responses:
+        '201':
+          description: Session created
+  /debate/sessions/{id}:
+    get:
+      summary: Fetch debate session by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Session details
+  /debate/sessions/{id}/decide:
+    post:
+      summary: Record decision on debate session
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Decision logged
+  /debate/sessions/{id}/adr:
+    post:
+      summary: Generate Architectural Decision Record (ADR)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ADR generated
+  /memory/search:
+    get:
+      summary: Search vector memory database
+      parameters:
+        - name: query
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Vector search results
+  /memory/impact:
+    post:
+      summary: Analyze impact analysis of target changes
+      responses:
+        '200':
+          description: Impact analysis report
+  /testing/suites:
+    get:
+      summary: Retrieve all testing suites
+      responses:
+        '200':
+          description: Testing suites list
+  /testing/suites/{id}/rerun:
+    post:
+      summary: Rerun specific test suite
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Sweep scheduled
+  /security/report:
+    get:
+      summary: Fetch security scanning reports
+      responses:
+        '200':
+          description: Scanning reports
