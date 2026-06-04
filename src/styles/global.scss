@@ -1,6 +1,11 @@
 // Global Styles
 @import './mixins.scss';
+@import './empty-state.scss';
+@import './skeleton.scss';
+@import './toast.scss';
+@import './form-feedback.scss';
 // Import this file in your main entry point
+
 
 // Reset and base styles
 *,
@@ -31,31 +36,36 @@ body {
 }
 
 // Typography
+html {
+  font-family: $font-family;
+}
+
 h1,
 h2,
 h3,
 h4,
 h5,
 h6 {
+  font-family: $font-family;
   font-weight: $font-weight-semibold;
   line-height: $line-height-tight;
   color: $gray-900;
 }
 
 h1 {
-  font-size: $font-size-3xl;
+  font-size: $font-size-3xl; // 1.45rem
 }
 
 h2 {
-  font-size: $font-size-2xl;
+  font-size: $font-size-2xl; // 1.25rem
 }
 
 h3 {
-  font-size: $font-size-xl;
+  font-size: $font-size-xl; // 0.95rem
 }
 
 h4 {
-  font-size: $font-size-lg;
+  font-size: $font-size-lg; // 0.85rem
 }
 
 h5 {

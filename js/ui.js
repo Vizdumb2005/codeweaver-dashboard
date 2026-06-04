@@ -1,5 +1,15 @@
 // --- DYNAMIC RENDERING UTILITIES ---
 
+// === MONITORING / ERROR LOGGING SYSTEM (Sentry placeholder) ===
+window.logErrorToSentry = function (error, context) {
+  console.error('[Sentry Monitoring Log]', {
+    message: error.message,
+    stack: error.stack,
+    context: context,
+    timestamp: new Date().toISOString(),
+  });
+};
+
 // === PERFORMANCE UTILITIES ===
 // Debounce function to prevent excessive render calls
 window.debounce = function (func, wait) {
@@ -198,6 +208,10 @@ window.selectTask = function (taskId) {
       outputContainer.style.color = '#5e5248';
     }
   }
+
+  if (typeof window.updateBreadcrumbs === 'function') {
+    window.updateBreadcrumbs();
+  }
 };
 
 window.renderKanban = function (filter = 'all') {
@@ -230,6 +244,9 @@ window.renderKanban = function (filter = 'all') {
     kanbanBoard.addEventListener('dragstart', (e) => {
       const card = e.target.closest('.task-card');
       if (card) {
+        if (typeof performance !== 'undefined') {
+          performance.mark('kanban-drag-start');
+        }
         e.dataTransfer.setData('text/plain', card.dataset.id);
         card.style.opacity = '0.5';
       }
@@ -293,6 +310,7 @@ window.renderKanban = function (filter = 'all') {
       card = document.createElement('div');
       card.className = 'task-card';
       card.setAttribute('draggable', 'true');
+      card.setAttribute('tabindex', '0');
       card.dataset.id = task.id;
 
       targetList.appendChild(card);
@@ -314,6 +332,13 @@ window.renderKanban = function (filter = 'all') {
       card.classList.add('active-border-glow');
     } else {
       card.classList.remove('active-border-glow');
+    }
+
+    // Update pending sync class
+    if (window.state.pendingSyncTasks && window.state.pendingSyncTasks.includes(task.id)) {
+      card.classList.add('pending-sync');
+    } else {
+      card.classList.remove('pending-sync');
     }
 
     // Rebuild internal elements dynamically
@@ -651,20 +676,22 @@ window.renderLogs = function () {
   });
 
   if (filteredLogs.length === 0) {
-    container.innerHTML = `
-      <div class="empty-state empty-state-sm" role="status" aria-live="polite">
-        <div class="empty-state-illustration">
-          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="color: var(--text-muted, #5e5248);">
-            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-            <polyline points="14 2 14 8 20 8"/>
-            <line x1="16" y1="13" x2="8" y2="13"/>
-            <line x1="16" y1="17" x2="8" y2="17"/>
-          </svg>
+    if (typeof window.renderEmptyState === 'function') {
+      const preset = (window.emptyStatePresets && window.emptyStatePresets.logs) || {
+        illustration: 'scroll',
+        title: 'No stealth scrolls to display',
+        description: 'Mission logs will appear here as shinobi agents complete tasks. Adjust filters or wait for new activity.',
+        size: 'sm'
+      };
+      container.innerHTML = window.renderEmptyState(preset);
+    } else {
+      container.innerHTML = `
+        <div class="empty-state empty-state-sm" role="status" aria-live="polite">
+          <h3 class="empty-state-title">No stealth scrolls to display</h3>
+          <p class="empty-state-description">Mission logs will appear here as shinobi agents complete tasks. Adjust filters or wait for new activity.</p>
         </div>
-        <h3 class="empty-state-title">No stealth scrolls to display</h3>
-        <p class="empty-state-description">Mission logs will appear here as shinobi agents complete tasks. Adjust filters or wait for new activity.</p>
-      </div>
-    `;
+      `;
+    }
     return;
   }
 
@@ -724,20 +751,42 @@ window.initTabComponent = function (tabId, renderFuncName, initFuncName) {
     }
   } catch (e) {
     console.error(`[CoNinja] Error initializing ${tabId}:`, e);
-    // Provide fallback UI for the tab container
-    const container = document.getElementById(`${tabId}-container`);
+    if (typeof window.logErrorToSentry === 'function') {
+      window.logErrorToSentry(e, { tabId, phase: 'initialization' });
+    }
+    // Provide fallback UI for the tab container or tab content element
+    const container = document.getElementById(`${tabId}-container`) || document.getElementById(`tab-${tabId}`);
     if (container) {
-      container.innerHTML = `<div style="padding:40px;text-align:center;color:var(--text-muted);">Failed to load ${tabId.replace(/-/g, ' ')}. <button class="btn btn-outline btn-sm" onclick="window.switchTab('${tabId}')">Retry</button></div>`;
+      container.innerHTML = `
+        <div class="cns-tab-error-boundary glass-card" style="padding: 40px; text-align: center; max-width: 500px; margin: 40px auto; border: 1px solid rgba(239, 68, 68, 0.2); border-radius: 12px; background-color: #0c0a08; color: #fff; box-shadow: 0 12px 32px rgba(0,0,0,0.5);">
+          <div style="font-size: 3rem; margin-bottom: 16px;">⚠️</div>
+          <h3 style="font-size: 1.2rem; font-weight: 700; color: var(--accent-error, #ef4444); margin-bottom: 10px; font-family: 'Outfit', sans-serif;">Stealth Thread Interrupted</h3>
+          <p style="font-size: 0.9rem; color: var(--text-muted, #8a8a9a); line-height: 1.6; margin-bottom: 20px; font-family: 'Outfit', sans-serif;">
+            A critical error occurred while executing this section. The ninja swarm has logged this incident.
+          </p>
+          <div style="display: flex; gap: 12px; justify-content: center; align-items: center;">
+            <button class="btn btn-outline btn-sm" onclick="window.switchTab('${tabId}')" style="min-height: 38px; display: inline-flex; align-items: center; justify-content: center; font-family: 'Outfit', sans-serif;">Reload Section</button>
+            <a href="mailto:support@coninja.io?subject=Swarm%20Error%20Report&body=Error%20in%20tab%20${tabId}" class="btn btn-primary btn-sm" style="min-height: 38px; display: inline-flex; align-items: center; justify-content: center; text-decoration: none; color: #fff; background: var(--accent-orange, #ff7300); padding: 0 16px; border-radius: 4px; font-family: 'Outfit', sans-serif;">Contact Support</a>
+          </div>
+        </div>`;
     }
   }
 };
 
 window.switchTab = function (tabId) {
+  if (typeof performance !== 'undefined') {
+    performance.mark('tab-switch-start');
+  }
   // 1b. Render Login tab view if user is not authenticated
   if (window.state && window.state.user && !window.state.user.isAuthenticated) {
     tabId = 'login';
   }
   window.state.activeTab = tabId;
+
+  // Update browser history and hash state
+  if (window.location.hash !== `#${tabId}` && (tabId !== 'login' || window.location.hash)) {
+    window.history.pushState({ tabId }, '', `#${tabId}`);
+  }
 
   // Toggle active tab content
   document.querySelectorAll('.tab-content').forEach((tab) => {
@@ -1018,6 +1067,23 @@ window.switchTab = function (tabId) {
   if (typeof window.decorateNinjaIcons === 'function') {
     const tabEl = document.getElementById(`tab-${tabId}`);
     if (tabEl) window.decorateNinjaIcons(tabEl);
+  }
+
+  if (typeof window.updateBreadcrumbs === 'function') {
+    window.updateBreadcrumbs();
+  }
+
+  if (typeof performance !== 'undefined') {
+    try {
+      performance.mark('tab-switch-end');
+      performance.measure(`tab-switch:${tabId}`, 'tab-switch-start', 'tab-switch-end');
+      const entry = performance.getEntriesByName(`tab-switch:${tabId}`).pop();
+      if (entry && typeof window.reportPerformanceMetric === 'function') {
+        window.reportPerformanceMetric('tab-switch-time', entry.duration);
+      }
+    } catch (e) {
+      // Gracefully ignore measurement error in unsupported contexts
+    }
   }
 };
 
@@ -1759,4 +1825,524 @@ window.renderSkeleton = function (type = 'text', count = 1) {
   };
   const className = classes[type] || classes.text;
   return Array(count).fill(`<div class="${className}"></div>`).join('');
+};
+
+window.addEventListener('popstate', (e) => {
+  const tabId = (e.state && e.state.tabId) || window.location.hash.replace('#', '') || 'swarm-graph';
+  if (tabId && window.state && window.state.user && window.state.user.isAuthenticated) {
+    window.dispatch('SWITCH_TAB', tabId);
+  }
+});
+
+/* ============================================================
+   BREADCRUMB NAVIGATION HELPERS
+   ============================================================ */
+window.updateBreadcrumbs = function () {
+  const container = document.getElementById('breadcrumb-navigation');
+  if (!container) return;
+
+  const activeTab = window.state?.activeTab;
+  if (!activeTab || activeTab === 'login') {
+    container.innerHTML = '';
+    container.style.display = 'none';
+    return;
+  }
+
+  container.style.display = 'flex';
+
+  // Find the nav-item button for the active tab
+  const navItem = document.querySelector(`.nav-item[data-tab="${activeTab}"]`);
+  let sectionName = '';
+  let tabName = '';
+
+  if (navItem) {
+    // Parent section title
+    const navSection = navItem.closest('.nav-section');
+    if (navSection) {
+      const sectionTitleEl = navSection.querySelector('.nav-section-title');
+      if (sectionTitleEl) {
+        sectionName = sectionTitleEl.textContent.trim();
+      }
+    }
+    // Tab name
+    const spanEl = navItem.querySelector('span');
+    if (spanEl) {
+      tabName = spanEl.textContent.trim();
+    }
+  }
+
+  // Fallbacks if not found (e.g. settings or custom routing tab)
+  if (!sectionName) {
+    if (activeTab === 'settings') {
+      sectionName = 'Infrastructure';
+      tabName = 'Settings';
+    } else {
+      sectionName = 'Dashboard';
+      tabName = activeTab.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+    }
+  }
+
+  let html = `<span class="breadcrumb-item" onclick="window.focusNavSection('${sectionName.replace(/'/g, "\\'")}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}" tabindex="0">${sectionName}</span>`;
+  html += `<span class="breadcrumb-separator">&gt;</span>`;
+
+  const selectedTaskId = window.state?.selectedTaskId;
+  if (activeTab === 'task-board' && selectedTaskId) {
+    html += `<span class="breadcrumb-item" onclick="window.clearSelectedTaskAndSwitch('${activeTab}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}" tabindex="0">${tabName}</span>`;
+    html += `<span class="breadcrumb-separator">&gt;</span>`;
+    html += `<span class="breadcrumb-item active" tabindex="0">Task #${selectedTaskId}</span>`;
+  } else {
+    html += `<span class="breadcrumb-item active" tabindex="0">${tabName}</span>`;
+  }
+
+  container.innerHTML = html;
+};
+
+window.focusNavSection = function (sectionName) {
+  const headers = document.querySelectorAll('.nav-section-header');
+  headers.forEach((header) => {
+    const titleEl = header.querySelector('.nav-section-title');
+    if (titleEl && titleEl.textContent.trim() === sectionName) {
+      const section = header.closest('.nav-section');
+      if (section && section.classList.contains('collapsed')) {
+        header.click();
+      }
+    }
+  });
+};
+
+window.clearSelectedTaskAndSwitch = function (tabId) {
+  window.state.selectedTaskId = null;
+  const agentPane = document.getElementById('pane-agent-detail');
+  const taskPane = document.getElementById('pane-task-detail');
+  if (agentPane) agentPane.classList.add('active');
+  if (taskPane) taskPane.classList.remove('active');
+  window.dispatch('SWITCH_TAB', tabId);
+};
+
+/* ============================================================
+   QUICK-ACCESS PINNING HELPERS
+   ============================================================ */
+window.initPinButtons = function () {
+  if (!window.state) window.state = {};
+  if (!window.state.pinnedTabs) {
+    try {
+      window.state.pinnedTabs = JSON.parse(localStorage.getItem('coNinja_pinnedTabs') || '[]');
+    } catch (e) {
+      window.state.pinnedTabs = [];
+    }
+  }
+
+  // Find all nav items that are NOT already in the pinned container
+  const navItems = document.querySelectorAll('.nav-menu .nav-section:not(#nav-section-pinned) .nav-item');
+  navItems.forEach((btn) => {
+    if (btn.querySelector('.pin-tab-btn')) return; // already added
+
+    // Create star button
+    const pinBtn = document.createElement('button');
+    pinBtn.className = 'pin-tab-btn';
+    pinBtn.setAttribute('aria-label', 'Pin screen');
+    pinBtn.setAttribute('title', 'Pin screen');
+    pinBtn.innerHTML = `
+      <svg class="star-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polygon points="12,2 15,9 22,9 17,14 19,21 12,17 5,21 7,14 2,9 9,9"/>
+      </svg>
+    `;
+    
+    pinBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      window.togglePinTab(btn.dataset.tab);
+    });
+
+    btn.appendChild(pinBtn);
+  });
+
+  window.updatePinnedUI();
+};
+
+window.togglePinTab = function (tabId) {
+  let pinned = window.state.pinnedTabs || [];
+  const index = pinned.indexOf(tabId);
+  if (index >= 0) {
+    // Unpin
+    pinned.splice(index, 1);
+  } else {
+    // Pin (up to 5)
+    if (pinned.length >= 5) {
+      if (typeof window.showToast === 'function') {
+        window.showToast('You can only pin up to 5 screens.', 'warning');
+      } else {
+        console.warn('You can only pin up to 5 screens.');
+      }
+      return;
+    }
+    pinned.push(tabId);
+  }
+  window.state.pinnedTabs = pinned;
+  try {
+    localStorage.setItem('coNinja_pinnedTabs', JSON.stringify(pinned));
+  } catch (e) {
+    console.warn('Failed to save pinned tabs to localStorage', e);
+  }
+  
+  window.updatePinnedUI();
+};
+
+window.updatePinnedUI = function () {
+  const pinnedList = window.state?.pinnedTabs || [];
+  const pinnedSection = document.getElementById('nav-section-pinned');
+  const container = document.getElementById('pinned-items-container');
+  if (!pinnedSection || !container) return;
+
+  // Clear container
+  container.innerHTML = '';
+
+  // Reset is-pinned class on all original nav-items
+  document.querySelectorAll('.nav-menu .nav-section:not(#nav-section-pinned) .nav-item').forEach((btn) => {
+    const tabId = btn.dataset.tab;
+    if (pinnedList.includes(tabId)) {
+      btn.classList.add('is-pinned');
+    } else {
+      btn.classList.remove('is-pinned');
+    }
+  });
+
+  if (pinnedList.length === 0) {
+    pinnedSection.style.display = 'none';
+    return;
+  }
+
+  // Display the pinned section
+  pinnedSection.style.display = 'block';
+
+  // For each pinned tab, find original nav-item and clone it
+  pinnedList.forEach((tabId) => {
+    const originalBtn = document.querySelector(`.nav-menu .nav-section:not(#nav-section-pinned) .nav-item[data-tab="${tabId}"]`);
+    if (!originalBtn) return;
+
+    // Clone the button
+    const clone = originalBtn.cloneNode(true);
+    clone.removeAttribute('id');
+    
+    // Re-attach switch tab click listener
+    clone.addEventListener('click', () => {
+      window.dispatch('SWITCH_TAB', tabId);
+    });
+
+    // Re-attach pin button click listener
+    const clonePinBtn = clone.querySelector('.pin-tab-btn');
+    if (clonePinBtn) {
+      clonePinBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        window.togglePinTab(tabId);
+      });
+    }
+
+    container.appendChild(clone);
+  });
+};
+
+/* ============================================================
+   GLOBAL SEARCH (CMD+K) OVERLAY LOGIC
+   ============================================================ */
+window.toggleSearchModal = function (show) {
+  const modal = document.getElementById('global-search-modal');
+  const input = document.getElementById('global-search-input');
+  if (!modal || !input) return;
+
+  if (show) {
+    modal.classList.add('active');
+    input.value = '';
+    input.focus();
+    window.performGlobalSearch('');
+  } else {
+    modal.classList.remove('active');
+  }
+};
+
+window.getSearchItems = function () {
+  const items = [];
+
+  // Tasks
+  if (window.state && window.state.tasks) {
+    window.state.tasks.forEach((t) => {
+      items.push({
+        id: t.id,
+        type: 'task',
+        title: t.title,
+        desc: t.desc || '',
+        action: () => {
+          window.dispatch('SWITCH_TAB', 'task-board');
+          window.dispatch('SELECT_TASK', t.id);
+          setTimeout(() => {
+            const el = document.querySelector(`.task-card[data-id="${t.id}"]`);
+            if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }, 100);
+        }
+      });
+    });
+  }
+
+  // Agents
+  if (window.state && window.state.agents) {
+    Object.values(window.state.agents).forEach((a) => {
+      items.push({
+        id: a.id,
+        type: 'agent',
+        title: a.name,
+        desc: a.objective || '',
+        action: () => {
+          window.dispatch('SWITCH_TAB', 'swarm-graph');
+          window.dispatch('SELECT_AGENT', a.id);
+        }
+      });
+    });
+  }
+
+  // Logs
+  if (window.state && window.state.consoleLogs) {
+    window.state.consoleLogs.forEach((l, index) => {
+      items.push({
+        id: `log-${index}`,
+        type: 'log',
+        title: l.msg,
+        desc: `[${l.agent}] - ${l.time}`,
+        action: () => {
+          window.dispatch('SWITCH_TAB', 'logs-console');
+        }
+      });
+    });
+  }
+
+  // Files
+  if (window.state && window.state.repository && window.state.repository.fileTree) {
+    const filePaths = [];
+    const flatten = (nodes) => {
+      nodes.forEach((n) => {
+        if (n.type === 'file') filePaths.push(n.path);
+        else if (n.children) flatten(n.children);
+      });
+    };
+    flatten(window.state.repository.fileTree);
+    filePaths.forEach((path) => {
+      items.push({
+        id: path,
+        type: 'file',
+        title: path.split('/').pop(),
+        desc: path,
+        action: () => {
+          window.dispatch('SWITCH_TAB', 'repo-explorer');
+          window.dispatch('REPO_SELECT_FILE', { path });
+          if (typeof window.renderRepoExplorer === 'function') window.renderRepoExplorer();
+        }
+      });
+    });
+  }
+
+  // PRs
+  if (window.state && window.state.pullRequests && window.state.pullRequests.list) {
+    window.state.pullRequests.list.forEach((pr) => {
+      items.push({
+        id: `pr-${pr.id}`,
+        type: 'pr',
+        title: pr.title,
+        desc: `PR #${pr.number} by ${pr.author} (${pr.branch})`,
+        action: () => {
+          window.dispatch('SWITCH_TAB', 'pull-requests');
+          window.dispatch('PR_SELECT', { prId: pr.id });
+          if (typeof window.renderPullRequests === 'function') window.renderPullRequests();
+        }
+      });
+    });
+  }
+
+  // Decisions
+  if (window.state && window.state.decisions) {
+    window.state.decisions.forEach((d) => {
+      items.push({
+        id: d.id,
+        type: 'decision',
+        title: d.title,
+        desc: d.desc || '',
+        action: () => {
+          window.dispatch('SWITCH_TAB', 'decision-log');
+          setTimeout(() => {
+            const el = document.getElementById(d.id) || document.querySelector(`[data-id="${d.id}"]`);
+            if (el) {
+              el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+              el.style.outline = '2px solid var(--accent-orange)';
+              setTimeout(() => { el.style.outline = ''; }, 2000);
+            }
+          }, 100);
+        }
+      });
+    });
+  }
+
+  return items;
+};
+
+window.performGlobalSearch = function (query) {
+  const container = document.getElementById('global-search-results');
+  if (!container) return;
+
+  if (!query) {
+    container.innerHTML = '<div class="search-empty-state">Type something to search...</div>';
+    return;
+  }
+
+  const items = window.getSearchItems();
+  const filtered = items.filter((item) => {
+    return (
+      (item.title && item.title.toLowerCase().includes(query.toLowerCase())) ||
+      (item.desc && item.desc.toLowerCase().includes(query.toLowerCase()))
+    );
+  });
+
+  if (filtered.length === 0) {
+    container.innerHTML = '<div class="search-empty-state">No results found</div>';
+    return;
+  }
+
+  const displayItems = filtered.slice(0, 15);
+
+  let html = '';
+  displayItems.forEach((item, index) => {
+    html += `
+      <div class="search-result-item ${index === 0 ? 'selected' : ''}" data-index="${index}" tabindex="0" onclick="window.selectSearchResult(${index})">
+        <div class="search-result-item-meta">
+          <span class="search-result-item-type ${item.type}">${item.type}</span>
+          <span class="search-result-item-title">${item.title}</span>
+        </div>
+        <div class="search-result-item-desc">${item.desc}</div>
+      </div>
+    `;
+  });
+
+  container.innerHTML = html;
+  window.currentSearchResults = displayItems;
+  window.selectedSearchIndex = displayItems.length > 0 ? 0 : -1;
+};
+
+window.selectSearchResult = function (index) {
+  if (!window.currentSearchResults) return;
+  const item = window.currentSearchResults[index];
+  if (item && typeof item.action === 'function') {
+    item.action();
+    window.toggleSearchModal(false);
+  }
+};
+
+window.initGlobalSearch = function () {
+  window.addEventListener('keydown', (e) => {
+    const isK = e.key === 'k' || e.key === 'K';
+    const isCmdOrCtrl = e.metaKey || e.ctrlKey;
+    if (isCmdOrCtrl && isK) {
+      e.preventDefault();
+      const modal = document.getElementById('global-search-modal');
+      const isActive = modal && modal.classList.contains('active');
+      window.toggleSearchModal(!isActive);
+    }
+  });
+
+  const modal = document.getElementById('global-search-modal');
+  if (modal) {
+    modal.addEventListener('keydown', (e) => {
+      const results = window.currentSearchResults || [];
+      const len = results.length;
+      
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        window.toggleSearchModal(false);
+      } else if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        if (len > 0) {
+          window.selectedSearchIndex = (window.selectedSearchIndex + 1) % len;
+          window.updateSearchSelectionHighlight();
+        }
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        if (len > 0) {
+          window.selectedSearchIndex = (window.selectedSearchIndex - 1 + len) % len;
+          window.updateSearchSelectionHighlight();
+        }
+      } else if (e.key === 'Enter') {
+        e.preventDefault();
+        if (window.selectedSearchIndex >= 0 && window.selectedSearchIndex < len) {
+          window.selectSearchResult(window.selectedSearchIndex);
+        }
+      }
+    });
+  }
+
+  const input = document.getElementById('global-search-input');
+  if (input) {
+    input.addEventListener('input', (e) => {
+      window.performGlobalSearch(e.target.value);
+    });
+  }
+
+  const closeBtn = document.getElementById('close-search-modal-btn');
+  if (closeBtn) {
+    closeBtn.addEventListener('click', () => {
+      window.toggleSearchModal(false);
+    });
+  }
+
+  if (modal) {
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) {
+        window.toggleSearchModal(false);
+      }
+    });
+  }
+};
+
+window.updateSearchSelectionHighlight = function () {
+  const container = document.getElementById('global-search-results');
+  if (!container) return;
+
+  const items = container.querySelectorAll('.search-result-item');
+  items.forEach((item, index) => {
+    if (index === window.selectedSearchIndex) {
+      item.classList.add('selected');
+      item.focus();
+    } else {
+      item.classList.remove('selected');
+    }
+  });
+};
+
+/* ============================================================
+   BUTTON STATE MATRIX OBSERVER
+   ============================================================ */
+window.initButtonStateObserver = function () {
+  const observer = new MutationObserver((mutations) => {
+    mutations.forEach((mutation) => {
+      if (mutation.type === 'attributes' && (mutation.attributeName === 'disabled' || mutation.attributeName === 'class')) {
+        const target = mutation.target;
+        if (target.tagName === 'BUTTON' || target.classList.contains('btn')) {
+          if (target.disabled || target.classList.contains('disabled') || target.classList.contains('btn-loading')) {
+            target.setAttribute('aria-disabled', 'true');
+          } else {
+            target.removeAttribute('aria-disabled');
+          }
+        }
+      }
+    });
+  });
+
+  observer.observe(document.body, {
+    attributes: true,
+    subtree: true,
+    attributeFilter: ['disabled', 'class']
+  });
+
+  // Run initial sync
+  document.querySelectorAll('button, .btn').forEach((btn) => {
+    if (btn.disabled || btn.classList.contains('disabled') || btn.classList.contains('btn-loading')) {
+      btn.setAttribute('aria-disabled', 'true');
+    }
+  });
 };

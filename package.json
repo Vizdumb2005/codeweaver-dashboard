@@ -5,8 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "npm run check:console && vite build",
-    "build:staging": "vite build --mode staging",
+    "build": "npm run check:console && vite build && node scripts/upload-sourcemaps.cjs && node scripts/check-budgets.cjs",
+    "build:staging": "vite build --mode staging && node scripts/upload-sourcemaps.cjs && node scripts/check-budgets.cjs",
+    "analyze": "vite-bundle-visualizer",
     "preview": "vite preview",
     "lint": "eslint src --ext .ts,.tsx,.js,.jsx",
     "lint:fix": "eslint src --ext .ts,.tsx,.js,.jsx --fix",
@@ -23,7 +24,8 @@
   },
   "dependencies": {
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "zustand": "^5.0.14"
   },
   "devDependencies": {
     "@playwright/test": "^1.60.0",
@@ -49,10 +51,12 @@
     "husky": "^9.1.7",
     "jsdom": "^29.1.1",
     "lint-staged": "^17.0.7",
+    "msw": "^2.14.6",
     "prettier": "^3.2.5",
     "sass": "^1.100.0",
     "typescript": "^5.3.3",
     "vite": "^5.1.0",
+    "vite-bundle-visualizer": "^1.2.1",
     "vitest": "^4.1.8"
   },
   "engines": {
@@ -62,5 +66,10 @@
     ">0.2%",
     "not dead",
     "not op_mini all"
-  ]
+  ],
+  "msw": {
+    "workerDirectory": [
+      "public"
+    ]
+  }
 }

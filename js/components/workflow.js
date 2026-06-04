@@ -379,6 +379,25 @@
 
     const wf = getWorkflow();
 
+    if (!wf || !wf.stages || wf.stages.length === 0) {
+      if (typeof window.renderEmptyState === 'function') {
+        const preset = (window.emptyStatePresets && window.emptyStatePresets.workflow) || {
+          illustration: 'kanji',
+          title: 'No active workflows',
+          description: 'Define pipeline blueprints to orchestrate multi-stage jutsu sequences.',
+          primaryLabel: 'Create Pipeline',
+          primaryAction: 'showWorkflowWizard',
+        };
+        container.innerHTML = window.renderEmptyState(preset);
+        if (typeof window.wireEmptyStateActions === 'function') {
+          window.wireEmptyStateActions(container);
+        }
+      } else {
+        container.innerHTML = '<div style="padding:40px; text-align:center;">No active workflows.</div>';
+      }
+      return;
+    }
+
     container.innerHTML = `
       <div class="wf-wrapper">
         <div class="wf-content">

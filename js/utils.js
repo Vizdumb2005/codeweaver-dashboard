@@ -45,6 +45,12 @@ window.drawShuriken = function (
 
 // --- SMOKE PUFF VISUAL EFFECT TRIGGER ( billowing smoke overlay ) ---
 window.triggerSmokePuff = function (cardId) {
+  if (
+    document.body.classList.contains('reduce-motion') ||
+    (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches)
+  ) {
+    return;
+  }
   const cardElement = document.querySelector(`.task-card[data-id="${cardId}"]`);
   if (!cardElement) return;
 
@@ -73,4 +79,21 @@ window.triggerSmokePuff = function (cardId) {
   setTimeout(() => {
     container.remove();
   }, 850);
+};
+
+// --- SCREEN READER ANNOUNCEMENTS ---
+window.announcePolite = function (message) {
+  const el = document.getElementById('sr-announcer-polite');
+  if (el) {
+    el.textContent = '';
+    setTimeout(() => { el.textContent = message; }, 50);
+  }
+};
+
+window.announceAssertive = function (message) {
+  const el = document.getElementById('sr-announcer-assertive');
+  if (el) {
+    el.textContent = '';
+    setTimeout(() => { el.textContent = message; }, 50);
+  }
 };

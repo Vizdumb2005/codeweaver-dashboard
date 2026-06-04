@@ -441,29 +441,25 @@
           <div class="pr-list">
             ${
               filteredPRs.length === 0
-                ? `
+                ? (typeof window.renderEmptyState === 'function'
+                    ? window.renderEmptyState(
+                        (window.emptyStatePresets && window.emptyStatePresets.pullRequests) || {
+                          illustration: 'katana',
+                          title: 'No pull requests',
+                          description: 'Pull requests created by agents will appear here for review.',
+                          secondaryLabel: 'View Branches',
+                        }
+                      )
+                    : `
               <div class="empty-state-hint" style="padding:60px 40px; text-align:center; color:var(--text-muted); border: 1px dashed rgba(255,115,0,0.1); border-radius: 12px; background: rgba(0,0,0,0.1); display: flex; flex-direction: column; align-items: center; justify-content: center;">
-                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="url(#pr-glow)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 16px; filter: drop-shadow(0 0 8px rgba(168, 85, 247, 0.2)); display: inline-block;">
-                  <defs>
-                    <linearGradient id="pr-glow" x1="0%" y1="0%" x2="100%" y2="100%">
-                      <stop offset="0%" stop-color="#ff7300" />
-                      <stop offset="100%" stop-color="#a855f7" />
-                    </linearGradient>
-                  </defs>
-                  <circle cx="18" cy="18" r="3"></circle>
-                  <circle cx="6" cy="6" r="3"></circle>
-                  <circle cx="6" cy="18" r="3"></circle>
-                  <path d="M18 15V9a4 4 0 0 0-4-4H9"></path>
-                  <line x1="6" y1="9" x2="6" y2="15"></line>
-                </svg>
                 <div style="font-size: 1rem; font-weight: 600; color: var(--text-primary); margin-bottom: 6px;">No Pull Requests</div>
                 <div style="font-size: 0.78rem; color: var(--text-muted);">No pull requests found in this scope.</div>
               </div>
-            `
+            `)
                 : filteredPRs
                     .map(
                       (pr) => `
-              <div class="pr-card" data-pr-id="${pr.id}">
+              <div class="pr-card" data-pr-id="${pr.id}" tabindex="0">
                 <div class="pr-card-header">
                   <div class="pr-status-icon">${STATUS_ICONS[pr.status]}</div>
                   <div class="pr-info">
@@ -1309,6 +1305,10 @@
         );
       });
     });
+
+    if (typeof window.wireEmptyStateActions === 'function') {
+      window.wireEmptyStateActions(document.getElementById('pull-requests-container'));
+    }
   }
 
   function hasUserApproved(pr) {

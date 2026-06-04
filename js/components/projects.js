@@ -130,6 +130,9 @@
                 <span class="last-activity">${formatTime(p.lastActivity)}</span>
                 <div class="project-footer-actions">
                   <button class="btn btn-xs btn-outline btn-clone-project" data-id="${p.id}" title="Clone Project">${window.ninjaIcons ? window.ninjaIcons.get('star') : ''}</button>
+                  <button class="btn btn-xs btn-outline btn-delete-project btn-danger" data-id="${p.id}" title="Delete Mission" aria-label="Delete mission">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:inline-block; vertical-align:middle;"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>
+                  </button>
                   ${
                     p.status === 'active'
                       ? `
@@ -322,6 +325,40 @@
               window.renderProjects();
               window.showToast(`Cloned project: ${name}`, 'success');
             },
+          );
+        }
+      });
+    });
+
+    // Delete project
+    document.querySelectorAll('.btn-delete-project').forEach((btn) => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const id = btn.dataset.id;
+        const target = window.state.projects.list.find((p) => p.id === id);
+        if (target) {
+          window.showConfirmDialog(
+            'Delete Mission',
+            `Permanently delete mission "${target.name}"? This action cannot be undone.`,
+            () => {
+              const index = window.state.projects.list.findIndex((p) => p.id === id);
+              if (index !== -1) {
+                window.state.projects.list.splice(index, 1);
+                if (window.state.projects.current === id) {
+                  const nextProj = window.state.projects.list.find((p) => p.status === 'active') || window.state.projects.list[0];
+                  window.state.projects.current = nextProj ? nextProj.id : null;
+                }
+                window.dispatch('ADD_LOG', {
+                  agent: 'system',
+                  type: 'error',
+                  msg: `Deleted mission scroll: "${target.name}"`,
+                });
+                window.renderProjects();
+                window.showToast(`Deleted mission: ${target.name}`, 'error');
+              }
+            },
+            true,
+            'delete-mission',
           );
         }
       });

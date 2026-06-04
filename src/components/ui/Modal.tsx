@@ -16,6 +16,24 @@ export const Modal: React.FC<ModalProps> = ({
   title,
   children,
 }) => {
+  React.useEffect(() => {
+    if (isOpen && typeof performance !== 'undefined') {
+      performance.mark('modal-open-start');
+      requestAnimationFrame(() => {
+        performance.mark('modal-open-end');
+        try {
+          performance.measure('modal-open-time', 'modal-open-start', 'modal-open-end');
+          const entry = performance.getEntriesByName('modal-open-time').pop();
+          if (entry && typeof window.reportPerformanceMetric === 'function') {
+            window.reportPerformanceMetric('modal-open-time', entry.duration);
+          }
+        } catch (e) {
+          // Gracefully ignore measurement errors in unsupported test envs
+        }
+      });
+    }
+  }, [isOpen]);
+
   if (!isOpen) {
     return null;
   }

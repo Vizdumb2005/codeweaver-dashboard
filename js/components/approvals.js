@@ -119,7 +119,7 @@
                     ${queue
                       .map(
                         (a) => `
-                      <tr class="approval-row risk-${a.riskLevel}" data-id="${a.id}">
+                      <tr class="approval-row risk-${a.riskLevel}" data-id="${a.id}" tabindex="0">
                         <td class="cell-type">
                           <span class="type-icon">${getTypeIcon(a.type)}</span>
                           <span class="type-name">${formatType(a.type)}</span>
@@ -157,7 +157,7 @@
                 ${queue
                   .map(
                     (a) => `
-                  <div class="approval-card risk-${a.riskLevel}" data-id="${a.id}">
+                  <div class="approval-card risk-${a.riskLevel}" data-id="${a.id}" tabindex="0">
                     <div class="approval-card-header">
                       <div class="approval-type">
                         <span class="type-icon">${getTypeIcon(a.type)}</span>

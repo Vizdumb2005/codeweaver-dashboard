@@ -1,9 +1,8 @@
-// ============================================================
-// CoNinja State Store — Single source of truth with subscriptions
-// ============================================================
+import { dashboardStore } from '../src/store/store.ts';
 
 (function () {
   'use strict';
+
 
   // ── Initial State ──────────────────────────────────────────
   const initialState = {
@@ -2023,66 +2022,47 @@
     },
   };
 
-  // ── Store Implementation ──────────────────────────────────
-  function createStore(initialData) {
-    const state = JSON.parse(JSON.stringify(initialData));
-    const listeners = [];
+  // ── Store Implementation bridged to Zustand ──────────────────
+  dashboardStore.getState().setRawState(initialState);
 
-    return {
-      getState() {
-        return state;
-      },
+  const store = {
+    getState() {
+      return dashboardStore.getState();
+    },
 
-      setState(path, value) {
-        if (path === null || path === undefined) return;
-        const parts = String(path).split('.');
-        let current = state;
-        for (let i = 0; i < parts.length - 1; i++) {
-          if (!current[parts[i]] || typeof current[parts[i]] !== 'object') {
-            current[parts[i]] = {};
-          }
-          current = current[parts[i]];
-        }
-        current[parts[parts.length - 1]] = value;
-        this.notify(path);
-      },
+    setState(path, value) {
+      dashboardStore.getState().updateSetting(path, value);
+      window.state = dashboardStore.getState();
+    },
 
-      notify(path) {
-        listeners.forEach((fn) => {
-          try {
-            fn(path, state);
-          } catch (e) {
-            console.warn('Store listener error:', e);
-          }
-        });
-      },
+    notify(path) {
+      dashboardStore.getState().setRawState({ ...window.state });
+    },
 
-      subscribe(fn) {
-        listeners.push(fn);
-        return () => {
-          const idx = listeners.indexOf(fn);
-          if (idx > -1) listeners.splice(idx, 1);
-        };
-      },
-    };
-  }
+    subscribe(fn) {
+      return dashboardStore.subscribe((state) => {
+        fn('', state);
+      });
+    },
+  };
 
-  const store = createStore(initialState);
-
-  window.state = store.getState();
+  window.state = dashboardStore.getState();
   window.store = store;
+
+  // Sync state whenever Zustand state changes internally
+  dashboardStore.subscribe((newState) => {
+    window.state = newState;
+  });
+
 
   // ── Log Helpers ───────────────────────────────────────────
   const ts = () => new Date().toTimeString().split(' ')[0];
 
   window.addLog = function (agent, type, msg, time) {
-    const log = { time: time || ts(), agent: agent, type: type || 'info', msg: msg };
-    window.state.consoleLogs.push(log);
-    if (window.state.consoleLogs.length > 500) {
-      window.state.consoleLogs.shift();
-    }
+    dashboardStore.getState().addLog(agent, type, msg, time);
     window.renderLogs();
   };
+
 
   window.getPersonaTone = function (temp) {
     if (temp <= 0.15) return 'Surgical';
@@ -2256,8 +2236,10 @@
         window.state.user.role = payload.role || 'Chunin';
         window.state.user.clan = payload.clan || 'Shadow Clan';
         window.state.user.avatar = payload.avatar || '◈';
-        window.state.activeTab = 'swarm-graph';
-        window.switchTab('swarm-graph');
+        const hashTab = window.location.hash.replace('#', '');
+        const targetTab = hashTab && hashTab !== 'login' ? hashTab : 'swarm-graph';
+        window.state.activeTab = targetTab;
+        window.switchTab(targetTab);
         break;
 
       case 'AUTH_LOGOUT':
@@ -2357,7 +2339,13 @@
       case 'UPDATE_TASK': {
         const task = window.state.tasks.find((t) => t.id === payload.taskId);
         if (task) {
+          const oldStatus = task.status;
           Object.assign(task, payload.updates);
+          if (payload.updates.status && payload.updates.status !== oldStatus) {
+            if (typeof window.announcePolite === 'function') {
+              window.announcePolite(`Task "${task.title}" status changed to ${payload.updates.status.replace('_', ' ')}`);
+            }
+          }
           window.renderKanban();
           if (window.state.selectedTaskId === payload.taskId) {
             window.selectTask(payload.taskId);
@@ -3136,6 +3124,8 @@
       default:
         console.warn(`Unknown action type: ${action}`);
     }
+
+    dashboardStore.getState().setRawState({ ...window.state });
 
     if (typeof window.updateSidebarBadges === 'function') {
       window.updateSidebarBadges();

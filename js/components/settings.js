@@ -885,6 +885,71 @@ window.renderIAMEcosystemPane = function () {
     });
   }
 
+  const revokeAnthropicBtn = document.getElementById('btn-revoke-anthropic');
+  const revokeOpenaiBtn = document.getElementById('btn-revoke-openai');
+
+  if (revokeAnthropicBtn) {
+    revokeAnthropicBtn.addEventListener('click', () => {
+      if (!window.state.integrations.anthropic || !window.state.integrations.anthropic.apiKey) {
+        if (typeof window.showToast === 'function') {
+          window.showToast('No Anthropic API Key configured to revoke.', 'info');
+        }
+        return;
+      }
+      if (typeof window.showConfirmDialog === 'function') {
+        window.showConfirmDialog(
+          'Revoke API Key',
+          'Are you sure you want to revoke and clear the Anthropic API Key?',
+          () => {
+            if (window.state.integrations.anthropic) {
+              window.state.integrations.anthropic.apiKey = '';
+            }
+            if (ecoAnthropic) ecoAnthropic.value = '';
+            if (typeof window.addLog === 'function') {
+              window.addLog('system', 'warn', 'Anthropic API key revoked.');
+            }
+            if (typeof window.showToast === 'function') {
+              window.showToast('Anthropic API key revoked.', 'warning');
+            }
+          },
+          true,
+          'revoke-api-key',
+        );
+      }
+    });
+  }
+
+  if (revokeOpenaiBtn) {
+    revokeOpenaiBtn.addEventListener('click', () => {
+      if (!window.state.integrations.openai || !window.state.integrations.openai.apiKey) {
+        if (typeof window.showToast === 'function') {
+          window.showToast('No OpenAI API Key configured to revoke.', 'info');
+        }
+        return;
+      }
+      if (typeof window.showConfirmDialog === 'function') {
+        window.showConfirmDialog(
+          'Revoke API Key',
+          'Are you sure you want to revoke and clear the OpenAI API Key?',
+          () => {
+            if (window.state.integrations.openai) {
+              window.state.integrations.openai.apiKey = '';
+            }
+            if (ecoOpenai) ecoOpenai.value = '';
+            if (typeof window.addLog === 'function') {
+              window.addLog('system', 'warn', 'OpenAI API key revoked.');
+            }
+            if (typeof window.showToast === 'function') {
+              window.showToast('OpenAI API key revoked.', 'warning');
+            }
+          },
+          true,
+          'revoke-api-key',
+        );
+      }
+    });
+  }
+
   // Double-safe password toggle wiring
   document.querySelectorAll('#s-content-iam-ecosystem .password-toggle').forEach((btn) => {
     if (!btn.dataset.wiredToggle) {

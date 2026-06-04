@@ -48,6 +48,15 @@ document.addEventListener('DOMContentLoaded', () => {
     if (typeof window.initNavigation === 'function') window.initNavigation();
   }, 'Navigation');
   safe(() => {
+    if (typeof window.initPinButtons === 'function') window.initPinButtons();
+  }, 'PinButtons');
+  safe(() => {
+    if (typeof window.initGlobalSearch === 'function') window.initGlobalSearch();
+  }, 'GlobalSearch');
+  safe(() => {
+    if (typeof window.initButtonStateObserver === 'function') window.initButtonStateObserver();
+  }, 'ButtonStateObserver');
+  safe(() => {
     if (typeof window.initGlobalControls === 'function') window.initGlobalControls();
   }, 'GlobalControls');
   safe(() => {
@@ -56,13 +65,14 @@ document.addEventListener('DOMContentLoaded', () => {
   safe(() => {
     if (typeof window.initWizard === 'function') window.initWizard();
   }, 'Wizard');
-
-  // 5b. Ensure all navigation sections are expanded (fix non-deterministic nav)
   safe(() => {
-    document.querySelectorAll('.nav-section.collapsed').forEach((section) => {
-      section.classList.remove('collapsed');
-    });
-  }, 'NavigationExpand');
+    if (typeof window.initThemeToggle === 'function') window.initThemeToggle();
+  }, 'ThemeToggle');
+  safe(() => {
+    if (typeof window.initSkipLink === 'function') window.initSkipLink();
+  }, 'SkipLink');
+
+
 
   // 5c. Ensure all modals are hidden by default
   safe(() => {
@@ -161,7 +171,9 @@ document.addEventListener('DOMContentLoaded', () => {
   // 13. Initialize Active Tab View on load
   safe(() => {
     if (typeof window.switchTab === 'function') {
-      window.switchTab(window.state.activeTab || 'login');
+      const hashTab = window.location.hash.replace('#', '');
+      const defaultTab = hashTab && hashTab !== 'login' ? hashTab : (window.state.activeTab || 'swarm-graph');
+      window.switchTab(window.state.user.isAuthenticated ? defaultTab : 'login');
     }
   }, 'InitTab');
 });

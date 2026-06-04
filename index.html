@@ -8,6 +8,7 @@
   <!-- Modern Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&family=JetBrains+Mono:wght@400;500&display=swap" as="style">
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <!-- Stylesheet -->
   <link rel="stylesheet" href="styles.css">
@@ -73,9 +74,66 @@
     .reduce-motion *,
     .reduce-motion *::before,
     .reduce-motion *::after {
-      animation-duration: 0.01ms !important;
+      animation-duration: 0s !important;
       animation-iteration-count: 1 !important;
-      transition-duration: 0.01ms !important;
+      transition-duration: 0s !important;
+    }
+    
+    .reduce-motion .shuriken-logo,
+    .reduce-motion .shuriken-svg,
+    .reduce-motion .shuriken-spin-svg,
+    .reduce-motion .vortex-spin,
+    .reduce-motion .ambient-glow,
+    .reduce-motion .status-indicator-pulse,
+    .reduce-motion .dag-node-active,
+    .reduce-motion .loop-alert,
+    .reduce-motion .live-dot-pulse,
+    .reduce-motion .live-pulse,
+    .reduce-motion .pulse-dot,
+    .reduce-motion .pulse-ring,
+    .reduce-motion .smoke-puff-container {
+      animation: none !important;
+      transform: none !important;
+    }
+    .reduce-motion .ambient-glow,
+    .reduce-motion .smoke-puff-container {
+      display: none !important;
+    }
+    .reduce-motion .tab-content {
+      animation: none !important;
+      transition: none !important;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0s !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0s !important;
+      }
+      .shuriken-logo,
+      .shuriken-svg,
+      .shuriken-spin-svg,
+      .vortex-spin,
+      .ambient-glow,
+      .status-indicator-pulse,
+      .dag-node-active,
+      .loop-alert,
+      .live-dot-pulse,
+      .live-pulse,
+      .pulse-dot,
+      .pulse-ring,
+      .smoke-puff-container {
+        animation: none !important;
+        transform: none !important;
+      }
+      .ambient-glow,
+      .smoke-puff-container {
+        display: none !important;
+      }
+      .tab-content {
+        animation: none !important;
+        transition: none !important;
+      }
     }
 
     /* === High contrast mode === */
@@ -117,6 +175,7 @@
     }
     .skip-link:focus { top: 0; }
   </style>
+
 </head>
 <body>
   <!-- Ambient Stealth Warm Orange & Charcoal Glows -->
@@ -131,7 +190,7 @@
   <div class="dashboard-shell">
     
     <!-- Top Navigation Bar -->
-    <header class="topbar">
+    <header class="topbar" role="banner">
       <div class="brand">
         <!-- SVG Spinning Shuriken Logo -->
         <div class="logo-mark shuriken-logo">
@@ -164,6 +223,7 @@
           <span class="status-indicator-pulse online" id="system-status-indicator"></span>
           <span id="system-status-text" class="status-text">Swarm Active (6 Shinobi Coding)</span>
         </div>
+        <div class="breadcrumb-container" id="breadcrumb-navigation" aria-label="Breadcrumb" role="navigation"></div>
       </div>
 
       <div class="topbar-actions">
@@ -197,6 +257,7 @@
           </svg>
           <span>New Mission</span>
         </button>
+
       </div>
     </header>
 
@@ -205,15 +266,26 @@
       
       <!-- Left Sidebar Navigation -->
       <aside class="sidebar">
-        <nav class="nav-menu">
+        <nav class="nav-menu" role="navigation">
+          <!-- Pinned Screens Section (Quick Access) -->
+          <div class="nav-section" id="nav-section-pinned" style="display: none;">
+            <div class="nav-section-header">
+              <span class="nav-section-title">Pinned Screens</span>
+              <span class="nav-section-toggle-icon"><svg class="jp-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6,9 12,15 18,9"/></svg></span>
+            </div>
+            <div class="nav-section-items" id="pinned-items-container">
+              <!-- Dynamically populated pinned items -->
+            </div>
+          </div>
+
           <!-- Mission Control Section -->
           <div class="nav-section">
-            <div class="nav-section-header" onclick="this.parentElement.classList.toggle('collapsed')">
+            <div class="nav-section-header">
               <span class="nav-section-title">Mission Control</span>
               <span class="nav-section-toggle-icon"><svg class="jp-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6,9 12,15 18,9"/></svg></span>
             </div>
             <div class="nav-section-items">
-              <button class="nav-item active" data-tab="swarm-graph">
+              <button class="nav-item active" id="tab-trigger-swarm-graph" data-tab="swarm-graph">
                 <!-- Pagoda/Dojo Custom SVG -->
                 <svg class="jp-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M4 22 h16" stroke-width="2"/>
@@ -227,7 +299,7 @@
                 </svg>
                 <span>Shinobi Clan</span>
               </button>
-              <button class="nav-item" data-tab="task-board">
+              <button class="nav-item" id="tab-trigger-task-board" data-tab="task-board">
                 <!-- Tied Scroll Custom SVG -->
                 <svg class="jp-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M16 8 H5 C3.3 8 2 9.3 2 11 C2 12.7 3.3 14 5 14 H19 C20.7 14 22 12.7 22 11 C22 9.3 20.7 8 19 8 H17"/>
@@ -239,7 +311,7 @@
                 <span>Jutsu Roadmap</span>
                 <span class="counter-badge" id="in-progress-count">3</span>
               </button>
-              <button class="nav-item" data-tab="logs-console">
+              <button class="nav-item" id="tab-trigger-logs-console" data-tab="logs-console">
                 <!-- Writing Brush & Paper SVG -->
                 <svg class="jp-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M8 3H16V21H8V3Z"/>
@@ -249,7 +321,7 @@
                 </svg>
                 <span>Stealth Scroll</span>
               </button>
-              <button class="nav-item" data-tab="notifications">
+              <button class="nav-item" id="tab-trigger-notifications" data-tab="notifications">
                 <!-- Bell SVG -->
                 <svg class="jp-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0"/>
@@ -257,7 +329,7 @@
                 <span>Notifications</span>
                 <span class="counter-badge badge-warning" id="notif-badge-count" style="display:none;" role="status" aria-live="polite">0</span>
               </button>
-              <button class="nav-item" data-tab="projects">
+              <button class="nav-item" id="tab-trigger-projects" data-tab="projects">
                 <!-- Grid/Projects SVG -->
                 <svg class="jp-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <rect x="3" y="3" width="7" height="7"/>
@@ -267,7 +339,7 @@
                 </svg>
                 <span>Projects</span>
               </button>
-              <button class="nav-item" data-tab="collaboration">
+              <button class="nav-item" id="tab-trigger-collaboration" data-tab="collaboration">
                 <!-- Users/Team SVG -->
                 <svg class="jp-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
@@ -282,12 +354,12 @@
 
           <!-- Engineering Section -->
           <div class="nav-section">
-            <div class="nav-section-header" onclick="this.parentElement.classList.toggle('collapsed')">
+            <div class="nav-section-header">
               <span class="nav-section-title">Engineering</span>
               <span class="nav-section-toggle-icon"><svg class="jp-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6,9 12,15 18,9"/></svg></span>
             </div>
             <div class="nav-section-items">
-              <button class="nav-item" data-tab="dojo-workbench">
+              <button class="nav-item" id="tab-trigger-dojo-workbench" data-tab="dojo-workbench">
                 <!-- Crossed Katana & Writing Brush SVG -->
                 <svg class="jp-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M4.5 19.5 L19.5 4.5" stroke-width="2"/>
@@ -297,14 +369,14 @@
                 </svg>
                 <span>Dojo Workbench</span>
               </button>
-              <button class="nav-item" data-tab="repo-explorer">
+              <button class="nav-item" id="tab-trigger-repo-explorer" data-tab="repo-explorer">
                 <!-- Folder/Repo SVG -->
                 <svg class="jp-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
                 </svg>
                 <span>Repository</span>
               </button>
-              <button class="nav-item" data-tab="pull-requests">
+              <button class="nav-item" id="tab-trigger-pull-requests" data-tab="pull-requests">
                 <!-- Git Merge SVG -->
                 <svg class="jp-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <circle cx="18" cy="18" r="3"/>
@@ -314,7 +386,7 @@
                 <span>Pull Requests</span>
                 <span class="counter-badge badge-warning" id="pr-badge-count">3</span>
               </button>
-              <button class="nav-item" data-tab="workflow">
+              <button class="nav-item" id="tab-trigger-workflow" data-tab="workflow">
                 <!-- Flow/Pipeline SVG -->
                 <svg class="jp-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <rect x="2" y="8" width="4" height="8" rx="1"/>
@@ -325,7 +397,7 @@
                 </svg>
                 <span>Workflow Forge</span>
               </button>
-              <button class="nav-item" data-tab="agent-studio">
+              <button class="nav-item" id="tab-trigger-agent-studio" data-tab="agent-studio">
                 <!-- Ninja Team SVG -->
                 <svg class="jp-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <circle cx="9" cy="7" r="3"/>
@@ -335,7 +407,7 @@
                 </svg>
                 <span>Agent Studio</span>
               </button>
-              <button class="nav-item" data-tab="testing">
+              <button class="nav-item" id="tab-trigger-testing" data-tab="testing">
                 <!-- Test/Flask SVG -->
                 <svg class="jp-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M14 3v4a1 1 0 0 0 1 1h4"/>
@@ -350,12 +422,12 @@
 
           <!-- Intelligence Section -->
           <div class="nav-section">
-            <div class="nav-section-header" onclick="this.parentElement.classList.toggle('collapsed')">
+            <div class="nav-section-header">
               <span class="nav-section-title">Intelligence</span>
               <span class="nav-section-toggle-icon"><svg class="jp-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6,9 12,15 18,9"/></svg></span>
             </div>
             <div class="nav-section-items">
-              <button class="nav-item" data-tab="neural-graph">
+              <button class="nav-item" id="tab-trigger-neural-graph" data-tab="neural-graph">
                 <!-- Network Node Graph SVG -->
                 <svg class="jp-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <circle cx="12" cy="5" r="3"/>
@@ -367,14 +439,14 @@
                 </svg>
                 <span>Neural Graph</span>
               </button>
-              <button class="nav-item" data-tab="memory">
+              <button class="nav-item" id="tab-trigger-memory" data-tab="memory">
                 <!-- Brain/Memory SVG -->
                 <svg class="jp-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M9.5 2A2.5 2.5 0 0 1 12 4.5V5a3 3 0 0 0 3 3h.5a2.5 2.5 0 0 1 0 5H15a3 3 0 0 0-3 3v.5a2.5 2.5 0 0 1-5 0V16a3 3 0 0 0-3-3h-.5a2.5 2.5 0 0 1 0-5H4a3 3 0 0 0 3-3v-.5A2.5 2.5 0 0 1 9.5 2z"/>
                 </svg>
                 <span>Memory Vault</span>
               </button>
-              <button class="nav-item" data-tab="intelligence">
+              <button class="nav-item" id="tab-trigger-intelligence" data-tab="intelligence">
                 <!-- Network/Brain SVG -->
                 <svg class="jp-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <circle cx="18" cy="5" r="3"/>
@@ -385,7 +457,7 @@
                 </svg>
                 <span>Intelligence</span>
               </button>
-              <button class="nav-item" data-tab="mission-reports">
+              <button class="nav-item" id="tab-trigger-mission-reports" data-tab="mission-reports">
                 <!-- Scroll with tied string SVG -->
                 <svg class="jp-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
@@ -396,7 +468,7 @@
                 </svg>
                 <span>Stealth Archives</span>
               </button>
-              <button class="nav-item" data-tab="analytics">
+              <button class="nav-item" id="tab-trigger-analytics" data-tab="analytics">
                 <!-- Bar Chart SVG -->
                 <svg class="jp-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <line x1="18" y1="20" x2="18" y2="10"/>
@@ -410,12 +482,12 @@
 
           <!-- Operations Section -->
           <div class="nav-section">
-            <div class="nav-section-header" onclick="this.parentElement.classList.toggle('collapsed')">
+            <div class="nav-section-header">
               <span class="nav-section-title">Operations</span>
               <span class="nav-section-toggle-icon"><svg class="jp-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6,9 12,15 18,9"/></svg></span>
             </div>
             <div class="nav-section-items">
-              <button class="nav-item" data-tab="ops-recovery">
+              <button class="nav-item" id="tab-trigger-ops-recovery" data-tab="ops-recovery">
                 <!-- Health Shield with Recovery Cross SVG -->
                 <svg class="jp-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
@@ -423,7 +495,7 @@
                 </svg>
                 <span>Ops & Recovery</span>
               </button>
-              <button class="nav-item" data-tab="monitoring">
+              <button class="nav-item" id="tab-trigger-monitoring" data-tab="monitoring">
                 <!-- Monitor Screen showing Activity Pulse SVG -->
                 <svg class="jp-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
@@ -432,7 +504,7 @@
                 </svg>
                 <span>Pulse Monitor</span>
               </button>
-              <button class="nav-item" data-tab="deployment">
+              <button class="nav-item" id="tab-trigger-deployment" data-tab="deployment">
                 <!-- Rocket/Deploy SVG -->
                 <svg class="jp-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/>
@@ -442,7 +514,7 @@
                 </svg>
                 <span>Deploy Gate</span>
               </button>
-              <button class="nav-item" data-tab="sandbox-multiplexer">
+              <button class="nav-item" id="tab-trigger-sandbox-multiplexer" data-tab="sandbox-multiplexer">
                 <!-- Terminal Grid SVG -->
                 <svg class="jp-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
@@ -456,12 +528,12 @@
 
           <!-- Governance Section -->
           <div class="nav-section">
-            <div class="nav-section-header" onclick="this.parentElement.classList.toggle('collapsed')">
+            <div class="nav-section-header">
               <span class="nav-section-title">Governance</span>
               <span class="nav-section-toggle-icon"><svg class="jp-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6,9 12,15 18,9"/></svg></span>
             </div>
             <div class="nav-section-items">
-              <button class="nav-item" data-tab="approvals">
+              <button class="nav-item" id="tab-trigger-approvals" data-tab="approvals">
                 <!-- Check Shield SVG -->
                 <svg class="jp-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
@@ -470,7 +542,7 @@
                 <span>Approvals</span>
                 <span class="counter-badge badge-warning" id="approval-badge-count">2</span>
               </button>
-              <button class="nav-item" data-tab="decision-log">
+              <button class="nav-item" id="tab-trigger-decision-log" data-tab="decision-log">
                 <!-- Katana Custom SVG -->
                 <svg class="jp-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M21 3 C17 7 6 18 3 21 C2.5 21.5 2.5 22.5 3 23 C3.5 23.5 4.5 23.5 5 23 C8 20 19 9 23 5 Z"/>
@@ -480,14 +552,14 @@
                 <span>Council Decrees</span>
                 <span class="counter-badge badge-warning" id="pending-decisions-count">1</span>
               </button>
-              <button class="nav-item" data-tab="debate">
+              <button class="nav-item" id="tab-trigger-debate" data-tab="debate">
                 <!-- Scales/Balance SVG -->
                 <svg class="jp-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M12 3v18M5 6l7-3 7 3M5 18l7 3 7-3M5 6l-2 6h4L5 6zM19 6l-2 6h4L19 6z"/>
                 </svg>
                 <span>Debate Center</span>
               </button>
-              <button class="nav-item" data-tab="security">
+              <button class="nav-item" id="tab-trigger-security" data-tab="security">
                 <!-- Shield SVG -->
                 <svg class="jp-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
@@ -496,7 +568,7 @@
                 <span>Shadow Guard</span>
                 <span class="counter-badge badge-warning" id="security-vulns-count">3</span>
               </button>
-              <button class="nav-item" data-tab="provenance">
+              <button class="nav-item" id="tab-trigger-provenance" data-tab="provenance">
                 <!-- Fingerprint/Trace SVG -->
                 <svg class="jp-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M12 2a10 10 0 0 0-10 10c0 5.523 4.477 10 10 10s10-4.477 10-10A10 10 0 0 0 12 2Z"/>
@@ -511,12 +583,12 @@
 
           <!-- Infrastructure Section -->
           <div class="nav-section">
-            <div class="nav-section-header" onclick="this.parentElement.classList.toggle('collapsed')">
+            <div class="nav-section-header">
               <span class="nav-section-title">Infrastructure</span>
               <span class="nav-section-toggle-icon">▼</span>
             </div>
             <div class="nav-section-items">
-              <button class="nav-item" data-tab="mcp-registry">
+              <button class="nav-item" id="tab-trigger-mcp-registry" data-tab="mcp-registry">
                 <!-- Server Stacks SVG -->
                 <svg class="jp-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <rect x="2" y="2" width="20" height="8" rx="2" ry="2"/>
@@ -526,7 +598,7 @@
                 </svg>
                 <span>MCP Registry</span>
               </button>
-              <button class="nav-item" data-tab="triage">
+              <button class="nav-item" id="tab-trigger-triage" data-tab="triage">
                 <!-- Inbox/Mail SVG -->
                 <svg class="jp-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/>
@@ -534,7 +606,7 @@
                 </svg>
                 <span>Triage Inbox</span>
               </button>
-              <button class="nav-item" data-tab="settings">
+              <button class="nav-item" id="tab-trigger-settings" data-tab="settings">
                 <!-- Torii Gate Custom SVG -->
                 <svg class="jp-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M2 5 h20" stroke-width="2"/>
@@ -576,15 +648,15 @@
       </aside>
 
       <!-- Central Viewport -->
-      <main id="viewport-main" class="viewport">
+      <main id="viewport-main" class="viewport" tabindex="-1" role="main">
         
         <!-- Tab: Login -->
-        <section id="tab-login" class="tab-content">
+        <section id="tab-login" class="tab-content" role="tabpanel" aria-label="Login Panel">
           <!-- Renders dynamically -->
         </section>
 
         <!-- Tab: Agent Swarm Graph -->
-        <section id="tab-swarm-graph" class="tab-content active">
+        <section id="tab-swarm-graph" class="tab-content active" role="tabpanel" aria-labelledby="tab-trigger-swarm-graph">
           <div class="panel-header">
             <h2>Shinobi Swarm Network</h2>
             <p class="description">Live shadow thread visualization. Click any shinobi crest to inspect their skills and VRAM allocation.</p>
@@ -603,7 +675,7 @@
         </section>
 
         <!-- Tab: Task Pipeline Kanban -->
-        <section id="tab-task-board" class="tab-content">
+        <section id="tab-task-board" class="tab-content" role="tabpanel" aria-labelledby="tab-trigger-task-board">
           <div class="panel-header">
             <div class="header-actions">
               <div class="header-title-group">
@@ -694,7 +766,7 @@
         </section>
 
         <!-- Tab: Decision Log -->
-        <section id="tab-decision-log" class="tab-content">
+        <section id="tab-decision-log" class="tab-content" role="tabpanel" aria-labelledby="tab-trigger-decision-log">
           <div class="panel-header">
             <h2>Grandmaster Decrees & Strategy Decisions</h2>
             <p class="description">Review, approve, or override strategy pathways chosen by the Sensei orchestrator.</p>
@@ -705,7 +777,7 @@
         </section>
 
         <!-- Tab: Logs Console -->
-        <section id="tab-logs-console" class="tab-content">
+        <section id="tab-logs-console" class="tab-content" role="tabpanel" aria-labelledby="tab-trigger-logs-console">
           <div class="panel-header">
             <div class="header-actions">
               <h2>Stealth Scroll</h2>
@@ -744,7 +816,7 @@
         </section>
 
         <!-- Tab: Dojo Workbench -->
-        <section id="tab-dojo-workbench" class="tab-content">
+        <section id="tab-dojo-workbench" class="tab-content" role="tabpanel" aria-labelledby="tab-trigger-dojo-workbench">
           <div class="workbench-layout">
             
             <!-- Left Panel: Scrolls, Blueprint & Checklist -->
@@ -844,7 +916,7 @@
         </section>
 
         <!-- Tab: Stealth Archives -->
-        <section id="tab-mission-reports" class="tab-content">
+        <section id="tab-mission-reports" class="tab-content" role="tabpanel" aria-labelledby="tab-trigger-mission-reports">
           <div class="panel-header">
             <h2>Stealth Archives & Audit Scrolls</h2>
             <p class="description">Review A/B test experiments, package dependency updates, and security sweep logs compiled by the Chunin swarm.</p>
@@ -879,7 +951,7 @@
         </section>
 
         <!-- Tab: MCP Registry -->
-        <section id="tab-mcp-registry" class="tab-content">
+        <section id="tab-mcp-registry" class="tab-content" role="tabpanel" aria-labelledby="tab-trigger-mcp-registry">
           <div class="panel-header">
             <h2>Model Context Protocol (MCP) Server Hub</h2>
             <p class="description">Manage dynamic connections to local and cloud-based tool providers. Configure authentication matrices for active agent roles.</p>
@@ -969,7 +1041,7 @@
         </section>
 
         <!-- Tab: Neural Graph (Knowledge Base Explorer) -->
-        <section id="tab-neural-graph" class="tab-content">
+        <section id="tab-neural-graph" class="tab-content" role="tabpanel" aria-labelledby="tab-trigger-neural-graph">
           <div class="panel-header">
             <h2>Swarm Neural Graph & Codebase Memory</h2>
             <p class="description">Interactive 2D force-directed architecture model. Displays file linkages, function call nodes, and schema dependencies parsed by the Scroll Keeper.</p>
@@ -1017,7 +1089,7 @@
         </section>
 
         <!-- Tab: Sandbox Multiplexer -->
-        <section id="tab-sandbox-multiplexer" class="tab-content">
+        <section id="tab-sandbox-multiplexer" class="tab-content" role="tabpanel" aria-labelledby="tab-trigger-sandbox-multiplexer">
           <div class="panel-header">
             <h2>Sandbox Multiplexer (Swarm Shell Grid)</h2>
             <p class="description">Monitor simultaneous execution of scripts, test suites, external searches, and sandbox Docker container outputs in real-time.</p>
@@ -1096,7 +1168,7 @@
         </section>
 
         <!-- Tab: Settings (Dojo Rules) -->
-        <section id="tab-settings" class="tab-content">
+        <section id="tab-settings" class="tab-content" role="tabpanel" aria-labelledby="tab-trigger-settings">
           <div class="panel-header">
             <h2>Dojo Rules & Shadow Engine Parameters</h2>
             <p class="description">Configure VRAM models routing, MCP servers, system prompts, RAG databases, and agent runtime parameters.</p>
@@ -2829,7 +2901,10 @@
                     <p class="card-desc" style="margin-bottom: 16px;">Configure environment secrets for orchestrators and webhook relays.</p>
                     
                     <div class="form-group" style="margin-bottom: 12px;">
-                      <label for="eco-anthropic-key">Anthropic API Key</label>
+                      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                        <label for="eco-anthropic-key" style="margin-bottom: 0;">Anthropic API Key</label>
+                        <button type="button" class="btn btn-xs btn-outline btn-danger" id="btn-revoke-anthropic" style="padding: 2px 8px; font-size: 10px;">Revoke</button>
+                      </div>
                       <div class="password-input-wrapper" style="position: relative; display: flex; align-items: center;">
                         <input type="password" id="eco-anthropic-key" class="form-input text-xs" style="width: 100%; padding-right: 40px;" placeholder="sk-ant-...">
                         <button type="button" class="password-toggle" data-target="eco-anthropic-key" style="position: absolute; right: 10px; background: none; border: none; color: var(--text-secondary); cursor: pointer;" aria-label="Toggle password visibility">
@@ -2846,7 +2921,10 @@
                     </div>
 
                     <div class="form-group" style="margin-bottom: 12px;">
-                      <label for="eco-openai-key">OpenAI API Key</label>
+                      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                        <label for="eco-openai-key" style="margin-bottom: 0;">OpenAI API Key</label>
+                        <button type="button" class="btn btn-xs btn-outline btn-danger" id="btn-revoke-openai" style="padding: 2px 8px; font-size: 10px;">Revoke</button>
+                      </div>
                       <div class="password-input-wrapper" style="position: relative; display: flex; align-items: center;">
                         <input type="password" id="eco-openai-key" class="form-input text-xs" style="width: 100%; padding-right: 40px;" placeholder="sk-...">
                         <button type="button" class="password-toggle" data-target="eco-openai-key" style="position: absolute; right: 10px; background: none; border: none; color: var(--text-secondary); cursor: pointer;" aria-label="Toggle password visibility">
@@ -2962,7 +3040,7 @@
         </section>
 
         <!-- Tab: Agent Studio -->
-        <section id="tab-agent-studio" class="tab-content">
+        <section id="tab-agent-studio" class="tab-content" role="tabpanel" aria-labelledby="tab-trigger-agent-studio">
           <div class="panel-header">
             <div class="header-actions">
               <div>
@@ -2986,7 +3064,7 @@
         </section>
 
         <!-- Tab: Workflow Forge -->
-        <section id="tab-workflow" class="tab-content">
+        <section id="tab-workflow" class="tab-content" role="tabpanel" aria-labelledby="tab-trigger-workflow">
           <div class="panel-header">
             <div class="header-actions">
               <div>
@@ -3005,7 +3083,7 @@
         </section>
 
         <!-- Tab: Debate Center -->
-        <section id="tab-debate" class="tab-content">
+        <section id="tab-debate" class="tab-content" role="tabpanel" aria-labelledby="tab-trigger-debate">
           <div class="panel-header">
             <div class="header-actions">
               <div>
@@ -3021,7 +3099,7 @@
         </section>
 
         <!-- Tab: Memory Vault -->
-        <section id="tab-memory" class="tab-content">
+        <section id="tab-memory" class="tab-content" role="tabpanel" aria-labelledby="tab-trigger-memory">
           <div class="panel-header">
             <div class="header-actions">
               <div>
@@ -3040,7 +3118,7 @@
         </section>
 
         <!-- Tab: Testing Grounds -->
-        <section id="tab-testing" class="tab-content">
+        <section id="tab-testing" class="tab-content" role="tabpanel" aria-labelledby="tab-trigger-testing">
           <div class="panel-header">
             <div class="header-actions">
               <div>
@@ -3059,7 +3137,7 @@
         </section>
 
         <!-- Tab: Security Center -->
-        <section id="tab-security" class="tab-content">
+        <section id="tab-security" class="tab-content" role="tabpanel" aria-labelledby="tab-trigger-security">
           <div class="panel-header">
             <div class="header-actions">
               <div>
@@ -3078,7 +3156,7 @@
         </section>
 
         <!-- Tab: Deployment Hub -->
-        <section id="tab-deployment" class="tab-content">
+        <section id="tab-deployment" class="tab-content" role="tabpanel" aria-labelledby="tab-trigger-deployment">
           <div class="panel-header">
             <div class="header-actions">
               <div>
@@ -3097,7 +3175,7 @@
         </section>
 
         <!-- Tab: Monitoring -->
-        <section id="tab-monitoring" class="tab-content">
+        <section id="tab-monitoring" class="tab-content" role="tabpanel" aria-labelledby="tab-trigger-monitoring">
           <div class="panel-header">
             <div class="header-actions">
               <div>
@@ -3119,7 +3197,7 @@
         </section>
 
         <!-- Tab: Notifications Center -->
-        <section id="tab-notifications" class="tab-content">
+        <section id="tab-notifications" class="tab-content" role="tabpanel" aria-labelledby="tab-trigger-notifications">
           <div class="panel-header">
             <div class="header-actions">
               <div>
@@ -3137,7 +3215,7 @@
         </section>
 
         <!-- Tab: Repository Explorer -->
-        <section id="tab-repo-explorer" class="tab-content">
+        <section id="tab-repo-explorer" class="tab-content" role="tabpanel" aria-labelledby="tab-trigger-repo-explorer">
           <div class="panel-header">
             <h2>Repository Explorer</h2>
             <p class="description">Navigate codebase structure, view file contents, and explore branch/commit history.</p>
@@ -3148,7 +3226,7 @@
         </section>
 
         <!-- Tab: Pull Requests -->
-        <section id="tab-pull-requests" class="tab-content">
+        <section id="tab-pull-requests" class="tab-content" role="tabpanel" aria-labelledby="tab-trigger-pull-requests">
           <div class="panel-header">
             <h2>Pull Request Center</h2>
             <p class="description">Review, approve, and merge code changes. View diffs and CI/CD checks.</p>
@@ -3159,7 +3237,7 @@
         </section>
 
         <!-- Tab: Approvals Governance -->
-        <section id="tab-approvals" class="tab-content">
+        <section id="tab-approvals" class="tab-content" role="tabpanel" aria-labelledby="tab-trigger-approvals">
           <div class="panel-header">
             <h2>Approvals — Council Governance</h2>
             <p class="description">Queue-based approval system for deployments, security changes, and high-risk operations.</p>
@@ -3170,7 +3248,7 @@
         </section>
 
         <!-- Tab: Ops & Recovery -->
-        <section id="tab-ops-recovery" class="tab-content">
+        <section id="tab-ops-recovery" class="tab-content" role="tabpanel" aria-labelledby="tab-trigger-ops-recovery">
           <div class="panel-header">
             <h2>Ops & Recovery Center</h2>
             <p class="description">Incident management, feature flags, secrets rotation, backups, and recovery runbooks.</p>
@@ -3181,7 +3259,7 @@
         </section>
 
         <!-- Tab: Projects Workspace -->
-        <section id="tab-projects" class="tab-content">
+        <section id="tab-projects" class="tab-content" role="tabpanel" aria-labelledby="tab-trigger-projects">
           <div class="panel-header">
             <h2>Multi-Project Workspace</h2>
             <p class="description">Manage multiple projects, switch contexts, and view cross-project activity.</p>
@@ -3192,7 +3270,7 @@
         </section>
 
         <!-- Tab: Provenance Traceability -->
-        <section id="tab-provenance" class="tab-content">
+        <section id="tab-provenance" class="tab-content" role="tabpanel" aria-labelledby="tab-trigger-provenance">
           <div class="panel-header">
             <h2>Provenance & Traceability</h2>
             <p class="description">Full audit trail of agent actions, prompts, and decision provenance.</p>
@@ -3203,7 +3281,7 @@
         </section>
 
         <!-- Tab: Collaboration Hub -->
-        <section id="tab-collaboration" class="tab-content">
+        <section id="tab-collaboration" class="tab-content" role="tabpanel" aria-labelledby="tab-trigger-collaboration">
           <div class="panel-header">
             <h2>Collaboration & Handoff Hub</h2>
             <p class="description">Agent conversations, handoff notes, and team activity feed.</p>
@@ -3214,7 +3292,7 @@
         </section>
 
         <!-- Tab: Analytics Dashboard -->
-        <section id="tab-analytics" class="tab-content">
+        <section id="tab-analytics" class="tab-content" role="tabpanel" aria-labelledby="tab-trigger-analytics">
           <div class="panel-header">
             <h2>Cost & Quality Analytics</h2>
             <p class="description">Cost breakdowns, quality trends, MTTR metrics, and deployment success rates.</p>
@@ -3225,7 +3303,7 @@
         </section>
 
         <!-- Tab: Repository Intelligence -->
-        <section id="tab-intelligence" class="tab-content">
+        <section id="tab-intelligence" class="tab-content" role="tabpanel" aria-labelledby="tab-trigger-intelligence">
           <div class="panel-header">
             <h2>Repository Intelligence</h2>
             <p class="description">Dependency graphs, symbol search, and impact analysis for safer refactoring.</p>
@@ -3236,7 +3314,7 @@
         </section>
 
         <!-- Tab: Inbound Triage Inbox -->
-        <section id="tab-triage" class="tab-content">
+        <section id="tab-triage" class="tab-content" role="tabpanel" aria-labelledby="tab-trigger-triage">
           <div class="panel-header">
             <h2>Inbound Triage Inbox</h2>
             <p class="description">Monitor and triage incoming exceptions, events, and webhook telemetry from live systems.</p>
@@ -3248,7 +3326,7 @@
       </main>
 
       <!-- Right Sidebar: Context Panel -->
-      <aside class="context-panel" id="context-pane">
+      <aside class="context-panel" id="context-pane" role="complementary">
         
         <!-- View 1: Agent Details (Default) -->
         <div id="pane-agent-detail" class="pane-view active">
@@ -3595,6 +3673,10 @@
     </div>
   </div>
 
+  <!-- Accessibility Live Regions -->
+  <div id="sr-announcer-polite" class="sr-only" aria-live="polite" aria-atomic="true"></div>
+  <div id="sr-announcer-assertive" class="sr-only" aria-live="assertive" aria-atomic="true"></div>
+
   <!-- Force Graph Library -->
   <script src="https://unpkg.com/force-graph"></script>
   <!-- Monaco Editor Loader -->
@@ -3645,6 +3727,25 @@
       <path d="M18 15l-6-6-6 6"/>
     </svg>
   </button>
+
+  <!-- Global Search Modal -->
+  <div id="global-search-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="search-modal-title">
+    <div class="modal-card search-modal-content">
+      <div class="search-modal-header">
+        <svg class="jp-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+        <input type="text" id="global-search-input" placeholder="Search tasks, agents, logs, files, PRs, decisions... (Esc to close)" autocomplete="off">
+        <button class="modal-close-btn" id="close-search-modal-btn" aria-label="Close search modal" style="background:transparent; border:none; color:var(--text-muted); font-size:1.5rem; cursor:pointer;">&times;</button>
+      </div>
+      <div class="search-modal-results" id="global-search-results">
+        <div class="search-empty-state">Type something to search...</div>
+      </div>
+      <div class="search-modal-footer">
+        <span>Use <kbd>↑</kbd> <kbd>↓</kbd> to navigate, <kbd>Enter</kbd> to select, <kbd>Esc</kbd> to close.</span>
+      </div>
+    </div>
+  </div>
 
   <!-- Global Loader -->
   <div id="global-loader" class="global-loader">

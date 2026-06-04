@@ -1,0 +1,270 @@
+// ─── Skeleton Loading Styles ──────────────────────────────────────────────────
+// Augments the existing .skeleton + skeleton-shimmer keyframes from styles.css.
+// Provides layout-level containers and structural scaffolding for each variant:
+//   SkeletonTaskCard  | SkeletonAgentItem | SkeletonLogEntry
+//   SkeletonChart     | SkeletonPRCard
+// ─────────────────────────────────────────────────────────────────────────────
+
+// ── Stagger helper ────────────────────────────────────────────────────────────
+// Applies a tiny delay to each child .skeleton so cards "breathe" out of phase.
+@mixin stagger-shimmer($count: 10, $step: 0.08s) {
+  @for $i from 1 through $count {
+    &:nth-child(#{$i}) .skeleton {
+      animation-delay: #{($i - 1) * $step};
+    }
+  }
+}
+
+// ── Reduced-motion guard – disable all skeleton shimmer ──────────────────────
+@media (prefers-reduced-motion: reduce) {
+  .skeleton {
+    animation: none !important;
+    background: rgba(255, 255, 255, 0.05) !important;
+  }
+}
+
+// ─── Task Card skeleton ───────────────────────────────────────────────────────
+// Mirrors .task-card geometry exactly so layout doesn't shift on data arrival.
+
+.skeleton-task-card {
+  // Reuse real card base class; just disable interaction
+  cursor: default !important;
+  pointer-events: none;
+  animation: sk-card-appear 0.3s ease both;
+
+  &__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+
+  &__badge {
+    // matches .badge pill shape
+  }
+
+  &__title {
+    margin-bottom: 8px !important;
+  }
+
+  // Description lines already handled by .skeleton-text widths
+
+  &__progress {
+    margin-top: 6px;
+  }
+
+  &__foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-top: 1px solid rgba(255, 255, 255, 0.03);
+    padding-top: 8px;
+    margin-top: 10px;
+  }
+
+  &__tags {
+    display: flex;
+    gap: 4px;
+  }
+
+  &__assignee {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  // Stagger shimmer for up to 8 sibling cards
+  @include stagger-shimmer(8, 0.1s);
+}
+
+// ─── Agent Item skeleton ──────────────────────────────────────────────────────
+
+.skeleton-agent-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.skeleton-agent-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm, 6px);
+  background-color: rgba(255, 255, 255, 0.01);
+  animation: sk-card-appear 0.3s ease both;
+
+  &__avatar-wrap {
+    position: relative;
+    flex-shrink: 0;
+  }
+
+  &__avatar {
+    display: block;
+  }
+
+  &__dot {
+    // Absolute status indicator dot
+    position: absolute !important;
+    bottom: 0;
+    right: 0;
+    border: 2px solid var(--bg-panel, #0c0807);
+  }
+
+  &__text {
+    flex: 1;
+    min-width: 0;
+  }
+
+  // Stagger
+  @include stagger-shimmer(10, 0.07s);
+}
+
+// ─── Log Entry skeleton ───────────────────────────────────────────────────────
+
+.skeleton-log-list {
+  // Inherits .console-viewport
+  pointer-events: none;
+}
+
+.skeleton-log-entry {
+  // Inherits .console-line layout (display:flex; gap:8px)
+  align-items: center;
+  animation: sk-card-appear 0.3s ease both;
+
+  &__time  { opacity: 0.6; }
+  &__agent { opacity: 0.7; }
+  &__msg   { flex: 1; }
+
+  // Stagger – up to 20 entries
+  @include stagger-shimmer(20, 0.04s);
+}
+
+// ─── Chart skeleton ───────────────────────────────────────────────────────────
+
+.skeleton-chart {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  pointer-events: none;
+  animation: sk-card-appear 0.35s ease both;
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  &__body {
+    display: flex;
+    gap: 12px;
+    align-items: flex-end;   // bars grow from the bottom
+    position: relative;
+  }
+
+  &__y-axis {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+    flex-shrink: 0;
+    padding-bottom: 4px;
+  }
+
+  &__bars {
+    display: flex;
+    align-items: flex-end;
+    gap: 6px;
+    flex: 1;
+    height: 100%;
+  }
+
+  &__bar-col {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    height: 100%;
+  }
+
+  &__bar {
+    width: 100%;
+    // Bars stagger their shimmer
+    @for $i from 1 through 12 {
+      &:nth-child(#{$i}) {
+        animation-delay: #{($i - 1) * 0.06s};
+      }
+    }
+  }
+
+  &__legend {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    border-top: 1px solid var(--border-color, rgba(255,115,0,0.08));
+    padding-top: 12px;
+  }
+
+  &__legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+}
+
+// ─── PR Card skeleton ─────────────────────────────────────────────────────────
+
+.skeleton-pr-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1px; // match table-row border
+}
+
+.skeleton-pr-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border-color, rgba(255,115,0,0.08));
+  animation: sk-card-appear 0.3s ease both;
+
+  &__left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+
+  &__centre {
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__meta {
+    display: flex;
+    gap: 12px;
+  }
+
+  &__right {
+    display: flex;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+
+  // Stagger
+  @include stagger-shimmer(10, 0.06s);
+}
+
+// ─── Shared entrance animation ────────────────────────────────────────────────
+
+@keyframes sk-card-appear {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

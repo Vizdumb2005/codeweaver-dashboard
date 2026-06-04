@@ -876,6 +876,7 @@
                 window.renderAgentStudio();
               },
               true,
+              'delete-agent',
             );
           }
         }

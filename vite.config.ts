@@ -173,7 +173,7 @@ export default defineConfig(({ mode }) => {
       globals: true,
       environment: 'jsdom',
       setupFiles: './tests/setup.ts',
-      include: ['tests/core.test.ts'],
+      include: ['tests/core.test.ts', 'tests/vitals.test.ts', 'tests/sentry.test.ts', 'tests/performance.test.ts'],
       coverage: {
         provider: 'v8',
         reporter: ['text', 'json', 'html'],

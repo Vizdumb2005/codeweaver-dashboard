@@ -105,6 +105,36 @@
       <text x="100" y="90" text-anchor="middle" fill="#ff7300" opacity="0.15" font-size="48" font-family="serif">忍</text>
       <text x="100" y="155" text-anchor="middle" fill="#ff7300" opacity="0.2" font-size="8" font-family="JetBrains Mono">empty</text>
     </svg>`,
+
+    // Search (no search results variant)
+    search: `<svg viewBox="0 0 200 160" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:160px;height:128px;">
+      <g opacity="0.12">
+        <circle cx="100" cy="75" r="30" fill="none" stroke="#ff7300" stroke-width="2"/>
+        <line x1="122" y1="97" x2="145" y2="120" stroke="#ff7300" stroke-width="2.5" stroke-linecap="round"/>
+        <circle cx="92" cy="67" r="6" fill="#ff7300" opacity="0.15"/>
+      </g>
+      <text x="100" y="155" text-anchor="middle" fill="#ff7300" opacity="0.2" font-size="8" font-family="JetBrains Mono">索</text>
+    </svg>`,
+
+    // Error (error loading variant)
+    error: `<svg viewBox="0 0 200 160" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:160px;height:128px;">
+      <g opacity="0.12">
+        <path d="M100 25 L160 125 H40 Z" fill="none" stroke="#ff7300" stroke-width="2" stroke-linejoin="round"/>
+        <rect x="97" y="65" width="6" height="30" rx="3" fill="#ff7300"/>
+        <circle cx="100" cy="110" r="4.5" fill="#ff7300"/>
+      </g>
+      <text x="100" y="155" text-anchor="middle" fill="#ff7300" opacity="0.2" font-size="8" font-family="JetBrains Mono">警</text>
+    </svg>`,
+
+    // Lock (unauthorized variant)
+    lock: `<svg viewBox="0 0 200 160" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:160px;height:128px;">
+      <g opacity="0.12">
+        <rect x="60" y="75" width="80" height="50" rx="6" fill="none" stroke="#ff7300" stroke-width="2"/>
+        <path d="M75 75 V55 C75 41 86 30 100 30 C114 30 125 41 125 55 V75" fill="none" stroke="#ff7300" stroke-width="2"/>
+        <circle cx="100" cy="100" r="6" fill="#ff7300"/>
+      </g>
+      <text x="100" y="155" text-anchor="middle" fill="#ff7300" opacity="0.2" font-size="8" font-family="JetBrains Mono">鎖</text>
+    </svg>`,
   };
 
   /* ── Empty State Component ───────────────────────────────── */
@@ -266,6 +296,12 @@
       illustration: 'kanji',
       title: 'All caught up',
       description: 'No new notifications. Alerts and events will appear here as they occur.',
+    },
+    logs: {
+      illustration: 'scroll',
+      title: 'No stealth scrolls to display',
+      description: 'Mission logs will appear here as shinobi agents complete tasks. Adjust filters or wait for new activity.',
+      size: 'sm'
     },
   };
 })();

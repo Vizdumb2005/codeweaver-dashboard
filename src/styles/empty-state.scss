@@ -1,0 +1,236 @@
+// ─── Empty State Component Styles ────────────────────────────────────────────
+// Full coNinja dark-theme styling for all four variants:
+//   no-data | no-search | error | unauthorized
+// Glassmorphism card, variant accent glow, staggered micro-animations.
+// ─────────────────────────────────────────────────────────────────────────────
+
+@use 'sass:color';
+
+// ── Variant token maps ────────────────────────────────────────────────────────
+// Each variant drives its own accent colour through a single CSS custom prop
+// so every child element can reference it without repeating hex codes.
+
+.empty-state {
+  // Layout – full area centred
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 340px;
+  padding: 48px 24px;
+  position: relative;
+  overflow: hidden;
+
+  // ── Variant accent overrides ──────────────────────────────────────────────
+  &--no-data {
+    --es-accent:      rgba(255, 115, 0, 1);
+    --es-accent-dim:  rgba(255, 115, 0, 0.15);
+    --es-accent-glow: rgba(255, 115, 0, 0.12);
+    --es-accent-ring: rgba(255, 115, 0, 0.2);
+  }
+
+  &--no-search {
+    --es-accent:      rgba(255, 179, 0, 1);
+    --es-accent-dim:  rgba(255, 179, 0, 0.15);
+    --es-accent-glow: rgba(255, 179, 0, 0.10);
+    --es-accent-ring: rgba(255, 179, 0, 0.18);
+  }
+
+  &--error {
+    --es-accent:      rgba(239, 68, 68, 1);
+    --es-accent-dim:  rgba(239, 68, 68, 0.12);
+    --es-accent-glow: rgba(239, 68, 68, 0.10);
+    --es-accent-ring: rgba(239, 68, 68, 0.22);
+  }
+
+  &--unauthorized {
+    --es-accent:      rgba(255, 115, 0, 1);
+    --es-accent-dim:  rgba(255, 115, 0, 0.10);
+    --es-accent-glow: rgba(255, 115, 0, 0.08);
+    --es-accent-ring: rgba(255, 115, 0, 0.18);
+  }
+
+  // ── Ambient radial behind the card ────────────────────────────────────────
+  &__ambient {
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: radial-gradient(ellipse 60% 50% at 50% 0%, var(--es-accent-glow, rgba(255,115,0,0.08)) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+    animation: es-ambient-pulse 6s ease-in-out infinite alternate;
+  }
+
+  // ── Glass card (inner wrapper) ────────────────────────────────────────────
+  &__inner {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+
+    // Glassmorphism card surface
+    background: linear-gradient(
+      145deg,
+      rgba(20, 14, 10, 0.72) 0%,
+      rgba(12, 8, 6, 0.55) 100%
+    );
+    backdrop-filter: blur(24px) saturate(180%);
+    -webkit-backdrop-filter: blur(24px) saturate(180%);
+    border: 1px solid var(--es-accent-ring, rgba(255,115,0,0.18));
+    border-radius: 20px;
+    padding: 48px 40px 40px;
+    max-width: 420px;
+    width: 100%;
+    box-shadow:
+      0 0 0 1px rgba(255,255,255,0.03) inset,
+      0 8px 32px rgba(0, 0, 0, 0.45),
+      0 0 40px var(--es-accent-glow, rgba(255,115,0,0.08));
+
+    animation: es-card-enter 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
+
+    // Subtle top shimmer line
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 20%;
+      right: 20%;
+      height: 1px;
+      background: linear-gradient(
+        90deg,
+        transparent,
+        var(--es-accent-dim, rgba(255,115,0,0.15)),
+        transparent
+      );
+      border-radius: 9999px;
+    }
+  }
+
+  // ── Illustration container ────────────────────────────────────────────────
+  &__illustration {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 24px;
+    animation: es-illus-float 4s ease-in-out infinite alternate;
+
+    .empty-state-svg {
+      width: 160px;
+      height: 144px;
+      overflow: visible;
+      filter: drop-shadow(0 0 18px var(--es-accent-glow, rgba(255,115,0,0.08)));
+      transition: filter 0.3s ease, transform 0.3s ease;
+
+      &:hover {
+        filter: drop-shadow(0 0 28px var(--es-accent-dim, rgba(255,115,0,0.2)));
+        transform: scale(1.04);
+      }
+    }
+  }
+
+  // ── Title ─────────────────────────────────────────────────────────────────
+  &__title {
+    font-family: var(--font-sans, 'Outfit', sans-serif);
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text-primary, #f8fafc);
+    margin: 0 0 10px;
+    letter-spacing: -0.02em;
+    line-height: 1.25;
+    animation: es-text-enter 0.5s 0.1s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  // ── Description ───────────────────────────────────────────────────────────
+  &__description {
+    font-family: var(--font-sans, 'Outfit', sans-serif);
+    font-size: 0.875rem;
+    color: var(--text-secondary, #94a3b8);
+    max-width: 320px;
+    line-height: 1.65;
+    margin: 0;
+    animation: es-text-enter 0.5s 0.18s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  // ── Actions ───────────────────────────────────────────────────────────────
+  &__actions {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 28px;
+    animation: es-text-enter 0.5s 0.26s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  // Primary CTA — inherits .btn .btn-primary from styles.css, just adds sizing
+  &__btn-primary {
+    min-width: 140px;
+  }
+
+  // Secondary ghost button
+  &__btn-secondary {
+    min-width: 120px;
+  }
+}
+
+// ─── Variant-specific title accent ───────────────────────────────────────────
+
+.empty-state--error .empty-state__title {
+  color: rgba(252, 165, 165, 0.95); // soft red
+}
+
+.empty-state--unauthorized .empty-state__title {
+  color: rgba(253, 186, 116, 0.95); // soft orange
+}
+
+// ─── Keyframes ───────────────────────────────────────────────────────────────
+
+@keyframes es-card-enter {
+  from {
+    opacity: 0;
+    transform: translateY(18px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes es-text-enter {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes es-illus-float {
+  from { transform: translateY(0px); }
+  to   { transform: translateY(-8px); }
+}
+
+@keyframes es-ambient-pulse {
+  from { opacity: 0.7; }
+  to   { opacity: 1; }
+}
+
+// ─── Legacy class aliases (backward compat) ───────────────────────────────────
+// The original classes are kept so any external code referencing them still works.
+
+.empty-state-illustration { @extend .empty-state__illustration; }
+.empty-state-title        { @extend .empty-state__title; }
+.empty-state-description  { @extend .empty-state__description; }
+.empty-state-actions      { @extend .empty-state__actions; }
+
+// ─── Accessibility: reduced motion ───────────────────────────────────────────
+@media (prefers-reduced-motion: reduce) {
+  .empty-state__inner       { animation: none; }
+  .empty-state__illustration { animation: none; }
+  .empty-state__title,
+  .empty-state__description,
+  .empty-state__actions     { animation: none; }
+  .empty-state__ambient     { animation: none; }
+}

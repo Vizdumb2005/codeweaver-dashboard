@@ -7,6 +7,38 @@ window.initNavigation = function () {
     });
   });
 
+  // Collapsible Nav Sections with persistence
+  const storageKey = 'codeweaver-collapsed-sections';
+  let collapsedSections = {};
+  try {
+    const raw = localStorage.getItem(storageKey);
+    if (raw) collapsedSections = JSON.parse(raw);
+  } catch (e) {
+    console.warn('Failed to parse collapsed sections', e);
+  }
+
+  document.querySelectorAll('.nav-section').forEach((section) => {
+    const titleEl = section.querySelector('.nav-section-title');
+    if (!titleEl) return;
+    const title = titleEl.textContent.trim();
+
+    // Restore state from localStorage
+    if (collapsedSections[title]) {
+      section.classList.add('collapsed');
+    } else {
+      section.classList.remove('collapsed');
+    }
+
+    const header = section.querySelector('.nav-section-header');
+    if (header) {
+      header.addEventListener('click', () => {
+        const isCollapsed = section.classList.toggle('collapsed');
+        collapsedSections[title] = isCollapsed;
+        localStorage.setItem(storageKey, JSON.stringify(collapsedSections));
+      });
+    }
+  });
+
   // Kanban filters
   document.querySelectorAll('.filter-pills .pill').forEach((pill) => {
     pill.addEventListener('click', () => {
@@ -23,7 +55,23 @@ window.initGlobalControls = function () {
   if (pauseBtn) {
     pauseBtn.addEventListener('click', () => {
       const targetStatus = window.state.systemStatus === 'active' ? 'paused' : 'active';
-      window.dispatch('UPDATE_SYSTEM_STATUS', targetStatus);
+      if (targetStatus === 'paused') {
+        if (typeof window.showConfirmDialog === 'function') {
+          window.showConfirmDialog(
+            'Halt Swarm',
+            'Stealth shroud activation will HALT all active shinobi threads. Proceed?',
+            () => {
+              window.dispatch('UPDATE_SYSTEM_STATUS', targetStatus);
+            },
+            true,
+            'halt-swarm',
+          );
+        } else {
+          window.dispatch('UPDATE_SYSTEM_STATUS', targetStatus);
+        }
+      } else {
+        window.dispatch('UPDATE_SYSTEM_STATUS', targetStatus);
+      }
     });
   }
 
@@ -195,6 +243,8 @@ window.initDragAndDrop = function () {
 
       const task = window.state.tasks.find((t) => t.id === taskId);
       if (task && task.status !== targetColId) {
+        const previousStatus = task.status;
+
         // Log transition
         window.dispatch('ADD_LOG', {
           agent: 'system',
@@ -203,11 +253,15 @@ window.initDragAndDrop = function () {
         });
 
         // Remove task assignment from agents if completed/backlog
+        let assignedAgentKey = null;
+        let originalAgentState = null;
         if (targetColId === 'completed' || targetColId === 'backlog') {
           const agentKey = Object.keys(window.state.agents).find(
             (k) => window.state.agents[k].currentTaskId === task.id,
           );
           if (agentKey) {
+            assignedAgentKey = agentKey;
+            originalAgentState = { ...window.state.agents[agentKey] };
             window.dispatch('UPDATE_AGENT_STATUS', {
               agentId: agentKey,
               status: 'idle',
@@ -216,27 +270,165 @@ window.initDragAndDrop = function () {
           }
         }
 
+        // Add to pendingSyncTasks list
+        const pendingSyncs = [...(window.state.pendingSyncTasks || [])];
+        if (!pendingSyncs.includes(task.id)) {
+          pendingSyncs.push(task.id);
+        }
+        window.dispatch('UPDATE_SETTING', { key: 'pendingSyncTasks', value: pendingSyncs });
+
+        // Update task status optimistically
         window.dispatch('UPDATE_TASK', {
           taskId: task.id,
           updates: { status: targetColId },
         });
 
+        if (typeof performance !== 'undefined') {
+          try {
+            performance.mark('kanban-drag-end');
+            performance.measure('kanban-drag-drop', 'kanban-drag-start', 'kanban-drag-end');
+            const entry = performance.getEntriesByName('kanban-drag-drop').pop();
+            if (entry && typeof window.reportPerformanceMetric === 'function') {
+              window.reportPerformanceMetric('kanban-drag-drop-latency', entry.duration);
+            }
+          } catch (e) {
+            // Gracefully ignore
+          }
+        }
+
         // Trigger Smoke Puff visual effect on card!
         window.triggerSmokePuff(task.id);
+
+        // Call the API client to save changes
+        window.api.updateTask(task.id, { status: targetColId })
+          .then(() => {
+            // Success: Remove from pending sync list
+            const currentSyncs = (window.state.pendingSyncTasks || []).filter(id => id !== task.id);
+            window.dispatch('UPDATE_SETTING', { key: 'pendingSyncTasks', value: currentSyncs });
+            window.dispatch('ADD_NOTIFICATION', {
+              type: 'success',
+              title: 'Kanban Sync Success',
+              message: `Task "${task.title}" synced successfully with the API.`,
+            });
+          })
+          .catch((error) => {
+            // Error: Rollback!
+            window.dispatch('ADD_LOG', {
+              agent: 'system',
+              type: 'error',
+              msg: `API Sync Failed for Scroll #${task.id}: ${error.message || error}. Rolling back.`,
+            });
+
+            // Revert task status
+            window.dispatch('UPDATE_TASK', {
+              taskId: task.id,
+              updates: { status: previousStatus },
+            });
+
+            // Restore agent assignment if it was removed
+            if (assignedAgentKey && originalAgentState) {
+              window.dispatch('UPDATE_AGENT_STATUS', {
+                agentId: assignedAgentKey,
+                status: originalAgentState.status,
+                currentTaskId: originalAgentState.currentTaskId,
+              });
+            }
+
+            // Remove from pending sync list
+            const currentSyncs = (window.state.pendingSyncTasks || []).filter(id => id !== task.id);
+            window.dispatch('UPDATE_SETTING', { key: 'pendingSyncTasks', value: currentSyncs });
+
+            // Display error feedback toast
+            window.dispatch('ADD_NOTIFICATION', {
+              type: 'error',
+              title: 'Kanban Sync Error',
+              message: `Failed to move task. Reverted back to [${previousStatus.toUpperCase()}].`,
+            });
+          });
       }
     });
   });
+
+  const kanbanBoard = document.getElementById('kanban-board');
+  if (kanbanBoard && !kanbanBoard.dataset.kanbanKeyboardWired) {
+    kanbanBoard.dataset.kanbanKeyboardWired = '1';
+    kanbanBoard.addEventListener('keydown', (e) => {
+      const card = e.target.closest('.task-card');
+      if (!card) return;
+
+      const taskId = card.dataset.id;
+      const task = window.state.tasks.find((t) => t.id === taskId);
+      if (!task) return;
+
+      const statuses = ['backlog', 'in_progress', 'review', 'completed'];
+      const currentIndex = statuses.indexOf(task.status);
+
+      if (e.key === ' ' || e.key === 'Spacebar') {
+        e.preventDefault();
+        window.selectTask(taskId);
+        document.querySelectorAll('.task-card').forEach((c) => c.classList.remove('active-border-glow'));
+        card.classList.add('active-border-glow');
+        if (typeof window.announcePolite === 'function') {
+          window.announcePolite(`Grabbed task: ${task.title}. Status: ${task.status.replace('_', ' ')}`);
+        }
+      } else if (e.key === 'ArrowRight' && currentIndex < statuses.length - 1) {
+        e.preventDefault();
+        const nextStatus = statuses[currentIndex + 1];
+        window.dispatch('UPDATE_TASK', {
+          taskId: task.id,
+          updates: { status: nextStatus }
+        });
+        setTimeout(() => {
+          const updatedCard = document.querySelector(`.task-card[data-id="${task.id}"]`);
+          if (updatedCard) updatedCard.focus();
+        }, 50);
+      } else if (e.key === 'ArrowLeft' && currentIndex > 0) {
+        e.preventDefault();
+        const prevStatus = statuses[currentIndex - 1];
+        window.dispatch('UPDATE_TASK', {
+          taskId: task.id,
+          updates: { status: prevStatus }
+        });
+        setTimeout(() => {
+          const updatedCard = document.querySelector(`.task-card[data-id="${task.id}"]`);
+          if (updatedCard) updatedCard.focus();
+        }, 50);
+      }
+    });
+  }
 };
 
 // ============================================================
 // SETTINGS EVENT BINDINGS
 // ============================================================
 window.initSettingsSubTabs = function () {
-  document.querySelectorAll('.settings-tabs .s-tab').forEach((btn) => {
+  const tabs = Array.from(document.querySelectorAll('.settings-tabs .s-tab'));
+  tabs.forEach((btn) => {
     btn.addEventListener('click', () => {
       window.renderSettingsSubtab(btn.dataset.sTab);
     });
   });
+
+  const settingsTabsContainer = document.querySelector('.settings-tabs');
+  if (settingsTabsContainer) {
+    settingsTabsContainer.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
+        const activeBtn = document.querySelector('.settings-tabs .s-tab.active');
+        if (!activeBtn) return;
+
+        let index = tabs.indexOf(activeBtn);
+        if (e.key === 'ArrowRight') {
+          index = (index + 1) % tabs.length;
+        } else {
+          index = (index - 1 + tabs.length) % tabs.length;
+        }
+
+        e.preventDefault();
+        tabs[index].click();
+        tabs[index].focus();
+      }
+    });
+  }
 
   // Settings sub-tab sliders
   const tempSlider = document.getElementById('settings-temp');
@@ -674,4 +866,121 @@ window.initExtendedSettings = function () {
     }
     return false;
   }
+})();
+  
+// ============================================================
+// THEME TOGGLE
+// ============================================================
+window.initThemeToggle = function () {
+  const THEME_KEY = 'codeweaver-theme';
+  const LIGHT_CLASS = 'theme-light';
+  const themeBtn = document.getElementById('theme-toggle-btn');
+
+  if (themeBtn) {
+    themeBtn.addEventListener('click', () => {
+      const html = document.documentElement;
+      const isLight = html.classList.contains(LIGHT_CLASS);
+      
+      if (isLight) {
+        html.classList.remove(LIGHT_CLASS);
+        localStorage.setItem(THEME_KEY, 'dark');
+      } else {
+        html.classList.add(LIGHT_CLASS);
+        localStorage.setItem(THEME_KEY, 'light');
+      }
+      
+      // Update button icon based on theme
+      const icon = themeBtn.querySelector('svg');
+      if (icon) {
+        icon.innerHTML = isLight 
+          ? '<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>'
+          : '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>';
+      }
+    });
+  }
+};
+
+// --- SKIP NAVIGATION LINK ---
+window.initSkipLink = function () {
+  const skipLink = document.querySelector('.skip-link');
+  const mainContent = document.getElementById('viewport-main');
+
+  if (skipLink && mainContent) {
+    skipLink.addEventListener('click', (e) => {
+      // Prevent default anchor behavior to handle focus manually
+      e.preventDefault();
+      
+      // Focus the main content area
+      mainContent.focus();
+      
+      // Scroll to main content (fallback in case focus doesn't scroll)
+      mainContent.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  }
+};
+
+// --- GLOBAL KEYBOARD MODAL HANDLERS (ESCAPE TO CLOSE, TAB TRAP FOCUS) ---
+(function () {
+  window.addEventListener('keydown', (e) => {
+    // 1. Escape to close dialogs
+    if (e.key === 'Escape') {
+      const asModal = document.getElementById('as-create-modal-overlay');
+      if (asModal) {
+        asModal.classList.remove('cns-confirm-visible');
+        setTimeout(() => asModal.remove(), 280);
+      }
+
+      const debateModal = document.getElementById('debate-new-modal');
+      if (debateModal && debateModal.style.display !== 'none') {
+        const closeBtn = document.getElementById('debate-modal-close');
+        if (closeBtn) closeBtn.click();
+        else debateModal.style.display = 'none';
+      }
+
+      const wizardOverlay = document.getElementById('mission-intake-wizard') || document.querySelector('.wizard-overlay');
+      if (wizardOverlay && !wizardOverlay.classList.contains('hide')) {
+        const closeBtn = wizardOverlay.querySelector('.wizard-close') || document.getElementById('wizard-close-btn');
+        if (closeBtn) closeBtn.click();
+        else wizardOverlay.classList.add('hide');
+      }
+
+      if (typeof window.closeConfirmDialog === 'function') {
+        window.closeConfirmDialog();
+      }
+    }
+
+    // 2. Tab trap inside active modals
+    if (e.key === 'Tab') {
+      const activeModal = [
+        document.getElementById('cns-confirm-overlay'),
+        document.getElementById('as-create-modal-overlay'),
+        document.getElementById('debate-new-modal'),
+        document.getElementById('mission-intake-wizard'),
+        document.getElementById('omni-command-palette')
+      ].find((el) => el && !el.classList.contains('hide') && el.style.display !== 'none' && el.parentNode);
+
+      if (activeModal) {
+        const focusableSelectors = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
+        const focusableElements = Array.from(activeModal.querySelectorAll(focusableSelectors))
+          .filter((el) => el.offsetWidth > 0 && el.offsetHeight > 0);
+
+        if (focusableElements.length === 0) return;
+
+        const firstEl = focusableElements[0];
+        const lastEl = focusableElements[focusableElements.length - 1];
+
+        if (e.shiftKey) {
+          if (document.activeElement === firstEl || !activeModal.contains(document.activeElement)) {
+            e.preventDefault();
+            lastEl.focus();
+          }
+        } else {
+          if (document.activeElement === lastEl || !activeModal.contains(document.activeElement)) {
+            e.preventDefault();
+            firstEl.focus();
+          }
+        }
+      }
+    }
+  });
 })();

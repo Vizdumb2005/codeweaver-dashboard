@@ -1,0 +1,229 @@
+// ─── Toast Styles ─────────────────────────────────────────────────────────────
+// Glassmorphism cards, slide-in from right, progress bar drain, icon glow.
+// Variant accent colours match the coNinja token system.
+// ─────────────────────────────────────────────────────────────────────────────
+
+// ── Viewport (fixed container) ────────────────────────────────────────────────
+.toast-viewport {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 9000;
+  display: flex;
+  flex-direction: column-reverse; // newest on top
+  gap: 10px;
+  width: 360px;
+  max-width: calc(100vw - 48px);
+  pointer-events: none; // pass clicks through empty space
+
+  // Each toast re-enables pointer events
+  > * { pointer-events: auto; }
+}
+
+// ── Base toast card ───────────────────────────────────────────────────────────
+.toast {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 14px 14px 18px;
+  border-radius: 12px;
+  overflow: hidden;
+
+  // Glassmorphism surface
+  background: linear-gradient(
+    135deg,
+    rgba(22, 15, 11, 0.88) 0%,
+    rgba(14, 9, 7, 0.78) 100%
+  );
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid var(--toast-accent-ring, rgba(255, 115, 0, 0.2));
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.55),
+    0 0 0 1px rgba(255, 255, 255, 0.03) inset,
+    0 0 24px var(--toast-glow, rgba(255, 115, 0, 0.08));
+
+  // ── Variant tokens ─────────────────────────────────────────────────────────
+  &--success {
+    --toast-accent:      #22c55e;
+    --toast-accent-ring: rgba(34, 197, 94, 0.25);
+    --toast-glow:        rgba(34, 197, 94, 0.10);
+  }
+  &--error {
+    --toast-accent:      #ef4444;
+    --toast-accent-ring: rgba(239, 68, 68, 0.28);
+    --toast-glow:        rgba(239, 68, 68, 0.12);
+  }
+  &--warning {
+    --toast-accent:      #f59e0b;
+    --toast-accent-ring: rgba(245, 158, 11, 0.25);
+    --toast-glow:        rgba(245, 158, 11, 0.10);
+  }
+  &--info {
+    --toast-accent:      #38bdf8;
+    --toast-accent-ring: rgba(56, 189, 248, 0.22);
+    --toast-glow:        rgba(56, 189, 248, 0.10);
+  }
+  &--loading {
+    --toast-accent:      #ff7300;
+    --toast-accent-ring: rgba(255, 115, 0, 0.2);
+    --toast-glow:        rgba(255, 115, 0, 0.08);
+  }
+
+  // ── Animations ─────────────────────────────────────────────────────────────
+  &--in  { animation: toast-slide-in  0.35s cubic-bezier(0.16, 1, 0.3, 1) both; }
+  &--out { animation: toast-slide-out 0.3s  cubic-bezier(0.4, 0, 1, 1)   both; }
+}
+
+// ── Accent left bar ───────────────────────────────────────────────────────────
+.toast__accent {
+  position: absolute;
+  left: 0;
+  top: 12%;
+  bottom: 12%;
+  width: 3px;
+  border-radius: 0 3px 3px 0;
+  background: var(--toast-accent, #ff7300);
+  box-shadow: 0 0 8px var(--toast-accent, #ff7300);
+}
+
+// ── Icon ──────────────────────────────────────────────────────────────────────
+.toast__icon-wrap {
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.toast__icon {
+  width: 22px;
+  height: 22px;
+  display: block;
+
+  &--success { color: #22c55e; filter: drop-shadow(0 0 5px rgba(34,197,94,0.5)); }
+  &--error   { color: #ef4444; filter: drop-shadow(0 0 5px rgba(239,68,68,0.5)); }
+  &--warning { color: #f59e0b; filter: drop-shadow(0 0 5px rgba(245,158,11,0.4)); }
+  &--info    { color: #38bdf8; filter: drop-shadow(0 0 5px rgba(56,189,248,0.4)); }
+  &--loading {
+    color: #ff7300;
+    animation: toast-spin 0.8s linear infinite;
+  }
+}
+
+// ── Animated checkmark ────────────────────────────────────────────────────────
+.toast__check-path {
+  stroke-dasharray: 20;
+  stroke-dashoffset: 20;
+  animation: toast-check-draw 0.4s 0.1s ease forwards;
+}
+
+// ── Content ───────────────────────────────────────────────────────────────────
+.toast__content {
+  flex: 1;
+  min-width: 0;
+}
+
+.toast__title {
+  font-family: var(--font-sans, 'Outfit', sans-serif);
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-primary, #f8fafc);
+  margin: 0;
+  line-height: 1.3;
+}
+
+.toast__description {
+  font-family: var(--font-sans, 'Outfit', sans-serif);
+  font-size: 0.78rem;
+  color: var(--text-secondary, #94a3b8);
+  margin: 4px 0 0;
+  line-height: 1.45;
+}
+
+// ── Close button ──────────────────────────────────────────────────────────────
+.toast__close {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: transparent;
+  border: none;
+  color: var(--text-secondary, #94a3b8);
+  cursor: pointer;
+  opacity: 0.5;
+  transition: opacity 0.15s ease, background 0.15s ease;
+  margin-top: 1px;
+
+  svg { width: 10px; height: 10px; display: block; }
+
+  &:hover {
+    opacity: 1;
+    background: rgba(255, 255, 255, 0.08);
+  }
+}
+
+// ── Progress bar drain ────────────────────────────────────────────────────────
+.toast__progress-track {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 0 0 12px 12px;
+  overflow: hidden;
+}
+
+.toast__progress-fill {
+  height: 100%;
+  background: var(--toast-accent, #ff7300);
+  border-radius: inherit;
+  opacity: 0.7;
+  // width is set via JS inline style; transition: none to avoid lag
+}
+
+// ── Keyframes ─────────────────────────────────────────────────────────────────
+
+@keyframes toast-slide-in {
+  from {
+    opacity: 0;
+    transform: translateX(110%) scale(0.92);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+@keyframes toast-slide-out {
+  from {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+    max-height: 120px;
+    margin-bottom: 0;
+  }
+  to {
+    opacity: 0;
+    transform: translateX(110%) scale(0.88);
+    max-height: 0;
+    margin-bottom: -10px;
+  }
+}
+
+@keyframes toast-spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes toast-check-draw {
+  to { stroke-dashoffset: 0; }
+}
+
+// ── Reduced motion ────────────────────────────────────────────────────────────
+@media (prefers-reduced-motion: reduce) {
+  .toast--in  { animation: none; opacity: 1; }
+  .toast--out { animation: none; opacity: 0; }
+  .toast__icon--loading { animation: none; }
+  .toast__check-path    { animation: none; stroke-dashoffset: 0; }
+}

@@ -304,15 +304,24 @@
      4. showConfirmDialog(title, message, onConfirm, destructive)
      Creates a modal overlay with backdrop blur
   ---------------------------------------------------------- */
-  window.showConfirmDialog = function (title, message, onConfirm, destructive) {
+  window.showConfirmDialog = function (title, message, onConfirm, destructive, actionKey) {
+    if (typeof performance !== 'undefined') {
+      performance.mark('confirm-modal-open-start');
+    }
+    if (actionKey && localStorage.getItem('coNinja_bypass_' + actionKey) === 'true') {
+      if (typeof onConfirm === 'function') onConfirm();
+      return;
+    }
+
     window.closeConfirmDialog();
 
     const overlay = document.createElement('div');
     overlay.id = 'cns-confirm-overlay';
+    overlay.className = 'modal-overlay';
     overlay.innerHTML = `
-      <div class="cns-confirm-backdrop" id="cns-confirm-backdrop"></div>
-      <div class="cns-confirm-modal glass-card" role="dialog" aria-modal="true"
-           aria-labelledby="cns-confirm-title" aria-describedby="cns-confirm-desc">
+      <div class="cns-confirm-backdrop" id="cns-confirm-backdrop" style="position: absolute; inset: 0;"></div>
+      <div class="cns-confirm-modal modal-card modal-sm glass-card" role="dialog" aria-modal="true"
+           aria-labelledby="cns-confirm-title" aria-describedby="cns-confirm-desc" style="z-index: 1;">
       <div class="cns-confirm-icon">
         ${
           destructive
@@ -322,10 +331,22 @@
       </div>
         <h2 class="cns-confirm-title" id="cns-confirm-title">${title || 'Confirm Action'}</h2>
         <p class="cns-confirm-desc" id="cns-confirm-desc">${message || 'Are you sure you want to proceed?'}</p>
+        
+        ${
+          actionKey
+            ? `
+          <div class="cns-confirm-bypass-wrapper" style="margin-bottom: 20px; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 0.85rem; color: var(--text-secondary);">
+            <input type="checkbox" id="cns-confirm-dont-ask-checkbox" style="cursor: pointer; accent-color: var(--accent-orange, #ff7300); width: 14px; height: 14px;">
+            <label for="cns-confirm-dont-ask-checkbox" style="cursor: pointer; user-select: none;">Don't ask again</label>
+          </div>
+        `
+            : ''
+        }
+
         <div class="cns-confirm-actions">
           <button id="cns-confirm-cancel" class="btn btn-outline">Cancel</button>
           <button id="cns-confirm-ok" class="btn ${destructive ? 'btn-danger' : 'btn-primary'}">
-            ${destructive ? 'Delete' : 'Confirm'}
+            ${destructive ? 'Confirm' : 'Confirm'}
           </button>
         </div>
       </div>`;
@@ -334,10 +355,28 @@
 
     /* Animate in */
     requestAnimationFrame(() => {
-      overlay.classList.add('cns-confirm-visible');
+      overlay.classList.add('active');
+      if (typeof performance !== 'undefined') {
+        try {
+          performance.mark('confirm-modal-open-end');
+          performance.measure('confirm-modal-open-time', 'confirm-modal-open-start', 'confirm-modal-open-end');
+          const entry = performance.getEntriesByName('confirm-modal-open-time').pop();
+          if (entry && typeof window.reportPerformanceMetric === 'function') {
+            window.reportPerformanceMetric('modal-open-time', entry.duration);
+          }
+        } catch (e) {
+          // Gracefully ignore
+        }
+      }
     });
 
     const closeAndRun = (run) => {
+      if (run && actionKey) {
+        const checkbox = overlay.querySelector('#cns-confirm-dont-ask-checkbox');
+        if (checkbox && checkbox.checked) {
+          localStorage.setItem('coNinja_bypass_' + actionKey, 'true');
+        }
+      }
       window.closeConfirmDialog();
       if (run && typeof onConfirm === 'function') onConfirm();
     };
@@ -365,14 +404,14 @@
 
   /* ----------------------------------------------------------
      5. closeConfirmDialog()
-  ---------------------------------------------------------- */
+     ---------------------------------------------------------- */
   window.closeConfirmDialog = function () {
     const existing = document.getElementById('cns-confirm-overlay');
     if (existing) {
-      existing.classList.remove('cns-confirm-visible');
+      existing.classList.remove('active');
       setTimeout(() => {
         if (existing.parentNode) existing.parentNode.removeChild(existing);
-      }, 280);
+      }, 450);
     }
   };
 
@@ -451,6 +490,15 @@
     window.showToast = function (message, type, duration) {
       type = type || 'info';
       duration = duration || 3500;
+
+      // Accessibility: screen reader announcements
+      if (typeof window.announcePolite === 'function' && typeof window.announceAssertive === 'function') {
+        if (type === 'error' || /fail|error|alert|vuln|security/i.test(message)) {
+          window.announceAssertive(message);
+        } else {
+          window.announcePolite(message);
+        }
+      }
 
       let container = document.getElementById('cns-toast-container');
       if (!container) {
@@ -848,6 +896,20 @@
         return;
       }
 
+      if (key === 'j' || key === 'k') {
+        e.preventDefault();
+        this.navigateList(key);
+        return;
+      }
+
+      if (key === 'a' || key === 'r') {
+        if (window.state?.activeTab === 'approvals') {
+          e.preventDefault();
+          this.handleApprovalAction(key);
+          return;
+        }
+      }
+
       if (key === 'escape') {
         e.preventDefault();
         this.handleEscape();
@@ -861,10 +923,71 @@
     },
 
     switchToTabByIndex(index) {
-      const tabs = document.querySelectorAll('.sidebar a');
-      if (tabs[index]) {
-        tabs[index].click();
-        window.showToast(`Switched to ${tabs[index].textContent.trim()}`, 'info', 2000);
+      const pinnedList = window.state?.pinnedTabs || [];
+      const tabId = pinnedList[index];
+      if (tabId) {
+        window.dispatch('SWITCH_TAB', tabId);
+        const originalBtn = document.querySelector(`.nav-menu .nav-section:not(#nav-section-pinned) .nav-item[data-tab="${tabId}"]`);
+        const label = originalBtn ? originalBtn.querySelector('span')?.textContent?.trim() : tabId;
+        window.showToast(`Switched to pinned tab: ${label || tabId}`, 'info', 2000);
+      }
+    },
+
+    navigateList(direction) {
+      let selector = '';
+      if (window.state?.activeTab === 'task-board') {
+        selector = '.task-card';
+      } else if (window.state?.activeTab === 'pull-requests') {
+        selector = '.pr-card';
+      } else if (window.state?.activeTab === 'approvals') {
+        selector = '.approval-row, .approval-card';
+      }
+
+      if (!selector) return;
+
+      const items = Array.from(document.querySelectorAll(selector)).filter(
+        (el) => el.offsetWidth > 0 && el.offsetHeight > 0
+      );
+      if (items.length === 0) return;
+
+      let currentIndex = items.indexOf(document.activeElement);
+      let targetIndex = 0;
+
+      if (currentIndex === -1) {
+        targetIndex = direction === 'j' ? 0 : items.length - 1;
+      } else {
+        if (direction === 'j') {
+          targetIndex = Math.min(currentIndex + 1, items.length - 1);
+        } else {
+          targetIndex = Math.max(currentIndex - 1, 0);
+        }
+      }
+
+      const targetItem = items[targetIndex];
+      if (targetItem) {
+        targetItem.focus();
+        targetItem.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        if (window.state?.activeTab === 'task-board' && typeof window.selectTask === 'function') {
+          const taskId = targetItem.dataset.id;
+          if (taskId) {
+            window.selectTask(taskId);
+            document.querySelectorAll('.task-card').forEach((c) => c.classList.remove('active-border-glow'));
+            targetItem.classList.add('active-border-glow');
+          }
+        }
+      }
+    },
+
+    handleApprovalAction(actionKey) {
+      const activeEl = document.activeElement;
+      if (!activeEl) return;
+      const item = activeEl.closest('.approval-row, .approval-card');
+      if (!item) return;
+
+      const action = actionKey === 'a' ? 'approve' : 'reject';
+      const btn = item.querySelector(`[data-action="${action}"]`);
+      if (btn) {
+        btn.click();
       }
     },
 
@@ -891,6 +1014,11 @@
       // Close modals
       window.closeConfirmDialog();
 
+      // Close search modal
+      if (typeof window.toggleSearchModal === 'function') {
+        window.toggleSearchModal(false);
+      }
+
       // Close any open drawers
       const drawer = document.querySelector('.node-detail-drawer.open');
       if (drawer) drawer.classList.remove('open');
@@ -898,19 +1026,90 @@
       // Close any open panels
       const panels = document.querySelectorAll('.panel-overlay.active');
       panels.forEach((p) => p.classList.remove('active'));
+
+      // Close other overlays
+      const asModal = document.getElementById('as-create-modal-overlay');
+      if (asModal) {
+        asModal.classList.remove('cns-confirm-visible');
+        setTimeout(() => asModal.remove(), 280);
+      }
+
+      const debateModal = document.getElementById('debate-new-modal');
+      if (debateModal) debateModal.style.display = 'none';
+
+      const wizardOverlay = document.getElementById('mission-intake-wizard') || document.querySelector('.wizard-overlay');
+      if (wizardOverlay) wizardOverlay.classList.add('hide');
     },
 
     showShortcutsHelp() {
       const shortcutsHtml = `
-        <div style="text-align:left; font-size:0.85rem; line-height:1.8;">
-          <div><kbd style="background:rgba(255,255,255,0.1); padding:2px 6px; border-radius:4px;">Ctrl+1-9</kbd> Switch tabs</div>
-          <div><kbd style="background:rgba(255,255,255,0.1); padding:2px 6px; border-radius:4px;">Ctrl+/</kbd> Toggle sidebar</div>
-          <div><kbd style="background:rgba(255,255,255,0.1); padding:2px 6px; border-radius:4px;">Ctrl+K</kbd> Focus search</div>
-          <div><kbd style="background:rgba(255,255,255,0.1); padding:2px 6px; border-radius:4px;">Esc</kbd> Close modals/drawers</div>
-          <div><kbd style="background:rgba(255,255,255,0.1); padding:2px 6px; border-radius:4px;">?</kbd> Show this help</div>
+        <div class="shortcuts-cheat-sheet" style="text-align: left; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; font-size: 0.85rem; line-height: 1.6; min-width: 460px;">
+          <div>
+            <h4 style="color: var(--accent-orange); border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 4px; margin-top: 0; margin-bottom: 8px;">🌐 Global</h4>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+              <span>Toggle search:</span>
+              <kbd style="background: rgba(255,255,255,0.1); padding: 2px 6px; border-radius: 4px; font-family: monospace; color: var(--text-primary);">Cmd+K</kbd>
+            </div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+              <span>Toggle sidebar:</span>
+              <kbd style="background: rgba(255,255,255,0.1); padding: 2px 6px; border-radius: 4px; font-family: monospace; color: var(--text-primary);">Cmd+/</kbd>
+            </div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+              <span>Close modals / search:</span>
+              <kbd style="background: rgba(255,255,255,0.1); padding: 2px 6px; border-radius: 4px; font-family: monospace; color: var(--text-primary);">Esc</kbd>
+            </div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+              <span>Show cheat sheet:</span>
+              <kbd style="background: rgba(255,255,255,0.1); padding: 2px 6px; border-radius: 4px; font-family: monospace; color: var(--text-primary);">?</kbd>
+            </div>
+          </div>
+
+          <div>
+            <h4 style="color: var(--accent-cyan); border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 4px; margin-top: 0; margin-bottom: 8px;">🧭 Navigation</h4>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+              <span>Switch pinned tabs:</span>
+              <kbd style="background: rgba(255,255,255,0.1); padding: 2px 6px; border-radius: 4px; font-family: monospace; color: var(--text-primary);">Cmd+1-9</kbd>
+            </div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+              <span>Navigate lists:</span>
+              <kbd style="background: rgba(255,255,255,0.1); padding: 2px 6px; border-radius: 4px; font-family: monospace; color: var(--text-primary);">J / K</kbd>
+            </div>
+          </div>
+
+          <div>
+            <h4 style="color: #4CAF50; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 4px; margin-top: 0; margin-bottom: 8px;">⚡ Actions</h4>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+              <span>Approve request:</span>
+              <kbd style="background: rgba(255,255,255,0.1); padding: 2px 6px; border-radius: 4px; font-family: monospace; color: var(--text-primary);">A</kbd>
+            </div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+              <span>Reject request:</span>
+              <kbd style="background: rgba(255,255,255,0.1); padding: 2px 6px; border-radius: 4px; font-family: monospace; color: var(--text-primary);">R</kbd>
+            </div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+              <span>Select task card:</span>
+              <kbd style="background: rgba(255,255,255,0.1); padding: 2px 6px; border-radius: 4px; font-family: monospace; color: var(--text-primary);">Space</kbd>
+            </div>
+          </div>
+
+          <div>
+            <h4 style="color: #9c27b0; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 4px; margin-top: 0; margin-bottom: 8px;">📝 Editor</h4>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+              <span>Indent lines:</span>
+              <kbd style="background: rgba(255,255,255,0.1); padding: 2px 6px; border-radius: 4px; font-family: monospace; color: var(--text-primary);">Tab</kbd>
+            </div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+              <span>Find in active file:</span>
+              <kbd style="background: rgba(255,255,255,0.1); padding: 2px 6px; border-radius: 4px; font-family: monospace; color: var(--text-primary);">Ctrl+F</kbd>
+            </div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+              <span>Find & Replace:</span>
+              <kbd style="background: rgba(255,255,255,0.1); padding: 2px 6px; border-radius: 4px; font-family: monospace; color: var(--text-primary);">Ctrl+H</kbd>
+            </div>
+          </div>
         </div>
       `;
-      window.showConfirmDialog('⌨️ Keyboard Shortcuts', shortcutsHtml, null, false);
+      window.showConfirmDialog('⌨️ Keyboard Shortcuts Cheat Sheet', shortcutsHtml, null, false);
       const okBtn = document.getElementById('cns-confirm-ok');
       if (okBtn) okBtn.textContent = 'Got it';
     },

@@ -1,0 +1,195 @@
+// ─── Form Feedback Styles ─────────────────────────────────────────────────────
+// Augments the existing .form-input, .form-group, .form-label, .form-error.
+// Adds:  error shake, valid checkmark, inline error animation, button spinner.
+// ─────────────────────────────────────────────────────────────────────────────
+
+// ── Field states on .form-input ───────────────────────────────────────────────
+
+.form-input,
+.form-select {
+  // Error state
+  &.is-error {
+    border-color: rgba(239, 68, 68, 0.6) !important;
+    box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.15), 0 0 12px rgba(239, 68, 68, 0.08) !important;
+    animation: field-shake 0.35s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+    background-color: rgba(239, 68, 68, 0.03) !important;
+
+    &:focus {
+      border-color: rgba(239, 68, 68, 0.8) !important;
+      outline-color: rgba(239, 68, 68, 0.4) !important;
+    }
+  }
+
+  // Valid state
+  &.is-valid {
+    border-color: rgba(34, 197, 94, 0.5) !important;
+    box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.10) !important;
+
+    &:focus {
+      border-color: rgba(34, 197, 94, 0.7) !important;
+      outline-color: rgba(34, 197, 94, 0.3) !important;
+    }
+  }
+}
+
+// ── Field group wrapper ───────────────────────────────────────────────────────
+
+.form-group {
+  position: relative;
+}
+
+// ── Label with valid indicator ────────────────────────────────────────────────
+
+.form-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--text-secondary, #94a3b8);
+  margin-bottom: var(--space-xs, 4px);
+  transition: color 0.2s ease;
+
+  .form-group.has-error & { color: rgba(252, 165, 165, 0.9); }
+  .form-group.is-valid  & { color: rgba(134, 239, 172, 0.9); }
+}
+
+// ── Valid checkmark icon (appended next to label) ─────────────────────────────
+
+.form-valid-icon {
+  display: inline-flex;
+  align-items: center;
+  opacity: 0;
+  transform: scale(0.4);
+  transition: opacity 0.2s ease, transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  svg {
+    width: 13px;
+    height: 13px;
+    color: #22c55e;
+    display: block;
+  }
+
+  .form-group.is-valid & {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+// ── Inline error message ──────────────────────────────────────────────────────
+
+.form-error {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.73rem;
+  color: rgba(252, 165, 165, 0.95) !important;
+  margin-top: var(--space-xs, 4px) !important;
+
+  // Slide down from above
+  animation: field-error-appear 0.25s cubic-bezier(0.16, 1, 0.3, 1) both;
+
+  // Error dot icon
+  &::before {
+    content: '';
+    display: inline-block;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: currentColor;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+}
+
+// ── Input wrapper (to position checkmark icon) ────────────────────────────────
+
+.form-input-wrapper {
+  position: relative;
+  display: block;
+
+  .form-valid-input-icon {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%) scale(0.3);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease, transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    color: #22c55e;
+
+    svg { width: 14px; height: 14px; display: block; }
+  }
+
+  &.is-valid .form-input {
+    padding-right: 34px;
+  }
+
+  &.is-valid .form-valid-input-icon {
+    opacity: 1;
+    transform: translateY(-50%) scale(1);
+  }
+}
+
+// ── Button spinner / loading state ────────────────────────────────────────────
+
+// Augments existing .btn-loading from styles.css
+// Spin ring is already handled by btn-loading::after in styles.css.
+// We add a smooth disabled-look transition:
+.btn.btn-submitting {
+  position: relative;
+  pointer-events: none;
+  opacity: 0.75;
+  color: transparent !important;
+
+  &::after {
+    content: '';
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    top: 50%;
+    left: 50%;
+    margin: -8px 0 0 -8px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: form-btn-spin 0.65s linear infinite;
+  }
+}
+
+// ── Submit success state on button ────────────────────────────────────────────
+
+.btn.btn-success-flash {
+  background: linear-gradient(135deg, #15803d, #22c55e) !important;
+  border-color: rgba(34, 197, 94, 0.4) !important;
+  box-shadow: 0 4px 14px rgba(34, 197, 94, 0.3) !important;
+  transition: background 0.3s ease, box-shadow 0.3s ease !important;
+}
+
+// ── Keyframes ─────────────────────────────────────────────────────────────────
+
+@keyframes field-shake {
+  0%, 100% { transform: translateX(0); }
+  20%       { transform: translateX(-5px); }
+  40%       { transform: translateX(5px); }
+  60%       { transform: translateX(-3px); }
+  80%       { transform: translateX(3px); }
+}
+
+@keyframes field-error-appear {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes form-btn-spin {
+  to { transform: rotate(360deg); }
+}
+
+// ── Reduced motion ────────────────────────────────────────────────────────────
+
+@media (prefers-reduced-motion: reduce) {
+  .form-input.is-error,
+  .form-select.is-error { animation: none !important; }
+  .form-error           { animation: none !important; }
+  .btn.btn-submitting::after { animation: none !important; }
+}
