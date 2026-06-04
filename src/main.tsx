@@ -55,6 +55,14 @@ async function prepareApp() {
 
 // Render the application
 prepareApp().then(() => {
+  // Clear the legacy HTML content from the body (except the root element)
+  // This ensures only React renders in production
+  const root = document.getElementById('root');
+  if (root) {
+    document.body.innerHTML = '';
+    document.body.appendChild(root);
+  }
+
   ReactDOM.createRoot(document.getElementById('root')!).render(
     <React.StrictMode>
       <ThemeProvider>
