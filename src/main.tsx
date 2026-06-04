@@ -11,6 +11,7 @@ import { trackWebVitals } from './utils/vitals';
 import './utils/performance';
 import { sentry } from './services/sentry';
 import { syncClient } from './services/sync';
+import { startHealthCheck } from './services/health';
 
 import { AuthProvider } from './hooks/useAuth';
 
@@ -25,6 +26,9 @@ trackWebVitals();
 
 // Start real-time state synchronization
 syncClient.connect();
+
+// Start backend system health check polling
+startHealthCheck();
 
 // Listen for system theme changes
 setupThemeListener();

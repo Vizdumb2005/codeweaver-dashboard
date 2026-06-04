@@ -145,4 +145,32 @@ export const handlers = [
       message: 'Error report stored successfully',
     });
   }),
+
+  // Intercept GET /api/v1/health
+  http.get('*/api/v1/health', async ({ request }) => {
+    const url = new URL(request.url);
+    const healthStatusParam = url.searchParams.get('health_status');
+    const hasOverride = typeof window !== 'undefined' && window.location && typeof window.location.search === 'string' && window.location.search.includes('health_status=degraded');
+    const isDegraded = healthStatusParam === 'degraded' || hasOverride;
+
+    if (isDegraded) {
+      return HttpResponse.json({
+        status: 'degraded',
+        details: {
+          database: 'healthy',
+          redis: 'degraded',
+          mcp_gateway: 'degraded',
+        },
+      });
+    }
+
+    return HttpResponse.json({
+      status: 'healthy',
+      details: {
+        database: 'healthy',
+        redis: 'healthy',
+        mcp_gateway: 'healthy',
+      },
+    });
+  }),
 ];

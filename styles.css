@@ -318,6 +318,11 @@ h6 {
 .status-indicator-pulse.offline {
   background-color: var(--text-secondary);
 }
+.status-indicator-pulse.degraded {
+  background-color: var(--accent-orange, #ff7300);
+  box-shadow: 0 0 10px var(--accent-orange, #ff7300);
+  animation: pulse-dot 1.5s infinite;
+}
 .status-text {
   font-size: 0.8rem;
   color: var(--text-secondary);
