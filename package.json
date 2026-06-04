@@ -20,7 +20,7 @@
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
     "test:e2e": "playwright test",
-    "prepare": "cd .. && node codeweaver-dashboard/node_modules/husky/bin.js codeweaver-dashboard/.husky"
+    "prepare": "husky install"
   },
   "dependencies": {
     "react": "^18.2.0",
